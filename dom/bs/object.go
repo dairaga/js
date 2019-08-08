@@ -42,24 +42,3 @@ func (obj Object) On(event string, fn func(Object, dom.Event)) {
 	obj.callbacks[event] = cb
 	dom.Call("$", obj.id).Call("on", event, cb)
 }
-
-/*
-func fromHTML(html string) Object {
-	p := js.CreateElement("div")
-	p.SetHTML(html)
-	js.AppendChild(p)
-
-	x := p.Get("firstChild")
-	p.Call("removeChild", x)
-	js.RemoveChild(p)
-	elm := js.ElementOf(x)
-	js.AppendChild(elm)
-
-	return Object{ref: elm}
-}
-
-func fromTmpl(tmpl string, data interface{}) Object {
-	html := js.HTML(tmpl, data)
-	return fromHTML(html)
-}
-*/
