@@ -24,6 +24,7 @@ type Recorder struct {
 	recording bool
 	cb        func([]float32)
 	processor media.AudioNode
+	onProcess js.Func
 }
 
 // Recording ...
@@ -51,8 +52,7 @@ func New(source media.AudioNode, size media.BufSize, channels int) *Recorder {
 	}
 
 	r.processor = r.ctx.CreateScriptProcessor(r.size, r.channels, r.channels)
-
-	r.processor.JSValue().Set("onaudioprocess", js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
+	r.onProcess = js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
 		if !r.recording {
 			return nil
 		}
@@ -87,7 +87,9 @@ func New(source media.AudioNode, size media.BufSize, channels int) *Recorder {
 		}
 
 		return nil
-	}))
+	})
+
+	r.processor.JSValue().Set("onaudioprocess", r.onProcess)
 
 	source.Connect(r.processor)
 	r.processor.Connect(r.ctx.Destination())
@@ -115,5 +117,5 @@ func (r *Recorder) Release() {
 	r.Stop()
 	r.processor.DisconnectAll()
 	r.source.Disconnect(r.processor)
-
+	r.onProcess.Release()
 }

@@ -5,10 +5,10 @@ import (
 	"syscall/js"
 )
 
-// BufSize ...
+// BufSize buffer size for script processor.
 type BufSize int
 
-// buffer size ...
+// buffer https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createScriptProcessor#Parameters
 const (
 	Size256   BufSize = 256
 	Size512   BufSize = 512
@@ -19,10 +19,10 @@ const (
 	Size16384 BufSize = 16384
 )
 
-// AudioState ...
+// AudioState state for AudioConext.
 type AudioState string
 
-// AudioContext State
+// AudioContext State https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/state
 const (
 	Suspended AudioState = "suspended"
 	Running   AudioState = "running"
@@ -47,7 +47,7 @@ func toFloat32Slice(srcFloat32Array js.Value) []float32 {
 
 // ----------------------------------------------------------------------------
 
-// AudioContext ...
+// AudioContext https://developer.mozilla.org/en-US/docs/Web/API/AudioContext
 type AudioContext struct {
 	ref       js.Value
 	onClose   js.Func
@@ -72,7 +72,7 @@ func init() {
 	}
 }
 
-// NewAudioContext ...
+// NewAudioContext return a audio context with sample rate.
 func NewAudioContext(sampleRate float64) AudioContext {
 	if sampleRate > 0 {
 		option := map[string]interface{}{
@@ -88,12 +88,12 @@ func (ctx AudioContext) JSValue() js.Value {
 	return ctx.ref
 }
 
-// CreateMediaStreamSource ...
+// CreateMediaStreamSource https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createMediaStreamSource
 func (ctx AudioContext) CreateMediaStreamSource(stream Stream) AudioNode {
 	return AudioNodeOf(ctx.ref.Call("createMediaStreamSource", stream.ref))
 }
 
-// CreateScriptProcessor ...
+// CreateScriptProcessor https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createScriptProcessor
 func (ctx AudioContext) CreateScriptProcessor(size BufSize, in, out int) AudioNode {
 	return AudioNodeOf(ctx.ref.Call("createScriptProcessor", int(size), in, out))
 }
@@ -182,7 +182,7 @@ func (ctx AudioContext) OnResume(cb func()) {
 
 // ----------------------------------------------------------------------------
 
-// AudioNode ...
+// AudioNode https://developer.mozilla.org/en-US/docs/Web/API/AudioNode
 type AudioNode struct {
 	ref js.Value
 }
@@ -197,7 +197,7 @@ func (n AudioNode) JSValue() js.Value {
 	return n.ref
 }
 
-// Context https://developer.mozilla.org/en-US/docs/Web/API/AudioNode/connect
+// Context ...
 func (n AudioNode) Context() AudioContext {
 	return AudioContext{ref: n.ref.Get("context")}
 }

@@ -2,7 +2,7 @@ package media
 
 import "syscall/js"
 
-// Stream ...
+// Stream https://developer.mozilla.org/en-US/docs/Web/API/MediaStream
 type Stream struct {
 	ref js.Value
 }
