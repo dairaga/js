@@ -1,4 +1,4 @@
-package templ
+package tmpl
 
 import (
 	"fmt"
