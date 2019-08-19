@@ -1,6 +1,6 @@
 package media
 
-import "syscall/js"
+import "github.com/dairaga/js"
 
 // Stream https://developer.mozilla.org/en-US/docs/Web/API/MediaStream
 type Stream struct {

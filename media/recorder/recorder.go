@@ -1,20 +1,13 @@
 package recorder
 
 import (
-	"syscall/js"
-
+	"github.com/dairaga/js"
 	"github.com/dairaga/js/media"
 )
 
 // ----------------------------------------------------------------------------
 
-func resample(buf []float32, srcRate, destRate float64) []float32 {
-	return nil
-}
-
-// ----------------------------------------------------------------------------
-
-// Recorder ...
+// Recorder is a recorder component.
 type Recorder struct {
 	ctx      media.AudioContext
 	source   media.AudioNode
@@ -27,12 +20,12 @@ type Recorder struct {
 	onProcess js.Func
 }
 
-// Recording ...
+// Recording returns true when recording.
 func (r Recorder) Recording() bool {
 	return r.recording
 }
 
-// New ...
+// New returns a recorder component.
 func New(source media.AudioNode, size media.BufSize, channels int) *Recorder {
 
 	if size <= 0 {
@@ -69,6 +62,7 @@ func New(source media.AudioNode, size media.BufSize, channels int) *Recorder {
 			}
 
 			if ch == 2 {
+				// interleave
 				newLen := len(buf[0]) + len(buf[1])
 				newbuf := make([]float32, newLen)
 				idx := 0
@@ -97,22 +91,22 @@ func New(source media.AudioNode, size media.BufSize, channels int) *Recorder {
 	return r
 }
 
-// OnRecording ...
+// OnRecording callback invokeing when recording.
 func (r *Recorder) OnRecording(cb func([]float32)) {
 	r.cb = cb
 }
 
-// Record ...
+// Record starts to record.
 func (r *Recorder) Record() {
 	r.recording = true
 }
 
-// Stop ...
+// Stop stops to record.
 func (r *Recorder) Stop() {
 	r.recording = false
 }
 
-// Release ...
+// Release frees up resources. Recorder must be not used after calling Release.
 func (r *Recorder) Release() {
 	r.Stop()
 	r.processor.DisconnectAll()

@@ -2,7 +2,8 @@ package media
 
 import (
 	"fmt"
-	"syscall/js"
+
+	"github.com/dairaga/js"
 )
 
 // BufSize buffer size for script processor.
@@ -55,7 +56,7 @@ type AudioContext struct {
 	onResume  js.Func
 }
 
-var audioContextConstructor = js.Undefined()
+var audioContextConstructor = js.Value{}
 
 func init() {
 
@@ -72,7 +73,7 @@ func init() {
 	}
 }
 
-// NewAudioContext return a audio context with sample rate.
+// NewAudioContext return a audio context with specific sample rate.
 func NewAudioContext(sampleRate float64) AudioContext {
 	if sampleRate > 0 {
 		option := map[string]interface{}{
@@ -98,22 +99,22 @@ func (ctx AudioContext) CreateScriptProcessor(size BufSize, in, out int) AudioNo
 	return AudioNodeOf(ctx.ref.Call("createScriptProcessor", int(size), in, out))
 }
 
-// Destination ...
+// Destination https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/destination
 func (ctx AudioContext) Destination() AudioNode {
 	return AudioNodeOf(ctx.ref.Get("destination"))
 }
 
-// State ...
+// State https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/state
 func (ctx AudioContext) State() AudioState {
 	return AudioState(ctx.ref.Get("state").String())
 }
 
-// SampleRate ...
+// SampleRate https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/sampleRate
 func (ctx AudioContext) SampleRate() float64 {
 	return ctx.ref.Get("sampleRate").Float()
 }
 
-// Close ...
+// Close https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/close
 func (ctx AudioContext) Close() {
 	promise := ctx.ref.Call("close")
 	if ctx.onClose.Truthy() {
@@ -121,7 +122,7 @@ func (ctx AudioContext) Close() {
 	}
 }
 
-// Suspend ...
+// Suspend https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/suspend
 func (ctx AudioContext) Suspend() {
 	promise := ctx.ref.Call("suspend")
 	if ctx.onSuspend.Truthy() {
@@ -129,7 +130,7 @@ func (ctx AudioContext) Suspend() {
 	}
 }
 
-// Resume ...
+// Resume https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/resume
 func (ctx AudioContext) Resume() {
 	promise := ctx.ref.Call("resume")
 	if ctx.onResume.Truthy() {
@@ -137,7 +138,7 @@ func (ctx AudioContext) Resume() {
 	}
 }
 
-// Release ...
+// Release frees up callback functions.
 func (ctx AudioContext) Release() {
 	if ctx.State() != Closed {
 		return
@@ -156,7 +157,7 @@ func (ctx AudioContext) Release() {
 	}
 }
 
-// OnClose ...
+// OnClose invoked when context is closed.
 func (ctx AudioContext) OnClose(cb func()) {
 	ctx.onClose = js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
 		cb()
@@ -164,7 +165,7 @@ func (ctx AudioContext) OnClose(cb func()) {
 	})
 }
 
-// OnSuspend ...
+// OnSuspend invoked when context is suspended.
 func (ctx AudioContext) OnSuspend(cb func()) {
 	ctx.onSuspend = js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
 		cb()
@@ -172,7 +173,7 @@ func (ctx AudioContext) OnSuspend(cb func()) {
 	})
 }
 
-// OnResume ...
+// OnResume invoked when context is resumed.
 func (ctx AudioContext) OnResume(cb func()) {
 	ctx.onResume = js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
 		cb()
@@ -187,7 +188,7 @@ type AudioNode struct {
 	ref js.Value
 }
 
-// AudioNodeOf ...
+// AudioNodeOf returns a audio node.
 func AudioNodeOf(x js.Value) AudioNode {
 	return AudioNode{ref: x}
 }
@@ -197,12 +198,12 @@ func (n AudioNode) JSValue() js.Value {
 	return n.ref
 }
 
-// Context ...
+// Context https://developer.mozilla.org/en-US/docs/Web/API/AudioNode/context
 func (n AudioNode) Context() AudioContext {
 	return AudioContext{ref: n.ref.Get("context")}
 }
 
-// Connect ...
+// Connect https://developer.mozilla.org/en-US/docs/Web/API/AudioNode/connect
 func (n AudioNode) Connect(dest AudioNode, index ...int) {
 	size := len(index)
 	switch size {
@@ -215,12 +216,12 @@ func (n AudioNode) Connect(dest AudioNode, index ...int) {
 	}
 }
 
-// DisconnectAll ...
+// DisconnectAll disconnects all destination nodes.
 func (n AudioNode) DisconnectAll() {
 	n.ref.Call("disconnect")
 }
 
-// Disconnect ...
+// Disconnect https://developer.mozilla.org/en-US/docs/Web/API/AudioNode/disconnect
 func (n AudioNode) Disconnect(dest AudioNode, index ...int) {
 	size := len(index)
 	switch size {
@@ -235,12 +236,12 @@ func (n AudioNode) Disconnect(dest AudioNode, index ...int) {
 
 // ----------------------------------------------------------------------------
 
-// AudioBuffer ...
+// AudioBuffer https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer
 type AudioBuffer struct {
 	ref js.Value
 }
 
-// AudioBufferOf ...
+// AudioBufferOf returns audio buffer.
 func AudioBufferOf(x js.Value) AudioBuffer {
 	return AudioBuffer{ref: x}
 }
@@ -250,22 +251,22 @@ func (buf AudioBuffer) JSValue() js.Value {
 	return buf.ref
 }
 
-// SampleRate ...
+// SampleRate https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer/sampleRate
 func (buf AudioBuffer) SampleRate() float64 {
 	return buf.ref.Get("sampleRate").Float()
 }
 
-// Length ...
+// Length https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer/length
 func (buf AudioBuffer) Length() int {
 	return buf.ref.Get("length").Int()
 }
 
-// Duration ...
+// Duration https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer/duration
 func (buf AudioBuffer) Duration() float64 {
 	return buf.ref.Get("duration").Float()
 }
 
-// NumberOfChannels ...
+// NumberOfChannels https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer/numberOfChannels
 func (buf AudioBuffer) NumberOfChannels() int {
 	return buf.ref.Get("numberOfChannels").Int()
 }
@@ -274,7 +275,7 @@ func (buf AudioBuffer) String() string {
 	return fmt.Sprintf(`{"sample_rate": %v, "length": %d, "duration": %v, "number_of_channels": %v}`, buf.SampleRate(), buf.Length(), buf.Duration(), buf.NumberOfChannels())
 }
 
-// ChannelData ...
+// ChannelData https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer/getChannelData
 func (buf AudioBuffer) ChannelData(idx int) []float32 {
 	if idx >= buf.NumberOfChannels() {
 		return nil
