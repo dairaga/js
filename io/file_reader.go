@@ -1,55 +1,61 @@
 package io
 
 import (
-	"syscall/js"
+	"github.com/dairaga/js"
 )
 
-// FileReader ...
+// FileReader represents javascript FileReader.
 type FileReader struct {
-	ref js.Value
+	js.EventTarget
 }
 
-// JSValue ...
-func (r FileReader) JSValue() js.Value {
-	return r.ref
-}
-
-// NewFileReader ...
+// NewFileReader returns a file reader.
 func NewFileReader() FileReader {
-	return FileReader{js.Global().Get("FileReader").New("FileReader")}
+	return FileReader{js.EventTargetOf(js.New("FileReader"))}
 }
 
-// ReadAsArrayBuffer ...
-func (r FileReader) ReadAsArrayBuffer(file File) {
-	r.ref.Call("readAsArrayBuffer", file.ref)
+// Read https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsArrayBuffer
+func (r FileReader) Read(file File) {
+	r.JSValue().Call("readAsArrayBuffer", file.ref)
 }
 
-// OnBufferLoaded ...
-func (r FileReader) OnBufferLoaded(h func([]byte)) {
-
+// Done https://developer.mozilla.org/en-US/docs/Web/API/FileReader/onload
+func (r FileReader) Done(h func([]byte)) {
 	cb := js.FuncOf(func(_this js.Value, _ []js.Value) interface{} {
 		result := js.ValueOf(_this.Get("result"))
-		h(toBytes(result))
+		h(js.Bytes(result))
 		return nil
 	})
 
-	r.ref.Call("addEventListener", "load", cb)
+	r.On("load", cb)
 }
 
-func toBytes(v js.Value) []byte {
-	size := v.Get("byteLength")
-	if !size.Truthy() {
+// Fail https://developer.mozilla.org/en-US/docs/Web/API/FileReader/error_event
+func (r FileReader) Fail(h func(js.Event)) {
+	cb := js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
+		h(js.EventOf(args[0]))
 		return nil
-	}
+	})
 
-	ret := make([]uint8, size.Int())
-	destArray := js.TypedArrayOf(ret)
+	r.On("error", cb)
+}
 
-	srcArray := js.Global().Get("Uint8Array").New(v)
+// Always https://developer.mozilla.org/en-US/docs/Web/API/FileReader/loadend_event
+func (r FileReader) Always(h func(js.Event)) {
+	cb := js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
+		h(js.EventOf(args[0]))
+		return nil
+	})
 
-	destArray.Call("set", srcArray, 0)
+	r.On("loadend", cb)
+}
 
-	destArray.Release()
+// Progress https://developer.mozilla.org/en-US/docs/Web/API/FileReader/progress_event
+func (r FileReader) Progress(h func(int, int, bool)) {
+	cb := js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
+		h(args[0].Get("loaded").Int(), args[0].Get("total").Int(), args[0].Get("lengthComputable").Bool())
+		return nil
+	})
 
-	return []byte(ret)
+	r.On("progress", cb)
 }

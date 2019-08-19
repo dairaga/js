@@ -3,10 +3,10 @@ package io
 import (
 	"time"
 
-	"syscall/js"
+	"github.com/dairaga/js"
 )
 
-// File ...
+// File represents javascript File. https://developer.mozilla.org/en-US/docs/Web/API/File
 type File struct {
 	ref js.Value
 }
@@ -16,27 +16,27 @@ func (f File) JSValue() js.Value {
 	return f.ref
 }
 
-// FileOf ...
+// FileOf returns a File object.
 func FileOf(x interface{}) File {
 	return File{ref: js.ValueOf(x)}
 }
 
-// Size ...
+// Size https://developer.mozilla.org/en-US/docs/Web/API/Blob/size
 func (f File) Size() int {
 	return f.ref.Get("size").Int()
 }
 
-// FileType ...
+// FileType https://developer.mozilla.org/en-US/docs/Web/API/File/type
 func (f File) FileType() string {
 	return f.ref.Get("type").String()
 }
 
-// Name ...
+// Name https://developer.mozilla.org/en-US/docs/Web/API/File/name
 func (f File) Name() string {
 	return f.ref.Get("name").String()
 }
 
-// LastModified ...
+// LastModified https://developer.mozilla.org/en-US/docs/Web/API/File/lastModified
 func (f File) LastModified() time.Time {
 	m := int64(f.ref.Get("lastModified").Int())
 	return time.Unix(0, m*int64(time.Millisecond))
