@@ -1,49 +1,29 @@
 package js
 
-import (
-	"syscall/js"
-	gojs "syscall/js"
+import "syscall/js"
+
+var (
+	global = js.Global()
 )
 
-// ----------------------------------------------------------------------------
-
-// Error ...
-type Error struct {
-	ref gojs.Value
-}
-
-// ErrorOf ...
-func ErrorOf(x gojs.Value) Error {
-	return Error{ref: x}
-}
-
-// JSValue ...
-func (err Error) JSValue() gojs.Value {
-	return err.ref
-}
-
-func (err Error) Error() string {
-	return err.ref.String()
+// Global returns javascript global.
+func Global() Value {
+	return global
 }
 
 // ----------------------------------------------------------------------------
 
-// Event ...
-type Event struct {
-	ref js.Value
+// New returns a javascript object.
+func New(constructor string, args ...interface{}) Value {
+	return global.Get(constructor).New(args...)
 }
 
-// JSValue ...
-func (e Event) JSValue() js.Value {
-	return e.ref
+// Call invoke a global function.
+func Call(fn string, args ...interface{}) Value {
+	return global.Call(fn, args...)
 }
 
-// EventOf ...
-func EventOf(x js.Value) Event {
-	return Event{ref: x}
-}
-
-// Target ...
-func (e Event) Target() js.Value {
-	return e.ref.Get("target")
+// RegisterFunc ...
+func RegisterFunc(name string, fn Func) {
+	global.Set(name, fn)
 }
