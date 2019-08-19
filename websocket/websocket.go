@@ -1,10 +1,7 @@
 package websocket
 
 import (
-	"fmt"
-	"syscall/js"
-
-	djs "github.com/dairaga/js"
+	"github.com/dairaga/js"
 )
 
 // State ...
@@ -61,9 +58,9 @@ func (ws WebSocket) ReadyState() State {
 }
 
 // OnOpen ...
-func (ws WebSocket) OnOpen(cb func(djs.Event)) WebSocket {
+func (ws WebSocket) OnOpen(cb func(js.Event)) WebSocket {
 	ws.onOpen = js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
-		cb(djs.EventOf(args[0]))
+		cb(js.EventOf(args[0]))
 		return nil
 	})
 	ws.ref.Set("onopen", ws.onOpen)
@@ -82,9 +79,9 @@ func (ws WebSocket) OnClose(cb func(CloseEvent)) WebSocket {
 }
 
 // OnError ...
-func (ws WebSocket) OnError(cb func(djs.Event)) WebSocket {
+func (ws WebSocket) OnError(cb func(js.Event)) WebSocket {
 	ws.onError = js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
-		cb(djs.EventOf(args[0]))
+		cb(js.EventOf(args[0]))
 		return nil
 	})
 
@@ -98,7 +95,7 @@ func (ws WebSocket) OnMessage(cb func([]byte)) WebSocket {
 		data := args[0].Get("data")
 
 		if data.InstanceOf(arrayBuffer) {
-			cb(toBytes(data))
+			cb(js.Bytes(data))
 		} else {
 			cb([]byte(data.String()))
 		}
@@ -150,38 +147,15 @@ func (ws WebSocket) SendText(data string) {
 
 // SendBinary data must be []int8, []int16, []int32, []uint8, []uint16, []uint32, []float32 and []float64.
 func (ws WebSocket) SendBinary(data interface{}) {
-	switch v := data.(type) {
-	case []int8, []int16, []int32, []uint8, []uint16, []uint32, []float32, []float64:
-		arr := js.TypedArrayOf(v)
-		ws.ref.Call("send", arr)
-		arr.Release()
-	default:
-		fmt.Println("send data type not supported!")
-	}
+	arr := js.TypedArrayOf(data)
+	ws.ref.Call("send", arr)
+	arr.Release()
 }
 
 // ----------------------------------------------------------------------------
 
 var stringValue = js.Global().Get("String")
 var arrayBuffer = js.Global().Get("ArrayBuffer")
-
-func toBytes(v js.Value) []byte {
-	size := v.Get("byteLength")
-	if !size.Truthy() {
-		return nil
-	}
-
-	ret := make([]uint8, size.Int())
-	destArray := js.TypedArrayOf(ret)
-
-	srcArray := js.Global().Get("Uint8Array").New(v)
-
-	destArray.Call("set", srcArray, 0)
-
-	destArray.Release()
-
-	return []byte(ret)
-}
 
 // Connect ...
 func Connect(url string) WebSocket {
