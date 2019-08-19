@@ -1,16 +1,14 @@
 package bs
 
 import (
-	"syscall/js"
-
+	"github.com/dairaga/js"
 	"github.com/dairaga/js/dom"
 )
 
 // Object ...
 type Object struct {
 	dom.Element
-	id        string
-	callbacks map[string]js.Func
+	id string
 }
 
 // JSValue ...
@@ -25,20 +23,15 @@ func Attach(id string) Object {
 		panic("can not found " + id)
 	}
 
-	return Object{id: id, Element: elm, callbacks: make(map[string]js.Func)}
+	return Object{id: id, Element: elm}
 }
 
 // On ...
-func (obj Object) On(event string, fn func(Object, dom.Event)) {
+func (obj Object) On(event string, fn func(Object, js.Event)) {
 	cb := js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
-		fn(obj, dom.EventOf(args[0]))
+		fn(obj, js.EventOf(args[0]))
 		return nil
 	})
-
-	old, ok := obj.callbacks[event]
-	if ok {
-		old.Release()
-	}
-	obj.callbacks[event] = cb
-	dom.Call("$", obj.id).Call("on", event, cb)
+	obj.Register(event, cb)
+	js.Call("$", obj.id).Call("on", event, cb)
 }

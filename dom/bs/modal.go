@@ -1,7 +1,7 @@
 package bs
 
 import (
-	"github.com/dairaga/js/dom"
+	"github.com/dairaga/js"
 )
 
 // Modal ...
@@ -49,48 +49,48 @@ func (m Modal) SetHTML(html string) Modal {
 
 // Show ...
 func (m Modal) Show() {
-	dom.Call("$", m.id).Call("modal", "show")
+	js.Call("$", m.id).Call("modal", "show")
 }
 
 // Hide ...
 func (m Modal) Hide() {
-	dom.Call("$", m.id).Call("modal", "hide")
+	js.Call("$", m.id).Call("modal", "hide")
 }
 
 // Dispose ...
 func (m Modal) Dispose() {
-	dom.Call("$", m.id).Call("modal", "dispose")
+	js.Call("$", m.id).Call("modal", "dispose")
 }
 
 // ----------------------------------------------------------------------------
 
 // Showing ...
-func (m Modal) Showing(fn func(Modal, dom.Event)) Modal {
-	m.On("show.bs.modal", func(_ Object, e dom.Event) {
+func (m Modal) Showing(fn func(Modal, js.Event)) Modal {
+	m.On("show.bs.modal", func(_ Object, e js.Event) {
 		fn(m, e)
 	})
 	return m
 }
 
 // Shown ...
-func (m Modal) Shown(fn func(Modal, dom.Event)) Modal {
-	m.On("shown.bs.modal", func(_ Object, e dom.Event) {
+func (m Modal) Shown(fn func(Modal, js.Event)) Modal {
+	m.On("shown.bs.modal", func(_ Object, e js.Event) {
 		fn(m, e)
 	})
 	return m
 }
 
 // Hidding ...
-func (m Modal) Hidding(fn func(Modal, dom.Event)) Modal {
-	m.On("hide.bs.modal", func(_ Object, e dom.Event) {
+func (m Modal) Hidding(fn func(Modal, js.Event)) Modal {
+	m.On("hide.bs.modal", func(_ Object, e js.Event) {
 		fn(m, e)
 	})
 	return m
 }
 
 // Hidden ...
-func (m Modal) Hidden(fn func(Modal, dom.Event)) Modal {
-	m.On("hidden.bs.modal", func(_ Object, e dom.Event) {
+func (m Modal) Hidden(fn func(Modal, js.Event)) Modal {
+	m.On("hidden.bs.modal", func(_ Object, e js.Event) {
 		fn(m, e)
 	})
 	return m

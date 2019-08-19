@@ -1,21 +1,22 @@
 package dom
 
+import "github.com/dairaga/js"
+
 // NodeList ...
 type NodeList []Element
 
 var emptyNodeList = []Element{}
 
 // NodeListOf ...
-func NodeListOf(x interface{}) NodeList {
-	v := ValueOf(x)
-	size := v.ref.Length()
+func NodeListOf(v js.Value) NodeList {
+	size := v.Length()
 	if size <= 0 {
 		return emptyNodeList
 	}
 	lst := make([]Element, size)
 
 	for i := 0; i < size; i++ {
-		lst[i] = ElementOf(v.ref.Index(i))
+		lst[i] = ElementOf(v.Index(i))
 	}
 	return lst
 }
@@ -64,8 +65,8 @@ func (nl NodeList) SetAttr(name, value string) NodeList {
 }
 
 // Prop ...
-func (nl NodeList) Prop(name string) []Value {
-	var result []Value
+func (nl NodeList) Prop(name string) []js.Value {
+	var result []js.Value
 	nl.Foreach(func(e Element) {
 		result = append(result, e.Prop(name))
 	})
