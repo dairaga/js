@@ -6,7 +6,7 @@ import (
 
 // Modal ...
 type Modal struct {
-	Object
+	*Object
 }
 
 // AttachModal ...
@@ -17,7 +17,7 @@ func AttachModal(id string) Modal {
 // ----------------------------------------------------------------------------
 
 // SetTitle ...
-func (m Modal) SetTitle(title string) Modal {
+func (m *Modal) SetTitle(title string) *Modal {
 	x := m.S(".modal-title")
 	if x.Truthy() {
 		x.SetText(title)
@@ -65,32 +65,32 @@ func (m Modal) Dispose() {
 // ----------------------------------------------------------------------------
 
 // Showing ...
-func (m Modal) Showing(fn func(Modal, js.Event)) Modal {
-	m.On("show.bs.modal", func(_ Object, e js.Event) {
+func (m *Modal) Showing(fn func(*Modal, *js.Event)) *Modal {
+	m.On("show.bs.modal", func(_ *Object, e *js.Event) {
 		fn(m, e)
 	})
 	return m
 }
 
 // Shown ...
-func (m Modal) Shown(fn func(Modal, js.Event)) Modal {
-	m.On("shown.bs.modal", func(_ Object, e js.Event) {
+func (m *Modal) Shown(fn func(*Modal, *js.Event)) *Modal {
+	m.On("shown.bs.modal", func(_ *Object, e *js.Event) {
 		fn(m, e)
 	})
 	return m
 }
 
 // Hidding ...
-func (m Modal) Hidding(fn func(Modal, js.Event)) Modal {
-	m.On("hide.bs.modal", func(_ Object, e js.Event) {
+func (m *Modal) Hidding(fn func(*Modal, *js.Event)) *Modal {
+	m.On("hide.bs.modal", func(_ *Object, e *js.Event) {
 		fn(m, e)
 	})
 	return m
 }
 
 // Hidden ...
-func (m Modal) Hidden(fn func(Modal, js.Event)) Modal {
-	m.On("hidden.bs.modal", func(_ Object, e js.Event) {
+func (m *Modal) Hidden(fn func(*Modal, *js.Event)) *Modal {
+	m.On("hidden.bs.modal", func(_ *Object, e *js.Event) {
 		fn(m, e)
 	})
 	return m

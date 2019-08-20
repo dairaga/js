@@ -138,8 +138,8 @@ type Client struct {
 }
 
 // NewClient returns Client
-func NewClient() Client {
-	cli := Client{
+func NewClient() *Client {
+	cli := &Client{
 		ref: xhrConstructor.New(),
 	}
 
@@ -150,7 +150,14 @@ func NewClient() Client {
 			if cli.resp == nil {
 				cli.resp = new(Response)
 			}
-			cli.onDone(cli.resp.fill(cli.ref))
+			cli.resp.fill(cli.ref)
+			if cli.resp.code >= 200 && cli.resp.code < 300 {
+				cli.onDone(cli.resp)
+			} else {
+				if cli.onFail != nil {
+					cli.onFail(cli.resp)
+				}
+			}
 		}
 		return nil
 	}))
@@ -187,17 +194,22 @@ func NewClient() Client {
 }
 
 // JSValue ...
-func (cli Client) JSValue() js.Value {
+func (cli *Client) JSValue() js.Value {
 	return cli.ref
 }
 
+// LastErr ...
+func (cli *Client) LastErr() error {
+	return cli.lastErr
+}
+
 // ReadyState https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/readyState
-func (cli Client) ReadyState() State {
+func (cli *Client) ReadyState() State {
 	return State(cli.ref.Get("readyState").Int())
 }
 
 // Do ...
-func (cli Client) Do(req *Request) Client {
+func (cli *Client) Do(req *Request) *Client {
 	cli.ref.Call("open", req.method, req.url, true)
 	if len(req.headers) > 0 {
 		for k, v := range req.headers {
@@ -212,30 +224,29 @@ func (cli Client) Do(req *Request) Client {
 	} else {
 		cli.ref.Call("send")
 	}
-
 	return cli
 }
 
 // Done ...
-func (cli Client) Done(cb func(*Response)) Client {
+func (cli *Client) Done(cb func(*Response)) *Client {
 	cli.onDone = cb
 	return cli
 }
 
 // Fail ...
-func (cli Client) Fail(cb func(*Response)) Client {
+func (cli *Client) Fail(cb func(*Response)) *Client {
 	cli.onFail = cb
 	return cli
 }
 
 // Always ...
-func (cli Client) Always(cb func(*Response)) Client {
+func (cli *Client) Always(cb func(*Response)) *Client {
 	cli.onAlways = cb
 	return cli
 }
 
 // Progress ...
-func (cli Client) Progress(cb func(int, int, bool)) Client {
+func (cli *Client) Progress(cb func(int, int, bool)) *Client {
 	cli.onProgress = cb
 	return cli
 }
@@ -248,7 +259,7 @@ func handle(data interface{}) (string, []byte, error) {
 	}
 
 	typ := reflect.TypeOf(data)
-	if typ.Kind() == reflect.Struct {
+	if typ.Kind() == reflect.Struct || (typ.Kind() == reflect.Ptr && typ.Elem().Kind() == reflect.Struct) {
 		dataBytes, err := json.Marshal(data)
 		if err != nil {
 			return "", nil, err
@@ -267,36 +278,43 @@ func handle(data interface{}) (string, []byte, error) {
 	return "", nil, fmt.Errorf("unknown type: %v", typ)
 }
 
-func do(method, url string, data interface{}) Client {
+func do(method, url string, data []interface{}) *Client {
 	cli := NewClient()
-	ctype, dataBytes, err := handle(data)
+	var x interface{}
+	if len(data) > 0 {
+		x = data[0]
+	}
+	ctype, dataBytes, err := handle(x)
 	if err != nil {
 		cli.lastErr = err
 		return cli
 	}
 
 	req := NewRequest(method, url, dataBytes)
-	req.SetHeader("Content-Type", ctype)
+	if ctype != "" {
+		req.SetHeader("Content-Type", ctype)
+	}
+
 	cli.Do(req)
 	return cli
 }
 
 // Get ...
-func Get(url string, data interface{}) Client {
+func Get(url string, data ...interface{}) *Client {
 	return do("GET", url, data)
 }
 
 // Post ...
-func Post(url string, data interface{}) Client {
+func Post(url string, data ...interface{}) *Client {
 	return do("POST", url, data)
 }
 
 // Put ...
-func Put(url string, data interface{}) Client {
+func Put(url string, data ...interface{}) *Client {
 	return do("PUT", url, data)
 }
 
 // Delete ...
-func Delete(url string, data interface{}) Client {
+func Delete(url string, data ...interface{}) *Client {
 	return do("DELETE", url, data)
 }

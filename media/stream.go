@@ -7,12 +7,17 @@ type Stream struct {
 	ref js.Value
 }
 
+// StreamOf returns a media stream.
+func StreamOf(v js.Value) *Stream {
+	return &Stream{ref: v}
+}
+
 // JSValue ...
-func (stream Stream) JSValue() js.Value {
+func (stream *Stream) JSValue() js.Value {
 	return stream.ref
 }
 
 // Ready ...
-func (stream Stream) Ready() bool {
+func (stream *Stream) Ready() bool {
 	return stream.ref.Truthy()
 }

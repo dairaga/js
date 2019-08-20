@@ -9,14 +9,14 @@ import (
 
 // Recorder is a recorder component.
 type Recorder struct {
-	ctx      media.AudioContext
-	source   media.AudioNode
+	ctx      *media.AudioContext
+	source   *media.AudioNode
 	size     media.BufSize
 	channels int
 
 	recording bool
 	cb        func([]float32)
-	processor media.AudioNode
+	processor *media.AudioNode
 	onProcess js.Func
 }
 
@@ -26,7 +26,7 @@ func (r Recorder) Recording() bool {
 }
 
 // New returns a recorder component.
-func New(source media.AudioNode, size media.BufSize, channels int) *Recorder {
+func New(source *media.AudioNode, size media.BufSize, channels int) *Recorder {
 
 	if size <= 0 {
 		size = media.Size4096

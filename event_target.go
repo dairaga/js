@@ -7,24 +7,24 @@ type EventTarget struct {
 }
 
 // EventTargetOf returns a event target object.
-func EventTargetOf(v Value) EventTarget {
-	return EventTarget{ref: v}
+func EventTargetOf(v Value) *EventTarget {
+	return &EventTarget{ref: v}
 }
 
 // JSValue ...
-func (e EventTarget) JSValue() Value {
+func (e *EventTarget) JSValue() Value {
 	return e.ref
 }
 
 // Release frees up resoruces if the object is not used anymore.
-func (e EventTarget) Release() {
+func (e *EventTarget) Release() {
 	for _, v := range e.cb {
 		v.Release()
 	}
 }
 
 // Register ...
-func (e EventTarget) Register(event string, cb Func) EventTarget {
+func (e *EventTarget) Register(event string, cb Func) *EventTarget {
 	old, ok := e.cb[event]
 	if ok && old.Truthy() {
 		old.Release()
@@ -35,7 +35,7 @@ func (e EventTarget) Register(event string, cb Func) EventTarget {
 }
 
 // On adds callback for some event.
-func (e EventTarget) On(event string, cb Func) EventTarget {
+func (e *EventTarget) On(event string, cb Func) *EventTarget {
 	if e.cb == nil {
 		e.cb = make(map[string]Func)
 	}

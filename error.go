@@ -8,15 +8,15 @@ type Error struct {
 }
 
 // ErrorOf ...
-func ErrorOf(x Value) Error {
-	return Error{ref: x}
+func ErrorOf(x Value) *Error {
+	return &Error{ref: x}
 }
 
 // JSValue ...
-func (err Error) JSValue() Value {
+func (err *Error) JSValue() Value {
 	return err.ref
 }
 
-func (err Error) Error() string {
+func (err *Error) Error() string {
 	return err.ref.String()
 }

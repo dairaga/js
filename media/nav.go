@@ -7,7 +7,7 @@ import (
 var (
 	window    = js.Global().Get("window")
 	navigator = window.Get("navigator")
-	stream    = Stream{ref: js.Value{}}
+	stream    *Stream
 )
 
 // StreamConstrains ...
@@ -24,8 +24,8 @@ func (constrains StreamConstrains) toJSObject() map[string]interface{} {
 }
 
 // GetUserMedia ...
-func GetUserMedia(constrains StreamConstrains, success func(Stream), fail func(js.Error)) {
-	if stream.Ready() {
+func GetUserMedia(constrains StreamConstrains, success func(*Stream), fail func(*js.Error)) {
+	if stream != nil && stream.Ready() {
 		success(stream)
 		return
 	}
@@ -47,7 +47,7 @@ func GetUserMedia(constrains StreamConstrains, success func(Stream), fail func(j
 	}
 
 	promise.Call("then", js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
-		stream = Stream{ref: args[0]}
+		stream = StreamOf(args[0])
 		success(stream)
 		return nil
 	}))

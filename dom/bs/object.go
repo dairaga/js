@@ -7,27 +7,22 @@ import (
 
 // Object ...
 type Object struct {
-	dom.Element
+	*dom.Element
 	id string
 }
 
-// JSValue ...
-func (obj Object) JSValue() js.Value {
-	return obj.Element.JSValue()
-}
-
 // Attach ...
-func Attach(id string) Object {
+func Attach(id string) *Object {
 	elm := dom.S(id)
 	if !elm.Truthy() {
 		panic("can not found " + id)
 	}
 
-	return Object{id: id, Element: elm}
+	return &Object{id: id, Element: elm}
 }
 
 // On ...
-func (obj Object) On(event string, fn func(Object, js.Event)) {
+func (obj *Object) On(event string, fn func(*Object, *js.Event)) {
 	cb := js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
 		fn(obj, js.EventOf(args[0]))
 		return nil

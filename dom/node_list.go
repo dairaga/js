@@ -3,9 +3,9 @@ package dom
 import "github.com/dairaga/js"
 
 // NodeList ...
-type NodeList []Element
+type NodeList []*Element
 
-var emptyNodeList = []Element{}
+var emptyNodeList = []*Element{}
 
 // NodeListOf ...
 func NodeListOf(v js.Value) NodeList {
@@ -13,7 +13,7 @@ func NodeListOf(v js.Value) NodeList {
 	if size <= 0 {
 		return emptyNodeList
 	}
-	lst := make([]Element, size)
+	lst := make([]*Element, size)
 
 	for i := 0; i < size; i++ {
 		lst[i] = ElementOf(v.Index(i))
@@ -27,7 +27,7 @@ func (nl NodeList) Length() int {
 }
 
 // Foreach ...
-func (nl NodeList) Foreach(fn func(v Element)) {
+func (nl NodeList) Foreach(fn func(v *Element)) {
 	size := nl.Length()
 	for i := 0; i < size; i++ {
 		fn(nl[i])
@@ -35,7 +35,7 @@ func (nl NodeList) Foreach(fn func(v Element)) {
 }
 
 // Append ...
-func (nl NodeList) Append(x ...Element) NodeList {
+func (nl NodeList) Append(x ...*Element) NodeList {
 	return append(nl, x...)
 }
 
@@ -48,7 +48,7 @@ func (nl NodeList) AppendList(other NodeList) NodeList {
 func (nl NodeList) Attr(name string) []string {
 	var result []string
 
-	nl.Foreach(func(e Element) {
+	nl.Foreach(func(e *Element) {
 		result = append(result, e.Attr(name))
 	})
 
@@ -57,7 +57,7 @@ func (nl NodeList) Attr(name string) []string {
 
 // SetAttr ...
 func (nl NodeList) SetAttr(name, value string) NodeList {
-	nl.Foreach(func(e Element) {
+	nl.Foreach(func(e *Element) {
 		e.SetAttr(name, value)
 	})
 
@@ -67,7 +67,7 @@ func (nl NodeList) SetAttr(name, value string) NodeList {
 // Prop ...
 func (nl NodeList) Prop(name string) []js.Value {
 	var result []js.Value
-	nl.Foreach(func(e Element) {
+	nl.Foreach(func(e *Element) {
 		result = append(result, e.Prop(name))
 	})
 	return result
@@ -75,7 +75,7 @@ func (nl NodeList) Prop(name string) []js.Value {
 
 // SetProp ...
 func (nl NodeList) SetProp(name string, flag bool) NodeList {
-	nl.Foreach(func(e Element) {
+	nl.Foreach(func(e *Element) {
 		e.SetProp(name, flag)
 	})
 	return nl
@@ -83,7 +83,7 @@ func (nl NodeList) SetProp(name string, flag bool) NodeList {
 
 // AddClass ...
 func (nl NodeList) AddClass(names ...string) NodeList {
-	nl.Foreach(func(e Element) {
+	nl.Foreach(func(e *Element) {
 		e.AddClass(names...)
 	})
 	return nl
@@ -91,7 +91,7 @@ func (nl NodeList) AddClass(names ...string) NodeList {
 
 // RemoveClass ...
 func (nl NodeList) RemoveClass(names ...string) NodeList {
-	nl.Foreach(func(e Element) {
+	nl.Foreach(func(e *Element) {
 		e.RemoveClass(names...)
 	})
 	return nl
@@ -99,7 +99,7 @@ func (nl NodeList) RemoveClass(names ...string) NodeList {
 
 // ToggleClass ...
 func (nl NodeList) ToggleClass(name string) NodeList {
-	nl.Foreach(func(e Element) {
+	nl.Foreach(func(e *Element) {
 		e.ToggleClass(name)
 	})
 
@@ -108,7 +108,7 @@ func (nl NodeList) ToggleClass(name string) NodeList {
 
 // ReplaceClass ...
 func (nl NodeList) ReplaceClass(oldName, newName string) NodeList {
-	nl.Foreach(func(e Element) {
+	nl.Foreach(func(e *Element) {
 		e.ReplaceClass(oldName, newName)
 	})
 
@@ -119,7 +119,7 @@ func (nl NodeList) ReplaceClass(oldName, newName string) NodeList {
 func (nl NodeList) HasClass(name string) []bool {
 	var result []bool
 
-	nl.Foreach(func(e Element) {
+	nl.Foreach(func(e *Element) {
 		result = append(result, e.HasClass(name))
 	})
 
@@ -130,7 +130,7 @@ func (nl NodeList) HasClass(name string) []bool {
 func (nl NodeList) TagName() []string {
 	var result []string
 
-	nl.Foreach(func(e Element) {
+	nl.Foreach(func(e *Element) {
 		result = append(result, e.TagName())
 	})
 
@@ -141,7 +141,7 @@ func (nl NodeList) TagName() []string {
 func (nl NodeList) Val() []string {
 	var result []string
 
-	nl.Foreach(func(e Element) {
+	nl.Foreach(func(e *Element) {
 		result = append(result, e.Val())
 	})
 
@@ -151,7 +151,7 @@ func (nl NodeList) Val() []string {
 // SetVal ...
 func (nl NodeList) SetVal(val interface{}) NodeList {
 
-	nl.Foreach(func(e Element) {
+	nl.Foreach(func(e *Element) {
 		nl.SetVal(val)
 	})
 	return nl
