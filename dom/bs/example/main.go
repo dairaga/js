@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 
+	"github.com/dairaga/js/dom/bs/progress"
+
 	"github.com/dairaga/js/dom"
 
 	"github.com/dairaga/js/dom/bs"
@@ -57,5 +59,10 @@ func main() {
 	container.Append(sp)
 	/* spinner end */
 
+	/* progress start */
+	pb := progress.New(bs.BGInfo, 0, 100, 41)
+	pb.Bar(0).Stripped().Animate().SetText("41")
+	container.Append(pb)
+	/* progress end */
 	select {}
 }
