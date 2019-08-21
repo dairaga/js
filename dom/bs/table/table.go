@@ -12,7 +12,7 @@ type Table struct {
 	*bs.Component
 }
 
-// Attach binds a Bootstrap table on page
+// Attach binds a Bootstrap table on page.
 func Attach(id string) *Table {
 	return &Table{bs.Attach(id)}
 }

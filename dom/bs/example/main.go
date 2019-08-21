@@ -7,6 +7,7 @@ import (
 
 	"github.com/dairaga/js/dom/bs"
 	"github.com/dairaga/js/dom/bs/badge"
+	"github.com/dairaga/js/dom/bs/spinner"
 	"github.com/dairaga/js/dom/bs/table"
 )
 
@@ -47,6 +48,14 @@ func main() {
 	b = badge.Link(bs.Danger, "my test link").Pill()
 	dom.AppendChild(b)
 	/* badge end */
+
+	/* spinner start */
+	sp := spinner.Border(bs.FGPrimary)
+	dom.AppendChild(sp)
+
+	sp = spinner.Grow(bs.FGDanger).Smaller()
+	dom.AppendChild(sp)
+	/* spinner end */
 
 	select {}
 }
