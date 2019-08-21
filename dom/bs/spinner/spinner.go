@@ -16,7 +16,7 @@ func Attach(id string) *Spinner {
 }
 
 func generate(typ string, fgColor bs.Color) *Spinner {
-	s := &Spinner{bs.ComponentOf(dom.CreateElement("div"), "")}
+	s := &Spinner{bs.ComponentOf(dom.CreateElement("div"))}
 	s.Color(fgColor).
 		AddClass("spinner-"+typ).
 		SetAttr("role", "status").

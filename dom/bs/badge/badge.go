@@ -16,7 +16,7 @@ func Attach(id string) *Badge {
 }
 
 func generate(tag string, style bs.Style, content interface{}) *Badge {
-	b := &Badge{bs.ComponentOf(dom.CreateElement(tag), "")}
+	b := &Badge{bs.ComponentOf(dom.CreateElement(tag))}
 
 	b.AddClass("badge", "badge-"+style)
 	b.Append(content)

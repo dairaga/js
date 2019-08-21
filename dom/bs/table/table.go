@@ -19,7 +19,7 @@ func Attach(id string) *Table {
 
 // New returns a table with headers and data.
 func New(header []interface{}, data [][]interface{}) *Table {
-	table := &Table{bs.ComponentOf(dom.CreateElement("table"), "")}
+	table := &Table{bs.ComponentOf(dom.CreateElement("table"))}
 	table.AddClass("table")
 	head := dom.CreateElement("thead")
 	if len(header) > 0 {
@@ -76,20 +76,20 @@ func (t *Table) Caption(x interface{}) *Table {
 // Header returns theader.
 func (t *Table) Header() *bs.Component {
 	elm := t.S("thead")
-	return bs.ComponentOf(elm, "")
+	return bs.ComponentOf(elm)
 }
 
 // Head return n-th header cell. idx is 0-index.
 func (t *Table) Head(idx int) *bs.Component {
 	selector := fmt.Sprintf("thead tr th:nth-child(%d)", idx+1)
 	elm := t.S(selector)
-	return bs.ComponentOf(elm, "")
+	return bs.ComponentOf(elm)
 }
 
 // Body returns tbody.
 func (t *Table) Body() *bs.Component {
 	elm := t.S("tbody")
-	return bs.ComponentOf(elm, "")
+	return bs.ComponentOf(elm)
 }
 
 // Cell return (row, col) cell in tbody. row and col are 0-index.
@@ -102,5 +102,5 @@ func (t *Table) Cell(row, col int) *bs.Component {
 	}
 
 	elm := t.S(selector)
-	return bs.ComponentOf(elm, "")
+	return bs.ComponentOf(elm)
 }

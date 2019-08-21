@@ -8,12 +8,11 @@ import (
 // Component represents Bootstrap component.
 type Component struct {
 	*dom.Element
-	id string
 }
 
 // ComponentOf returns a Bootstrap component.
-func ComponentOf(elm *dom.Element, id string) *Component {
-	return &Component{elm, id}
+func ComponentOf(elm *dom.Element) *Component {
+	return &Component{elm}
 }
 
 // Attach binds some html component on page.
@@ -23,15 +22,7 @@ func Attach(id string) *Component {
 		panic("can not found " + id)
 	}
 
-	return &Component{id: id, Element: elm}
-}
-
-// ID returns component id attribute.
-func (obj *Component) ID() string {
-	if obj.id == "" {
-		obj.id = obj.Attr("id")
-	}
-	return obj.id
+	return &Component{Element: elm}
 }
 
 // On adds Bootstrap listener.
@@ -41,5 +32,5 @@ func (obj *Component) On(event string, fn func(*Component, *js.Event)) {
 		return nil
 	})
 	obj.Register(event, cb)
-	js.Call("$", obj.id).Call("on", event, cb)
+	js.Call("$", obj.Attr("id")).Call("on", event, cb)
 }

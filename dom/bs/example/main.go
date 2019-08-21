@@ -13,7 +13,7 @@ import (
 
 func main() {
 	fmt.Println("hello")
-
+	container := dom.S("#main")
 	/* table example start */
 	t := table.Attach("#test_table")
 	fmt.Println("all table:", t)
@@ -39,22 +39,22 @@ func main() {
 		},
 	).Caption("List of users")
 
-	dom.AppendChild(t)
+	container.Append(t)
 	/* table example end */
 
 	/* badge start */
 	b := badge.New(bs.Primary, "my test").Pill()
-	dom.AppendChild(b)
+	container.Append(b)
 	b = badge.Link(bs.Danger, "my test link").Pill()
-	dom.AppendChild(b)
+	container.Append(b)
 	/* badge end */
 
 	/* spinner start */
 	sp := spinner.Border(bs.FGPrimary)
-	dom.AppendChild(sp)
+	container.Append(sp)
 
 	sp = spinner.Grow(bs.FGDanger).Smaller()
-	dom.AppendChild(sp)
+	container.Append(sp)
 	/* spinner end */
 
 	select {}
