@@ -4,7 +4,7 @@ import (
 	"github.com/dairaga/js"
 )
 
-// State ...
+// State represents websocket ready state.
 type State uint16
 
 func (s State) String() string {
@@ -22,7 +22,7 @@ func (s State) String() string {
 	}
 }
 
-// websocket constant
+// websocket ready state valeus.
 const (
 	Connecting State = 0
 	Open       State = 1
@@ -30,68 +30,58 @@ const (
 	Closed     State = 3
 )
 
-// WebSocket ...
+// WebSocket represents javascript web socket component.
 type WebSocket struct {
-	ref js.Value
-
-	onOpen    js.Func
-	onClose   js.Func
-	onError   js.Func
-	onMessage js.Func
-	onText    func(string)
-	onBinary  func([]byte)
+	ref      *js.EventTarget
+	onText   func(string)
+	onBinary func([]byte)
 }
 
-// JSValue ...
-func (ws *WebSocket) JSValue() js.Value {
-	return ws.ref
-}
-
-// URL ...
+// URL returns current connecting url.
 func (ws *WebSocket) URL() string {
-	return ws.ref.Get("url").String()
+	return ws.ref.JSValue().Get("url").String()
 }
 
-// ReadyState ...
+// ReadyState returns current ready state.
 func (ws *WebSocket) ReadyState() State {
-	return State(ws.ref.Get("readyState").Int())
+	return State(ws.ref.JSValue().Get("readyState").Int())
 }
 
-// OnOpen ...
+// OnOpen add callback function when opening.
 func (ws *WebSocket) OnOpen(cb func(*js.Event)) *WebSocket {
-	ws.onOpen = js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
+	fn := js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
 		cb(js.EventOf(args[0]))
 		return nil
 	})
-	ws.ref.Set("onopen", ws.onOpen)
+	ws.ref.On("open", fn)
 	return ws
 }
 
-// OnClose ...
+// OnClose add callback function when closed.
 func (ws *WebSocket) OnClose(cb func(*CloseEvent)) *WebSocket {
-	ws.onClose = js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
+	fn := js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
 		cb(CloseEventOf(args[0]))
 		return nil
 	})
 
-	ws.ref.Set("onclose", ws.onClose)
+	ws.ref.On("close", fn)
 	return ws
 }
 
-// OnError ...
+// OnError add callback function when error happening.
 func (ws *WebSocket) OnError(cb func(*js.Event)) *WebSocket {
-	ws.onError = js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
+	fn := js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
 		cb(js.EventOf(args[0]))
 		return nil
 	})
 
-	ws.ref.Set("onerror", ws.onError)
+	ws.ref.On("error", fn)
 	return ws
 }
 
-// OnMessage ...
+// OnMessage add callback function when receiving message.
 func (ws *WebSocket) OnMessage(cb func([]byte)) *WebSocket {
-	ws.onMessage = js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
+	fn := js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
 		data := args[0].Get("data")
 
 		if data.InstanceOf(arrayBuffer) {
@@ -102,54 +92,39 @@ func (ws *WebSocket) OnMessage(cb func([]byte)) *WebSocket {
 		return nil
 	})
 
-	ws.ref.Set("onmessage", ws.onMessage)
+	ws.ref.On("message", fn)
 	return ws
 }
 
-// Closed ...
+// Closed returns boolean that indicates whether or not the connection was closed.
 func (ws *WebSocket) Closed() bool {
 	s := ws.ReadyState()
-	return s == Closed || s == Closing
+	return s == Closed
 }
 
-// Close ...
+// Close closes the connection.
 func (ws *WebSocket) Close() {
-	ws.ref.Call("close")
+	ws.ref.JSValue().Call("close")
 }
 
-// Release ...
+// Release closes connection and frees up resources.
 func (ws *WebSocket) Release() {
 	if !ws.Closed() {
 		ws.Close()
 	}
-
-	if ws.onOpen.Truthy() {
-		ws.onOpen.Release()
-	}
-
-	if ws.onClose.Truthy() {
-		ws.onClose.Release()
-	}
-
-	if ws.onError.Truthy() {
-		ws.onError.Release()
-	}
-
-	if ws.onMessage.Truthy() {
-		ws.onMessage.Release()
-	}
+	ws.ref.Release()
 }
 
-// SendText ...
+// SendText sends text message to server.
 func (ws *WebSocket) SendText(data string) *WebSocket {
-	ws.ref.Call("send", data)
+	ws.ref.JSValue().Call("send", data)
 	return ws
 }
 
-// SendBinary data must be []int8, []int16, []int32, []uint8, []uint16, []uint32, []float32 and []float64.
+// SendBinary sends binary data to server. Parameter data must be []int8, []int16, []int32, []uint8, []uint16, []uint32, []float32 and []float64.
 func (ws *WebSocket) SendBinary(data interface{}) *WebSocket {
 	arr := js.TypedArrayOf(data)
-	ws.ref.Call("send", arr)
+	ws.ref.JSValue().Call("send", arr)
 	arr.Release()
 	return ws
 }
@@ -159,9 +134,9 @@ func (ws *WebSocket) SendBinary(data interface{}) *WebSocket {
 var stringValue = js.Global().Get("String")
 var arrayBuffer = js.Global().Get("ArrayBuffer")
 
-// Connect ...
+// Connect connects to server.
 func Connect(url string) *WebSocket {
-	ws := &WebSocket{ref: js.Global().Get("WebSocket").New(url)}
-	ws.ref.Set("binaryType", "arraybuffer")
+	ws := &WebSocket{ref: js.EventTargetOf(js.Global().Get("WebSocket").New(url))}
+	ws.ref.JSValue().Set("binaryType", "arraybuffer")
 	return ws
 }

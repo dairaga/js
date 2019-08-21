@@ -1,33 +1,28 @@
 package websocket
 
-import "syscall/js"
+import "github.com/dairaga/js"
 
-// CloseEvent ...
+// CloseEvent represents javascript close event. https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent.
 type CloseEvent struct {
-	ref js.Value
+	*js.Event
 }
 
-// CloseEventOf ...
+// CloseEventOf returns a close event.
 func CloseEventOf(x js.Value) *CloseEvent {
-	return &CloseEvent{ref: x}
+	return &CloseEvent{js.EventOf(x)}
 }
 
-// JSValue ...
-func (e *CloseEvent) JSValue() js.Value {
-	return e.ref
-}
-
-// Code ...
+// Code returns close code from server.
 func (e *CloseEvent) Code() uint16 {
-	return uint16(e.ref.Get("code").Int())
+	return uint16(e.JSValue().Get("code").Int())
 }
 
-// Reason ...
+// Reason returns eht reason the server closed the connection.
 func (e *CloseEvent) Reason() string {
-	return e.ref.Get("reason").String()
+	return e.JSValue().Get("reason").String()
 }
 
-// WasClean ...
+// WasClean returns a boolean that indicates whether or not the connection was cleanly closed.
 func (e *CloseEvent) WasClean() bool {
-	return e.ref.Get("wasClean").Bool()
+	return e.JSValue().Get("wasClean").Bool()
 }
