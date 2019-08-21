@@ -1,6 +1,7 @@
 package dom
 
 import (
+	"fmt"
 	"strings"
 	gojs "syscall/js"
 
@@ -18,6 +19,18 @@ func ElementOf(v js.Value) *Element {
 }
 
 // ----------------------------------------------------------------------------
+
+func (e *Element) String() string {
+	if !e.Truthy() {
+		return e.JSValue().String()
+	}
+
+	id := e.Attr("id")
+	tag := e.TagName()
+	content := e.HTML()
+
+	return fmt.Sprintf(`tag: %s, id:%q, content: %s`, tag, id, content)
+}
 
 // S returns child by quering selector condition.
 func (e *Element) S(selector string) *Element {
@@ -173,6 +186,12 @@ func (e *Element) SetVal(val interface{}) *Element {
 // Append add child to element.
 func (e *Element) Append(child interface{}) *Element {
 	e.JSValue().Call("append", child)
+	return e
+}
+
+// RemoveChild removes child element.
+func (e *Element) RemoveChild(elm *Element) *Element {
+	e.JSValue().Call("removeChild", elm)
 	return e
 }
 

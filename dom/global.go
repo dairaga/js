@@ -16,8 +16,8 @@ func CreateElement(tag string) *Element {
 }
 
 // AppendChild appends child to document.
-func AppendChild(child *Element) {
-	document.Call("appendChild", child)
+func AppendChild(child interface{}) {
+	document.Prop("body").Call("appendChild", child)
 }
 
 // RemoveChild removes child form document.

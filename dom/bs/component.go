@@ -5,10 +5,15 @@ import (
 	"github.com/dairaga/js/dom"
 )
 
-// Component represents bootstrap component.
+// Component represents Bootstrap component.
 type Component struct {
 	*dom.Element
 	id string
+}
+
+// ComponentOf returns a Bootstrap component.
+func ComponentOf(elm *dom.Element, id string) *Component {
+	return &Component{elm, id}
 }
 
 // Attach binds some html component on page.
@@ -22,11 +27,14 @@ func Attach(id string) *Component {
 }
 
 // ID returns component id attribute.
-func (obj Component) ID() string {
+func (obj *Component) ID() string {
+	if obj.id == "" {
+		obj.id = obj.Attr("id")
+	}
 	return obj.id
 }
 
-// On adds bootstrap listener.
+// On adds Bootstrap listener.
 func (obj *Component) On(event string, fn func(*Component, *js.Event)) {
 	cb := js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
 		fn(obj, js.EventOf(args[0]))
