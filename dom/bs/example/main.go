@@ -91,5 +91,7 @@ func main() {
 	container.Append(crd)
 	/* card end */
 
+	container.Prepend(badge.Link(bs.Danger, "test prepend"))
+
 	select {}
 }

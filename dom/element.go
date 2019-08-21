@@ -183,10 +183,22 @@ func (e *Element) SetVal(val interface{}) *Element {
 
 // ----------------------------------------------------------------------------
 
-// Append add child to element.
+// Append appends child to element.
 func (e *Element) Append(child ...interface{}) *Element {
 	for _, x := range child {
 		e.JSValue().Call("append", x)
+	}
+
+	return e
+}
+
+// Prepend inserts new child as first child.
+func (e *Element) Prepend(child interface{}) *Element {
+	lst := e.JSValue().Get("childNodes")
+	if lst.Length() > 0 {
+		e.Call("insertBefore", child, lst.Index(0))
+	} else {
+		e.JSValue().Call("append", child)
 	}
 
 	return e
