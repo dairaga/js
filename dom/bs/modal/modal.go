@@ -1,17 +1,18 @@
-package bs
+package modal
 
 import (
 	"github.com/dairaga/js"
+	"github.com/dairaga/js/dom/bs"
 )
 
 // Modal ...
 type Modal struct {
-	*Object
+	*bs.Component
 }
 
-// AttachModal ...
-func AttachModal(id string) Modal {
-	return Modal{Attach(id)}
+// Attach binds a bootstrap modal component on page.
+func Attach(id string) Modal {
+	return Modal{bs.Attach(id)}
 }
 
 // ----------------------------------------------------------------------------
@@ -49,24 +50,24 @@ func (m Modal) SetHTML(html string) Modal {
 
 // Show ...
 func (m Modal) Show() {
-	js.Call("$", m.id).Call("modal", "show")
+	js.Call("$", m.ID()).Call("modal", "show")
 }
 
 // Hide ...
 func (m Modal) Hide() {
-	js.Call("$", m.id).Call("modal", "hide")
+	js.Call("$", m.ID()).Call("modal", "hide")
 }
 
 // Dispose ...
 func (m Modal) Dispose() {
-	js.Call("$", m.id).Call("modal", "dispose")
+	js.Call("$", m.ID()).Call("modal", "dispose")
 }
 
 // ----------------------------------------------------------------------------
 
 // Showing ...
 func (m *Modal) Showing(fn func(*Modal, *js.Event)) *Modal {
-	m.On("show.bs.modal", func(_ *Object, e *js.Event) {
+	m.On("show.bs.modal", func(_ *bs.Component, e *js.Event) {
 		fn(m, e)
 	})
 	return m
@@ -74,7 +75,7 @@ func (m *Modal) Showing(fn func(*Modal, *js.Event)) *Modal {
 
 // Shown ...
 func (m *Modal) Shown(fn func(*Modal, *js.Event)) *Modal {
-	m.On("shown.bs.modal", func(_ *Object, e *js.Event) {
+	m.On("shown.bs.modal", func(_ *bs.Component, e *js.Event) {
 		fn(m, e)
 	})
 	return m
@@ -82,7 +83,7 @@ func (m *Modal) Shown(fn func(*Modal, *js.Event)) *Modal {
 
 // Hidding ...
 func (m *Modal) Hidding(fn func(*Modal, *js.Event)) *Modal {
-	m.On("hide.bs.modal", func(_ *Object, e *js.Event) {
+	m.On("hide.bs.modal", func(_ *bs.Component, e *js.Event) {
 		fn(m, e)
 	})
 	return m
@@ -90,7 +91,7 @@ func (m *Modal) Hidding(fn func(*Modal, *js.Event)) *Modal {
 
 // Hidden ...
 func (m *Modal) Hidden(fn func(*Modal, *js.Event)) *Modal {
-	m.On("hidden.bs.modal", func(_ *Object, e *js.Event) {
+	m.On("hidden.bs.modal", func(_ *bs.Component, e *js.Event) {
 		fn(m, e)
 	})
 	return m
