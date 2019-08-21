@@ -146,7 +146,7 @@ func (e *Element) ReplaceClass(oldName, newName string) *Element {
 
 // HasClass returns boolean indicates whether or not element has the class.
 func (e *Element) HasClass(name string) bool {
-	return e.JSValue().Get("classList").Call("contains").Bool()
+	return e.JSValue().Get("classList").Call("contains", name).Bool()
 }
 
 // ----------------------------------------------------------------------------
