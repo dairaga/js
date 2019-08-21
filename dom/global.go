@@ -10,27 +10,27 @@ var document = ElementOf(js.Global().Get("document"))
 
 // document
 
-// CreateElement ...
+// CreateElement returns a HTML element.
 func CreateElement(tag string) *Element {
 	return ElementOf(document.Call("createElement", tag))
 }
 
-// AppendChild ...
+// AppendChild appends child to document.
 func AppendChild(child *Element) {
 	document.Call("appendChild", child)
 }
 
-// RemoveChild ...
+// RemoveChild removes child form document.
 func RemoveChild(child *Element) {
 	document.Call("removeChild", child)
 }
 
-// S ...
+// S returns one element in document with query selector condition.
 func S(selector string) *Element {
 	return document.S(selector)
 }
 
-// SS ...
-func SS(selector string) NodeList {
+// SS returns elements in document with query selector condition.
+func SS(selector string) ElementList {
 	return document.SS(selector)
 }

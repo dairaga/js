@@ -7,43 +7,43 @@ import (
 	"github.com/dairaga/js"
 )
 
-// Element ...
+// Element represents a HTML element.
 type Element struct {
 	*js.EventTarget
 }
 
-// ElementOf ...
+// ElementOf returns a HTML element.
 func ElementOf(v js.Value) *Element {
 	return &Element{js.EventTargetOf(v)}
 }
 
 // ----------------------------------------------------------------------------
 
-// S ...
+// S returns child by quering selector condition.
 func (e *Element) S(selector string) *Element {
 	return ElementOf(e.JSValue().Call("querySelector", selector))
 }
 
-// SS ...
-func (e *Element) SS(selector string) NodeList {
-	return NodeListOf(e.JSValue().Call("querySelectorAll", selector))
+// SS returns children by query selector condition.
+func (e *Element) SS(selector string) ElementList {
+	return ElementListOf(e.JSValue().Call("querySelectorAll", selector))
 }
 
 // ----------------------------------------------------------------------------
 
-// Truthy ...
+// Truthy returns javascript truthy value.
 func (e *Element) Truthy() bool {
 	return e.JSValue().Truthy()
 }
 
 // ----------------------------------------------------------------------------
 
-// Attr ...
+// Attr returns attribute value.
 func (e *Element) Attr(name string) string {
 	return e.JSValue().Call("getAttribute", name).String()
 }
 
-// SetAttr ...
+// SetAttr sets attribute.
 func (e *Element) SetAttr(name, value string) *Element {
 	e.JSValue().Call("setAttribute", name, value)
 	return e
@@ -51,12 +51,12 @@ func (e *Element) SetAttr(name, value string) *Element {
 
 // ----------------------------------------------------------------------------
 
-// Prop ...
+// Prop returns property of element.
 func (e *Element) Prop(name string) js.Value {
 	return e.JSValue().Get(name)
 }
 
-// SetProp ...
+// SetProp sets property.
 func (e *Element) SetProp(name string, val interface{}) *Element {
 	e.JSValue().Set(name, val)
 	return e
@@ -64,24 +64,24 @@ func (e *Element) SetProp(name string, val interface{}) *Element {
 
 // ----------------------------------------------------------------------------
 
-// SetText ...
+// SetText set inner text of element.
 func (e *Element) SetText(text string) *Element {
 	e.JSValue().Set("innerText", text)
 	return e
 }
 
-// Text ...
+// Text returns inner text of element.
 func (e *Element) Text() string {
 	return e.JSValue().Get("innerText").String()
 }
 
-// SetHTML ...
+// SetHTML set inner html of element.
 func (e *Element) SetHTML(html string) *Element {
 	e.JSValue().Set("innerHTML", html)
 	return e
 }
 
-// HTML ...
+// HTML return inner html of element.
 func (e *Element) HTML() string {
 	return e.JSValue().Get("innerHTML").String()
 }
@@ -111,41 +111,41 @@ func (e *Element) clz(m string, args ...string) *Element {
 	return e
 }
 
-// AddClass ...
+// AddClass add class to element.
 func (e *Element) AddClass(names ...string) *Element {
 	return e.clz("add", names...)
 }
 
-// RemoveClass ...
+// RemoveClass remove class from element.
 func (e *Element) RemoveClass(names ...string) *Element {
 	return e.clz("remove", names...)
 }
 
-// ToggleClass ...
+// ToggleClass toggle some class of element.
 func (e *Element) ToggleClass(name string) *Element {
 	return e.clz("toggle", name)
 }
 
-// ReplaceClass ...
+// ReplaceClass replace some class of element with new one.
 func (e *Element) ReplaceClass(oldName, newName string) *Element {
 	return e.clz("replace", oldName, newName)
 }
 
-// HasClass ...
+// HasClass returns boolean indicates whether or not element has the class.
 func (e *Element) HasClass(name string) bool {
 	return e.JSValue().Get("classList").Call("contains").Bool()
 }
 
 // ----------------------------------------------------------------------------
 
-// TagName ...
+// TagName returns tag name (all lower case) of element.
 func (e *Element) TagName() string {
 	return strings.ToLower(e.JSValue().Get("tagName").String())
 }
 
 // ----------------------------------------------------------------------------
 
-// Val ...
+// Val returns value of form input, select or textarea element.
 func (e *Element) Val() string {
 
 	switch e.TagName() {
@@ -157,7 +157,7 @@ func (e *Element) Val() string {
 	return gojs.Undefined().String()
 }
 
-// SetVal ...
+// SetVal set value to input, select, or textarea element.
 func (e *Element) SetVal(val interface{}) *Element {
 	switch e.TagName() {
 	case "input", "select":
@@ -170,20 +170,20 @@ func (e *Element) SetVal(val interface{}) *Element {
 
 // ----------------------------------------------------------------------------
 
-// Append ...
+// Append add child to element.
 func (e *Element) Append(child interface{}) *Element {
 	e.JSValue().Call("append", child)
 	return e
 }
 
-// Clone https://developer.mozilla.org/en-US/docs/Web/API/Node/cloneNode
+// Clone clones the element. https://developer.mozilla.org/en-US/docs/Web/API/Node/cloneNode.
 func (e *Element) Clone() *Element {
 	return ElementOf(e.JSValue().Call("cloneNode", true))
 }
 
 // ----------------------------------------------------------------------------
 
-// On ...
+// On add listener for some event.
 func (e *Element) On(event string, fn func(*Element, *js.Event)) *Element {
 	cb := js.FuncOf(func(_this js.Value, args []js.Value) interface{} {
 		fn(ElementOf(_this), js.EventOf(args[0]))
@@ -194,19 +194,19 @@ func (e *Element) On(event string, fn func(*Element, *js.Event)) *Element {
 	return e
 }
 
-// OnClick ...
+// OnClick adds callback function when clicking element.
 func (e *Element) OnClick(fn func(*Element, *js.Event)) *Element {
 	return e.On("click", fn)
 }
 
-// OnChange ...
+// OnChange adds callback function when element value changed.
 func (e *Element) OnChange(fn func(*Element, *js.Event)) *Element {
 	return e.On("change", fn)
 }
 
 // ----------------------------------------------------------------------------
 
-// Call ...
+// Call invokes element method.
 func (e *Element) Call(name string, args ...interface{}) js.Value {
 	return e.JSValue().Call(name, args...)
 }

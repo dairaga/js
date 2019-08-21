@@ -2,13 +2,13 @@ package dom
 
 import "github.com/dairaga/js"
 
-// NodeList ...
-type NodeList []*Element
+// ElementList is a collection of elements.
+type ElementList []*Element
 
 var emptyNodeList = []*Element{}
 
-// NodeListOf ...
-func NodeListOf(v js.Value) NodeList {
+// ElementListOf returns a element list.
+func ElementListOf(v js.Value) ElementList {
 	size := v.Length()
 	if size <= 0 {
 		return emptyNodeList
@@ -21,31 +21,31 @@ func NodeListOf(v js.Value) NodeList {
 	return lst
 }
 
-// Length ...
-func (nl NodeList) Length() int {
+// Length returns the size of list.
+func (nl ElementList) Length() int {
 	return len(nl)
 }
 
-// Foreach ...
-func (nl NodeList) Foreach(fn func(v *Element)) {
+// Foreach apply function on each element.
+func (nl ElementList) Foreach(fn func(v *Element)) {
 	size := nl.Length()
 	for i := 0; i < size; i++ {
 		fn(nl[i])
 	}
 }
 
-// Append ...
-func (nl NodeList) Append(x ...*Element) NodeList {
+// Append add a new element.
+func (nl ElementList) Append(x ...*Element) ElementList {
 	return append(nl, x...)
 }
 
-// AppendList ...
-func (nl NodeList) AppendList(other NodeList) NodeList {
+// AppendList appends other list.
+func (nl ElementList) AppendList(other ElementList) ElementList {
 	return append(nl, other...)
 }
 
-// Attr ...
-func (nl NodeList) Attr(name string) []string {
+// Attr returns some attribute values.
+func (nl ElementList) Attr(name string) []string {
 	var result []string
 
 	nl.Foreach(func(e *Element) {
@@ -55,8 +55,8 @@ func (nl NodeList) Attr(name string) []string {
 	return result
 }
 
-// SetAttr ...
-func (nl NodeList) SetAttr(name, value string) NodeList {
+// SetAttr sets attribute to all elements.
+func (nl ElementList) SetAttr(name, value string) ElementList {
 	nl.Foreach(func(e *Element) {
 		e.SetAttr(name, value)
 	})
@@ -64,8 +64,8 @@ func (nl NodeList) SetAttr(name, value string) NodeList {
 	return nl
 }
 
-// Prop ...
-func (nl NodeList) Prop(name string) []js.Value {
+// Prop returns some property values.
+func (nl ElementList) Prop(name string) []js.Value {
 	var result []js.Value
 	nl.Foreach(func(e *Element) {
 		result = append(result, e.Prop(name))
@@ -73,32 +73,32 @@ func (nl NodeList) Prop(name string) []js.Value {
 	return result
 }
 
-// SetProp ...
-func (nl NodeList) SetProp(name string, flag bool) NodeList {
+// SetProp sets property to all elements.
+func (nl ElementList) SetProp(name string, flag bool) ElementList {
 	nl.Foreach(func(e *Element) {
 		e.SetProp(name, flag)
 	})
 	return nl
 }
 
-// AddClass ...
-func (nl NodeList) AddClass(names ...string) NodeList {
+// AddClass adds class to all elements.
+func (nl ElementList) AddClass(names ...string) ElementList {
 	nl.Foreach(func(e *Element) {
 		e.AddClass(names...)
 	})
 	return nl
 }
 
-// RemoveClass ...
-func (nl NodeList) RemoveClass(names ...string) NodeList {
+// RemoveClass remove some class from all elements.
+func (nl ElementList) RemoveClass(names ...string) ElementList {
 	nl.Foreach(func(e *Element) {
 		e.RemoveClass(names...)
 	})
 	return nl
 }
 
-// ToggleClass ...
-func (nl NodeList) ToggleClass(name string) NodeList {
+// ToggleClass toggles some class on all elements.
+func (nl ElementList) ToggleClass(name string) ElementList {
 	nl.Foreach(func(e *Element) {
 		e.ToggleClass(name)
 	})
@@ -106,8 +106,8 @@ func (nl NodeList) ToggleClass(name string) NodeList {
 	return nl
 }
 
-// ReplaceClass ...
-func (nl NodeList) ReplaceClass(oldName, newName string) NodeList {
+// ReplaceClass replace some class with new one on all elements.
+func (nl ElementList) ReplaceClass(oldName, newName string) ElementList {
 	nl.Foreach(func(e *Element) {
 		e.ReplaceClass(oldName, newName)
 	})
@@ -115,19 +115,21 @@ func (nl NodeList) ReplaceClass(oldName, newName string) NodeList {
 	return nl
 }
 
-// HasClass ...
-func (nl NodeList) HasClass(name string) []bool {
-	var result []bool
+// HasClass returns elements which has specific class.
+func (nl ElementList) HasClass(name string) ElementList {
+	var result []*Element
 
 	nl.Foreach(func(e *Element) {
-		result = append(result, e.HasClass(name))
+		if e.HasClass(name) {
+			result = append(result, e)
+		}
 	})
 
 	return result
 }
 
-// TagName ...
-func (nl NodeList) TagName() []string {
+// TagName returns all tag names.
+func (nl ElementList) TagName() []string {
 	var result []string
 
 	nl.Foreach(func(e *Element) {
@@ -137,8 +139,8 @@ func (nl NodeList) TagName() []string {
 	return result
 }
 
-// Val ...
-func (nl NodeList) Val() []string {
+// Val returns all values.
+func (nl ElementList) Val() []string {
 	var result []string
 
 	nl.Foreach(func(e *Element) {
@@ -148,8 +150,8 @@ func (nl NodeList) Val() []string {
 	return result
 }
 
-// SetVal ...
-func (nl NodeList) SetVal(val interface{}) NodeList {
+// SetVal set value to all elements.
+func (nl ElementList) SetVal(val interface{}) ElementList {
 
 	nl.Foreach(func(e *Element) {
 		nl.SetVal(val)
