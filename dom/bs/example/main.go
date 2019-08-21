@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/dairaga/js/dom/bs/card"
 	"github.com/dairaga/js/dom/bs/progress"
 
 	"github.com/dairaga/js/dom"
@@ -64,5 +65,31 @@ func main() {
 	pb.Bar(0).Stripped().Animate().SetText("41")
 	container.Append(pb)
 	/* progress end */
+
+	/* card start */
+	crd := card.New()
+	crd.AddClass("border-success")
+	crdheader := card.NewHeader("Header")
+	crdheader.AddClass("border-success")
+	crd.Header(crdheader)
+
+	crdbody := card.NewBody(nil)
+
+	crdbody.Color(bs.FGSuccess)
+	crdbody.Title("Success card title")
+	crdbody.SubTitle("Success card subtitle")
+	crdbody.Text(`Some quick example text to build on the card title and make up the bulk of the card's content.`)
+	crdbody.Link("#", "link 1")
+	crdbody.Link("#", "link 2")
+	crd.Append(crdbody)
+
+	crdfooter := card.NewFooter("Footer")
+	crdfooter.AddClass("border-success")
+	crd.Footer(crdfooter)
+
+	crd.Width(bs.Size25)
+	container.Append(crd)
+	/* card end */
+
 	select {}
 }
