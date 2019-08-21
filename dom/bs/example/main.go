@@ -5,6 +5,8 @@ import (
 
 	"github.com/dairaga/js/dom"
 
+	"github.com/dairaga/js/dom/bs"
+	"github.com/dairaga/js/dom/bs/badge"
 	"github.com/dairaga/js/dom/bs/table"
 )
 
@@ -38,6 +40,13 @@ func main() {
 
 	dom.AppendChild(t)
 	/* table example end */
+
+	/* badge start */
+	b := badge.New(bs.Primary, "my test").Pill()
+	dom.AppendChild(b)
+	b = badge.Link(bs.Danger, "my test link").Pill()
+	dom.AppendChild(b)
+	/* badge end */
 
 	select {}
 }

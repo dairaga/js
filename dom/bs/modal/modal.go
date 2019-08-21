@@ -10,7 +10,7 @@ type Modal struct {
 	*bs.Component
 }
 
-// Attach binds a bootstrap modal component on page.
+// Attach binds a Bootstrap modal component on page.
 func Attach(id string) *Modal {
 	return &Modal{bs.Attach(id)}
 }
