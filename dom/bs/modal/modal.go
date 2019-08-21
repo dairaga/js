@@ -5,14 +5,14 @@ import (
 	"github.com/dairaga/js/dom/bs"
 )
 
-// Modal ...
+// Modal represents Bootstrap Modal component.
 type Modal struct {
 	*bs.Component
 }
 
 // Attach binds a bootstrap modal component on page.
-func Attach(id string) Modal {
-	return Modal{bs.Attach(id)}
+func Attach(id string) *Modal {
+	return &Modal{bs.Attach(id)}
 }
 
 // ----------------------------------------------------------------------------
