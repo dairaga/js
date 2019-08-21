@@ -184,8 +184,11 @@ func (e *Element) SetVal(val interface{}) *Element {
 // ----------------------------------------------------------------------------
 
 // Append add child to element.
-func (e *Element) Append(child interface{}) *Element {
-	e.JSValue().Call("append", child)
+func (e *Element) Append(child ...interface{}) *Element {
+	for _, x := range child {
+		e.JSValue().Call("append", x)
+	}
+
 	return e
 }
 

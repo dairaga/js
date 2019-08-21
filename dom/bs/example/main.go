@@ -69,7 +69,7 @@ func main() {
 	/* card start */
 	crd := card.New()
 	crd.AddClass("border-success")
-	crdheader := card.NewHeader("Header")
+	crdheader := card.NewHeader("Header", badge.New(bs.Primary, "abc"))
 	crdheader.AddClass("border-success")
 	crd.Header(crdheader)
 

@@ -11,12 +11,10 @@ type Header struct {
 }
 
 // NewHeader returns card header.
-func NewHeader(content interface{}) *Header {
+func NewHeader(content ...interface{}) *Header {
 	h := &Header{bs.ComponentOf(dom.CreateElement("div"))}
 	h.AddClass("card-header")
-	if content != nil {
-		h.Append(content)
-	}
+	h.Append(content...)
 	return h
 }
 
@@ -80,12 +78,10 @@ type Footer struct {
 }
 
 // NewFooter returns card footer.
-func NewFooter(content interface{}) *Footer {
+func NewFooter(content ...interface{}) *Footer {
 	f := &Footer{bs.ComponentOf(dom.CreateElement("div"))}
 	f.AddClass("card-footer")
-	if content != nil {
-		f.Append(content)
-	}
+	f.Append(content...)
 	return f
 }
 

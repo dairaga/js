@@ -15,23 +15,22 @@ func Attach(id string) *Badge {
 	return &Badge{bs.Attach(id)}
 }
 
-func generate(tag string, style bs.Style, content interface{}) *Badge {
+func generate(tag string, style bs.Style, content ...interface{}) *Badge {
 	b := &Badge{bs.ComponentOf(dom.CreateElement(tag))}
 
 	b.AddClass("badge", "badge-"+style)
-	b.Append(content)
-
+	b.Append(content...)
 	return b
 }
 
 // New returns a Bootstrap badge with span tag.
-func New(style bs.Style, content interface{}) *Badge {
-	return generate("span", style, content)
+func New(style bs.Style, content ...interface{}) *Badge {
+	return generate("span", style, content...)
 }
 
 // Link returns a Bootstrap badge with link (<a>).
-func Link(style bs.Style, content interface{}) *Badge {
-	return generate("a", style, content)
+func Link(style bs.Style, content ...interface{}) *Badge {
+	return generate("a", style, content...)
 }
 
 // Pill adds pill style.
