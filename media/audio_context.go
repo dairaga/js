@@ -90,7 +90,7 @@ func (ctx *AudioContext) JSValue() js.Value {
 }
 
 // CreateMediaStreamSource https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createMediaStreamSource
-func (ctx *AudioContext) CreateMediaStreamSource(stream Stream) *AudioNode {
+func (ctx *AudioContext) CreateMediaStreamSource(stream *Stream) *AudioNode {
 	return AudioNodeOf(ctx.ref.Call("createMediaStreamSource", stream.ref))
 }
 
