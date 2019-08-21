@@ -2,12 +2,12 @@ package js
 
 // ----------------------------------------------------------------------------
 
-// Error ...
+// Error represents javascript error object.
 type Error struct {
 	ref Value
 }
 
-// ErrorOf ...
+// ErrorOf returns a error object.
 func ErrorOf(x Value) *Error {
 	return &Error{ref: x}
 }

@@ -11,22 +11,22 @@ func Window() Value {
 	return window
 }
 
-// Alert ...
+// Alert invokes window.alert function.
 func Alert(a ...interface{}) {
 	window.Call("alert", fmt.Sprint(a...))
 }
 
-// Alertf ...
+// Alertf invokes window.alert function.
 func Alertf(format string, a ...interface{}) {
 	window.Call("alert", fmt.Sprintf(format, a...))
 }
 
-// Confirm ...
+// Confirm invokes window.confirm function.
 func Confirm(a ...interface{}) bool {
 	return window.Call("confirm", fmt.Sprint(a...)).Bool()
 }
 
-// Confirmf ...
+// Confirmf invokes window.confirm function.
 func Confirmf(format string, a ...interface{}) bool {
 	return window.Call("confirm", fmt.Sprintf(format, a...)).Bool()
 }
