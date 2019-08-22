@@ -105,10 +105,14 @@ func css1(property string, side Side, vs ...ViewportSize) string {
 }
 
 func ccs2(property string, side Side, size Size, vs ...ViewportSize) string {
-	if len(vs) > 0 {
-		return fmt.Sprintf("%s%s-%s-%s", property, side[0:], size, vs[0])
+	if side != Blank {
+		side = side[0:1]
 	}
-	return fmt.Sprintf("%s%s-%s", property, side[0:], size)
+
+	if len(vs) > 0 {
+		return fmt.Sprintf("%s%s-%s-%s", property, side, size, vs[0])
+	}
+	return fmt.Sprintf("%s%s-%s", property, side, size)
 }
 
 // ----------------------------------------------------------------------------
