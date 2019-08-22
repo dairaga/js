@@ -75,6 +75,7 @@ func generate(tag, itemTag string, data [][]interface{}) *Group {
 		group.items = append(group.items, it)
 		group.Append(it)
 	}
+	group.AddClass("list-group")
 
 	return group
 }
@@ -182,4 +183,13 @@ func (g *Group) Add(content ...interface{}) *Item {
 	g.items = append(g.items, it)
 	g.Append(it)
 	return it
+}
+
+// Action adds action style to all items.
+func (g *Group) Action() *Group {
+	g.Foreach(func(_ int, it *Item) {
+		it.Action()
+	})
+
+	return g
 }
