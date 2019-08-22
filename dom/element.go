@@ -62,6 +62,12 @@ func (e *Element) SetAttr(name, value string) *Element {
 	return e
 }
 
+// RemoveAttr removes soem attribute.
+func (e *Element) RemoveAttr(name string) *Element {
+	e.JSValue().Call("removeAttribute", name)
+	return e
+}
+
 // ----------------------------------------------------------------------------
 
 // Prop returns property of element.
