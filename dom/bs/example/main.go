@@ -85,7 +85,9 @@ func ExampleSpinner(container *dom.Element) {
 // ExampleProgress is a sample code about progress bar.
 func ExampleProgress(container *dom.Element) {
 	pb := progress.New(bs.BGInfo, 0, 100, 41)
-	pb.Bar(0).Stripped().Animate().SetText("41")
+	pb.Bar(0).Stripped().Animate().Show("41%")
+	pb.Add(progress.NewBar(bs.BGPrimary, 0, 100, 32).Stripped().Animate().Show("32%"))
+
 	container.Append(pb)
 }
 

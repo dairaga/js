@@ -83,6 +83,12 @@ func (b *Bar) Val() int {
 	return b.value
 }
 
+// Show display specific data on progress bar.
+func (b *Bar) Show(content ...interface{}) *Bar {
+	b.Append(content...)
+	return b
+}
+
 // ----------------------------------------------------------------------------
 
 // Progress represents a Bootstrap progress conainer.
