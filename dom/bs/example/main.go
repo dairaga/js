@@ -109,6 +109,17 @@ func ExampleCard(container *dom.Element) {
 	crdbody.Link("#", "link 2")
 	crd.Append(crdbody)
 
+	g := list.Button([][]interface{}{
+		[]interface{}{`Cras justo odio`, badge.New(bs.Warning, "14").Pill()},
+		[]interface{}{`Dapibus ac facilisis in`, badge.New(bs.Warning, "2").Pill()},
+		[]interface{}{`Morbi leo risus`, badge.New(bs.Warning, "1").Pill()},
+	}).Foreach(func(_ int, it *list.Item) {
+		it.AddClass("d-flex", "justify-content-between", "align-items-center")
+		it.Action()
+	}).Flush()
+
+	crd.Append(g)
+
 	crdfooter := card.NewFooter("Footer")
 	crdfooter.AddClass("border-success")
 	crd.Footer(crdfooter)
