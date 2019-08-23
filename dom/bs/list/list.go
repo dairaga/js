@@ -8,10 +8,11 @@ import (
 // Item represents Bootstrap list group item.
 type Item struct {
 	*bs.Component
+	parent *Group
 }
 
 func generateItem(tag string, content ...interface{}) *Item {
-	it := &Item{bs.ComponentOf(dom.CreateElement(tag))}
+	it := &Item{bs.ComponentOf(dom.CreateElement(tag)), nil}
 	it.AddClass("list-group-item").Append(content...)
 	return it
 }
@@ -58,6 +59,11 @@ func (it *Item) Style(style bs.Style) *Item {
 	return it
 }
 
+// Parent ...
+func (it *Item) Parent() *Group {
+	return it.parent
+}
+
 // ----------------------------------------------------------------------------
 
 // Group represents Bootstrap list group container.
@@ -74,6 +80,7 @@ func generate(tag, itemTag string, data [][]interface{}) *Group {
 		it := generateItem(itemTag, content...)
 		group.items = append(group.items, it)
 		group.Append(it)
+		it.parent = group
 	}
 	group.AddClass("list-group")
 
