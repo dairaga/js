@@ -43,3 +43,13 @@ func ParseInt(val string, radix int) (int, bool) {
 	}
 	return x.Int(), true
 }
+
+// ParseFloat ...
+func ParseFloat(val string) (float64, bool) {
+	x := global.Call("parseFloat", val)
+	if IsNaN(x) {
+		return 0.0, false
+	}
+
+	return x.Float(), true
+}
