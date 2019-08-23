@@ -53,7 +53,11 @@ func (e *Element) Truthy() bool {
 
 // Attr returns attribute value.
 func (e *Element) Attr(name string) string {
-	return e.JSValue().Call("getAttribute", name).String()
+	x := e.JSValue().Call("getAttribute", name)
+	if x.Truthy() {
+		return x.String()
+	}
+	return ""
 }
 
 // SetAttr sets attribute.
