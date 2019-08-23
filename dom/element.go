@@ -29,7 +29,7 @@ func (e *Element) String() string {
 	tag := e.TagName()
 	content := e.HTML()
 
-	return fmt.Sprintf(`tag: %s, id:%q, content: %s`, tag, id, content)
+	return fmt.Sprintf(`{tag: %s, id: %q, content: %s}`, tag, id, content)
 }
 
 // S returns child by quering selector condition.
