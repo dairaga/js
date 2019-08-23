@@ -11,6 +11,11 @@ type Button struct {
 	*bs.Component
 }
 
+// Attach binds a Bootstrap button on page
+func Attach(id string) *Button {
+	return &Button{bs.Attach(id)}
+}
+
 // New returns a button with <button> tag.
 func New(style bs.Style, content ...interface{}) *Button {
 	btn := &Button{bs.ComponentOf(dom.CreateElement("button"))}
