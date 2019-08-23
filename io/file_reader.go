@@ -28,7 +28,7 @@ func (r *FileReader) Done(h func([]byte)) *FileReader {
 		return nil
 	})
 
-	r.On("load", cb)
+	r.AddEventListener("load", cb)
 	return r
 }
 
@@ -39,7 +39,7 @@ func (r *FileReader) Fail(h func(*js.Event)) *FileReader {
 		return nil
 	})
 
-	r.On("error", cb)
+	r.AddEventListener("error", cb)
 	return r
 }
 
@@ -50,7 +50,7 @@ func (r FileReader) Always(h func(*js.Event)) {
 		return nil
 	})
 
-	r.On("loadend", cb)
+	r.AddEventListener("loadend", cb)
 }
 
 // Progress https://developer.mozilla.org/en-US/docs/Web/API/FileReader/progress_event
@@ -60,5 +60,5 @@ func (r FileReader) Progress(h func(int, int, bool)) {
 		return nil
 	})
 
-	r.On("progress", cb)
+	r.AddEventListener("progress", cb)
 }
