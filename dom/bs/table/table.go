@@ -101,6 +101,15 @@ func (t *Table) Cell(row, col int) *bs.Component {
 	return bs.ComponentOf(elm)
 }
 
+// SetCell reset new content to some cell.
+func (t *Table) SetCell(row, col int, content ...interface{}) *Table {
+	cell := t.Cell(row, col)
+	if cell.Truthy() {
+		cell.Empty().Append(content...)
+	}
+	return t
+}
+
 // Add adds data to table.
 func (t *Table) Add(idx interface{}, data []interface{}) *Table {
 	tr := dom.CreateElement("tr")
