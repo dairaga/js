@@ -27,10 +27,10 @@ func (nl ElementList) Length() int {
 }
 
 // Foreach apply function on each element.
-func (nl ElementList) Foreach(fn func(v *Element)) {
+func (nl ElementList) Foreach(fn func(idx int, v *Element)) {
 	size := nl.Length()
 	for i := 0; i < size; i++ {
-		fn(nl[i])
+		fn(i, nl[i])
 	}
 }
 
@@ -48,7 +48,7 @@ func (nl ElementList) AppendList(other ElementList) ElementList {
 func (nl ElementList) Attr(name string) []string {
 	var result []string
 
-	nl.Foreach(func(e *Element) {
+	nl.Foreach(func(_ int, e *Element) {
 		result = append(result, e.Attr(name))
 	})
 
@@ -57,7 +57,7 @@ func (nl ElementList) Attr(name string) []string {
 
 // SetAttr sets attribute to all elements.
 func (nl ElementList) SetAttr(name, value string) ElementList {
-	nl.Foreach(func(e *Element) {
+	nl.Foreach(func(_ int, e *Element) {
 		e.SetAttr(name, value)
 	})
 
@@ -67,7 +67,7 @@ func (nl ElementList) SetAttr(name, value string) ElementList {
 // Prop returns some property values.
 func (nl ElementList) Prop(name string) []js.Value {
 	var result []js.Value
-	nl.Foreach(func(e *Element) {
+	nl.Foreach(func(_ int, e *Element) {
 		result = append(result, e.Prop(name))
 	})
 	return result
@@ -75,7 +75,7 @@ func (nl ElementList) Prop(name string) []js.Value {
 
 // SetProp sets property to all elements.
 func (nl ElementList) SetProp(name string, flag bool) ElementList {
-	nl.Foreach(func(e *Element) {
+	nl.Foreach(func(_ int, e *Element) {
 		e.SetProp(name, flag)
 	})
 	return nl
@@ -83,7 +83,7 @@ func (nl ElementList) SetProp(name string, flag bool) ElementList {
 
 // AddClass adds class to all elements.
 func (nl ElementList) AddClass(names ...string) ElementList {
-	nl.Foreach(func(e *Element) {
+	nl.Foreach(func(_ int, e *Element) {
 		e.AddClass(names...)
 	})
 	return nl
@@ -91,7 +91,7 @@ func (nl ElementList) AddClass(names ...string) ElementList {
 
 // RemoveClass remove some class from all elements.
 func (nl ElementList) RemoveClass(names ...string) ElementList {
-	nl.Foreach(func(e *Element) {
+	nl.Foreach(func(_ int, e *Element) {
 		e.RemoveClass(names...)
 	})
 	return nl
@@ -99,7 +99,7 @@ func (nl ElementList) RemoveClass(names ...string) ElementList {
 
 // ToggleClass toggles some class on all elements.
 func (nl ElementList) ToggleClass(name string) ElementList {
-	nl.Foreach(func(e *Element) {
+	nl.Foreach(func(_ int, e *Element) {
 		e.ToggleClass(name)
 	})
 
@@ -108,7 +108,7 @@ func (nl ElementList) ToggleClass(name string) ElementList {
 
 // ReplaceClass replace some class with new one on all elements.
 func (nl ElementList) ReplaceClass(oldName, newName string) ElementList {
-	nl.Foreach(func(e *Element) {
+	nl.Foreach(func(_ int, e *Element) {
 		e.ReplaceClass(oldName, newName)
 	})
 
@@ -119,7 +119,7 @@ func (nl ElementList) ReplaceClass(oldName, newName string) ElementList {
 func (nl ElementList) HasClass(name string) ElementList {
 	var result []*Element
 
-	nl.Foreach(func(e *Element) {
+	nl.Foreach(func(_ int, e *Element) {
 		if e.HasClass(name) {
 			result = append(result, e)
 		}
@@ -132,7 +132,7 @@ func (nl ElementList) HasClass(name string) ElementList {
 func (nl ElementList) TagName() []string {
 	var result []string
 
-	nl.Foreach(func(e *Element) {
+	nl.Foreach(func(_ int, e *Element) {
 		result = append(result, e.TagName())
 	})
 
@@ -143,7 +143,7 @@ func (nl ElementList) TagName() []string {
 func (nl ElementList) Val() []string {
 	var result []string
 
-	nl.Foreach(func(e *Element) {
+	nl.Foreach(func(_ int, e *Element) {
 		result = append(result, e.Val())
 	})
 
@@ -153,7 +153,7 @@ func (nl ElementList) Val() []string {
 // SetVal set value to all elements.
 func (nl ElementList) SetVal(val interface{}) ElementList {
 
-	nl.Foreach(func(e *Element) {
+	nl.Foreach(func(_ int, e *Element) {
 		nl.SetVal(val)
 	})
 	return nl
