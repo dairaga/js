@@ -40,8 +40,6 @@ func main() {
 func ExampleTable(container *dom.Element) {
 	t := table.Attach("#test_table")
 	fmt.Println("all table:", t)
-	fmt.Println("header:", t.Header())
-	fmt.Println("body:", t.Body())
 
 	for i := 0; i < 4; i++ {
 		fmt.Println(t.Head(i))
@@ -54,11 +52,11 @@ func ExampleTable(container *dom.Element) {
 	}
 
 	t = table.New(
-		[]interface{}{"#", "First", "Last", "Handle"},
+		[]interface{}{"First", "Last", "Handle"},
 		[][]interface{}{
-			[]interface{}{1, "Mark", "Otto", "@mdo"},
-			[]interface{}{2, "Jacob", "Thornton", "@fat"},
-			[]interface{}{3, "Larry", "the Bird", "@twitter"},
+			[]interface{}{"Mark", "Otto", "@mdo"},
+			[]interface{}{"Jacob", "Thornton", "@fat"},
+			[]interface{}{"Larry", "the Bird", "@twitter"},
 		},
 	).Caption("List of users")
 
