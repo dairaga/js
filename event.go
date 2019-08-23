@@ -1,5 +1,7 @@
 package js
 
+import "fmt"
+
 // Event represents javascript Event. https://developer.mozilla.org/en-US/docs/Web/API/Event
 type Event struct {
 	ref Value
@@ -8,6 +10,10 @@ type Event struct {
 // JSValue ...
 func (e *Event) JSValue() Value {
 	return e.ref
+}
+
+func (e *Event) String() string {
+	return fmt.Sprintf(`{type: %q}`, e.Type())
 }
 
 // EventOf returns event.
