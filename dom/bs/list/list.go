@@ -87,6 +87,23 @@ func generate(tag, itemTag string, data [][]interface{}) *Group {
 	return group
 }
 
+// Attach binds a Bootstrap list group on page.
+func Attach(id string) *Group {
+	g := &Group{bs.Attach(id), "", nil}
+
+	children := g.SS(".list-group-item")
+
+	children.Foreach(func(x int, elm *dom.Element) {
+		if x == 0 {
+			g.childTag = elm.TagName()
+		}
+
+		g.items = append(g.items, &Item{bs.ComponentOf(elm), g})
+	})
+
+	return g
+}
+
 // New returns a list group with "<ul>"
 func New(data [][]interface{}) *Group {
 	return generate("ul", "li", data)
