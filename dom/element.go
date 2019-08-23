@@ -260,3 +260,21 @@ func (e *Element) Data(key, value string) *Element {
 	e.SetAttr("data-"+key, value)
 	return e
 }
+
+// ----------------------------------------------------------------------------
+
+// Empty cleans children.
+func (e *Element) Empty() *Element {
+	lst := e.JSValue().Get("childNodes")
+	if lst.Length() <= 0 {
+		return e
+	}
+
+	size := lst.Length()
+
+	for i := 0; i < size; i++ {
+		e.JSValue().Call("removeChild", lst.Index(i))
+	}
+
+	return e
+}
