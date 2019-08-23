@@ -1,6 +1,8 @@
 package alert
 
 import (
+	"syscall/js"
+
 	"github.com/dairaga/js/dom"
 	"github.com/dairaga/js/dom/bs"
 )
@@ -27,5 +29,17 @@ func New(style bs.Style, close bool, content ...interface{}) *Alert {
 		a.Append(closeBtn)
 	}
 
+	return a
+}
+
+// Alert shows alert component.
+func (a *Alert) Alert() *Alert {
+	js.Global().Call("$", a.JSValue()).Call("alert")
+	return a
+}
+
+// Close hide and dispose alert component.
+func (a *Alert) Close() *Alert {
+	js.Global().Call("$", a.JSValue()).Call("alert", "close")
 	return a
 }
