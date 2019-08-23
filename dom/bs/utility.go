@@ -1,6 +1,8 @@
 package bs
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // BootStrap utilities
 
