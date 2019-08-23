@@ -27,3 +27,19 @@ func Call(fn string, args ...interface{}) Value {
 func RegisterFunc(name string, fn Func) {
 	global.Set(name, fn)
 }
+
+// ----------------------------------------------------------------------------
+
+// IsNaN ...
+func IsNaN(v js.Value) bool {
+	return global.Call("isNaN", v).Bool()
+}
+
+// ParseInt ...
+func ParseInt(val string, radix int) (int, bool) {
+	x := global.Call("parseInt", val, radix)
+	if IsNaN(x) {
+		return 0, false
+	}
+	return x.Int(), true
+}
