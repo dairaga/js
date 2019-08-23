@@ -17,8 +17,8 @@ type Table struct {
 // Attach binds a Bootstrap table on page.
 func Attach(id string) *Table {
 	t := &Table{bs.Attach(id), nil, nil}
-	t.head = bs.ComponentOf(dom.S("thead"))
-	t.body = bs.ComponentOf(dom.S("tbody"))
+	t.head = bs.ComponentOf(t.S("thead"))
+	t.body = bs.ComponentOf(t.S("tbody"))
 
 	return t
 }
