@@ -26,6 +26,6 @@ func (btn *Button) OnClick(fn func(*Button, *js.Event)) *Button {
 		return nil
 	})
 
-	btn.Component.EventTarget.On("click", cb)
+	btn.AddEventListener("click", cb)
 	return btn
 }

@@ -53,7 +53,7 @@ func (ws *WebSocket) OnOpen(cb func(*js.Event)) *WebSocket {
 		cb(js.EventOf(args[0]))
 		return nil
 	})
-	ws.ref.On("open", fn)
+	ws.ref.AddEventListener("open", fn)
 	return ws
 }
 
@@ -64,7 +64,7 @@ func (ws *WebSocket) OnClose(cb func(*CloseEvent)) *WebSocket {
 		return nil
 	})
 
-	ws.ref.On("close", fn)
+	ws.ref.AddEventListener("close", fn)
 	return ws
 }
 
@@ -75,7 +75,7 @@ func (ws *WebSocket) OnError(cb func(*js.Event)) *WebSocket {
 		return nil
 	})
 
-	ws.ref.On("error", fn)
+	ws.ref.AddEventListener("error", fn)
 	return ws
 }
 
@@ -92,7 +92,7 @@ func (ws *WebSocket) OnMessage(cb func([]byte)) *WebSocket {
 		return nil
 	})
 
-	ws.ref.On("message", fn)
+	ws.ref.AddEventListener("message", fn)
 	return ws
 }
 

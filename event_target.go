@@ -34,8 +34,8 @@ func (e *EventTarget) Register(event string, cb Func) *EventTarget {
 	return e
 }
 
-// On adds callback for some event.
-func (e *EventTarget) On(event string, cb Func) *EventTarget {
+// AddEventListener adds callback for some event.
+func (e *EventTarget) AddEventListener(event string, cb Func) *EventTarget {
 	if e.cb == nil {
 		e.cb = make(map[string]Func)
 	}

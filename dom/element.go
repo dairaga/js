@@ -226,11 +226,11 @@ func (e *Element) Clone() *Element {
 // On add listener for some event.
 func (e *Element) On(event string, fn func(*Element, *js.Event)) *Element {
 	cb := js.FuncOf(func(_this js.Value, args []js.Value) interface{} {
-		fn(ElementOf(_this), js.EventOf(args[0]))
+		fn(e, js.EventOf(args[0]))
 		return nil
 	})
 
-	e.EventTarget.On(event, cb)
+	e.EventTarget.AddEventListener(event, cb)
 	return e
 }
 
@@ -249,4 +249,10 @@ func (e *Element) OnChange(fn func(*Element, *js.Event)) *Element {
 // Call invokes element method.
 func (e *Element) Call(name string, args ...interface{}) js.Value {
 	return e.JSValue().Call(name, args...)
+}
+
+// Data adds "data-*" attribute.
+func (e *Element) Data(key, value string) *Element {
+	e.SetAttr("data-"+key, value)
+	return e
 }

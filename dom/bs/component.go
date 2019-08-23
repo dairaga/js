@@ -26,9 +26,9 @@ func Attach(id string) *Component {
 }
 
 // On adds Bootstrap listener.
-func (obj *Component) On(event string, fn func(*Component, *js.Event)) {
+func (obj *Component) On(event string, fn func(*js.Event)) {
 	cb := js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
-		fn(obj, js.EventOf(args[0]))
+		fn(js.EventOf(args[0]))
 		return nil
 	})
 	obj.Register(event, cb)

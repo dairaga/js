@@ -67,7 +67,7 @@ func (m Modal) Dispose() {
 
 // Showing ...
 func (m *Modal) Showing(fn func(*Modal, *js.Event)) *Modal {
-	m.On("show.bs.modal", func(_ *bs.Component, e *js.Event) {
+	m.On("show.bs.modal", func(e *js.Event) {
 		fn(m, e)
 	})
 	return m
@@ -75,7 +75,7 @@ func (m *Modal) Showing(fn func(*Modal, *js.Event)) *Modal {
 
 // Shown ...
 func (m *Modal) Shown(fn func(*Modal, *js.Event)) *Modal {
-	m.On("shown.bs.modal", func(_ *bs.Component, e *js.Event) {
+	m.On("shown.bs.modal", func(e *js.Event) {
 		fn(m, e)
 	})
 	return m
@@ -83,7 +83,7 @@ func (m *Modal) Shown(fn func(*Modal, *js.Event)) *Modal {
 
 // Hidding ...
 func (m *Modal) Hidding(fn func(*Modal, *js.Event)) *Modal {
-	m.On("hide.bs.modal", func(_ *bs.Component, e *js.Event) {
+	m.On("hide.bs.modal", func(e *js.Event) {
 		fn(m, e)
 	})
 	return m
@@ -91,7 +91,7 @@ func (m *Modal) Hidding(fn func(*Modal, *js.Event)) *Modal {
 
 // Hidden ...
 func (m *Modal) Hidden(fn func(*Modal, *js.Event)) *Modal {
-	m.On("hidden.bs.modal", func(_ *bs.Component, e *js.Event) {
+	m.On("hidden.bs.modal", func(e *js.Event) {
 		fn(m, e)
 	})
 	return m
