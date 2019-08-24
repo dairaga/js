@@ -1,3 +1,4 @@
+/*Package progress wraps Bootstrap Progress component.*/
 package progress
 
 import (

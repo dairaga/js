@@ -1,3 +1,4 @@
+/*Package table wraps Bootstrap default Table Content.*/
 package table
 
 import (

@@ -1,3 +1,4 @@
+/*Package alert wraps Bootstrap Alert component */
 package alert
 
 import (

@@ -1,3 +1,4 @@
+/*Package spinner wraps Bootstrap spinner component.*/
 package spinner
 
 import (

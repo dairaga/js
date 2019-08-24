@@ -1,3 +1,4 @@
+/*Package badge wraps Bootstrap Badge component */
 package badge
 
 import (

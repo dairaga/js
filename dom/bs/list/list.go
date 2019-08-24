@@ -1,3 +1,4 @@
+/*Package list wraps Bootstrap List Group component.*/
 package list
 
 import (

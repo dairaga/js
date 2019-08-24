@@ -1,3 +1,4 @@
+/*Package button wraps Bootstrap Button component. */
 package button
 
 import (

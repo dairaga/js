@@ -1,3 +1,4 @@
+/*Package modal wraps Bootstrap Modal component.*/
 package modal
 
 import (

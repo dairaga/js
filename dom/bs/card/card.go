@@ -1,3 +1,4 @@
+/*Package card wraps Bootstrap Card component.*/
 package card
 
 import (
