@@ -131,7 +131,7 @@ func (g *Group) Flush() *Group {
 }
 
 // Horizontalize returns a horizontal list group.
-func (g *Group) Horizontalize(vs ...bs.ViewportSize) *Group {
+func (g *Group) Horizontalize(vs ...string) *Group {
 	clz := "list-group-horizontal"
 	if len(vs) > 0 {
 		clz = clz + "-" + vs[0]

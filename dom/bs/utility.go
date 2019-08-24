@@ -2,51 +2,42 @@ package bs
 
 import (
 	"fmt"
+
+	"github.com/dairaga/js/dom"
 )
-
-// BootStrap utilities
-
-// ViewportSize represents bootstrap viewport size value.
-type ViewportSize = string
 
 // pre-defined viewport size values.
 const (
-	ExtraSmall ViewportSize = ""
-	Small      ViewportSize = "sm"
-	Medium     ViewportSize = "md"
-	Large      ViewportSize = "lg"
-	ExtraLarge ViewportSize = "xl"
+	VSExtraSmall = ""
+	VSSmall      = "sm"
+	VSMedium     = "md"
+	VSLarge      = "lg"
+	VSExtraLarge = "xl"
 )
-
-// Side represents css position for alignment, border and etc.
-type Side = string
 
 // pre-defined position values.
 const (
-	Left   Side = "left"
-	Right  Side = "right"
-	Center Side = "center"
+	SideLeft   = "left"
+	SideRight  = "right"
+	SideTop    = "top"
+	SideBottom = "bottom"
 
-	Top    Side = "top"
-	Bottom Side = "bottom"
+	SideCenter = "center"
 
-	None Side = "none"
+	SideNone = "none"
 
 	// margin, padding
-	Negative      = "n"
-	Blank    Side = ""
-	X        Side = "x"
-	Y        Side = "y"
+	SideNegative = "n"
+	SideBlank    = ""
+	SideX        = "x"
+	SideY        = "y"
 
 	// vertical alignment
-	Middle     = "middle"
-	Baseline   = "baseline"
-	TextTop    = "text-top"
-	TextBottom = "text-bottom"
+	SideMiddle     = "middle"
+	SideBaseline   = "baseline"
+	SideTextTop    = "text-top"
+	SideTextBottom = "text-bottom"
 )
-
-// Size represents bootstrap size values.
-type Size = string
 
 // pre-defined bootstrap size values.
 const (
@@ -66,48 +57,45 @@ const (
 	SizeAuto = "auto"
 )
 
-// Color represents bootstrap color value.
-type Color = string
-
-// pre-defined color values.
+// pre-defined values.
 const (
-	FGPrimary   Color = "text-primary"
-	FGSecondary Color = "text-secondary"
-	FGSuccess   Color = "text-success"
-	FGDanger    Color = "text-danger"
-	FGWarning   Color = "text-warning"
-	FGInfo      Color = "text-info"
-	FGLight     Color = "text-light"
-	FGDark      Color = "text-dark"
-	FGBody      Color = "text-body"
-	FGMuted     Color = "text-muted"
-	FGWhite     Color = "text-white"
-	FGHalfBlack Color = "text-black-50"
-	FGHalfWhite Color = "text-white-50"
+	FGPrimary   = "text-primary"
+	FGSecondary = "text-secondary"
+	FGSuccess   = "text-success"
+	FGDanger    = "text-danger"
+	FGWarning   = "text-warning"
+	FGInfo      = "text-info"
+	FGLight     = "text-light"
+	FGDark      = "text-dark"
+	FGBody      = "text-body"
+	FGMuted     = "text-muted"
+	FGWhite     = "text-white"
+	FGHalfBlack = "text-black-50"
+	FGHalfWhite = "text-white-50"
 
-	BGPrimary     Color = "bg-primary"
-	BGSecondary   Color = "bg-secondary"
-	BGSuccess     Color = "bg-success"
-	BGDanger      Color = "bg-danger"
-	BGWarning     Color = "bg-warning"
-	BGInfo        Color = "bg-info"
-	BGLight       Color = "bg-light"
-	BGDark        Color = "bg-dark"
-	BGWhite       Color = "bg-white"
-	BGTransparent Color = "bg-transparent"
+	BGPrimary     = "bg-primary"
+	BGSecondary   = "bg-secondary"
+	BGSuccess     = "bg-success"
+	BGDanger      = "bg-danger"
+	BGWarning     = "bg-warning"
+	BGInfo        = "bg-info"
+	BGLight       = "bg-light"
+	BGDark        = "bg-dark"
+	BGWhite       = "bg-white"
+	BGTransparent = "bg-transparent"
 )
 
 // ----------------------------------------------------------------------------
 
-func css1(property string, side Side, vs ...ViewportSize) string {
+func css1(property string, side string, vs ...string) string {
 	if len(vs) > 0 {
 		return fmt.Sprintf("%s-%s-%s", property, side, vs[0])
 	}
 	return fmt.Sprintf("%s-%s", property, side)
 }
 
-func ccs2(property string, side Side, size Size, vs ...ViewportSize) string {
-	if side != Blank {
+func ccs2(property string, side string, size string, vs ...string) string {
+	if side != SideBlank {
 		side = side[0:1]
 	}
 
@@ -119,139 +107,97 @@ func ccs2(property string, side Side, size Size, vs ...ViewportSize) string {
 
 // ----------------------------------------------------------------------------
 
-func (obj *Component) wh(property string, size Size) *Component {
-	obj.AddClass(property + size)
-	return obj
+// TextAlign add text alignment style to element.
+func TextAlign(elm *dom.Element, side string, vs ...string) *dom.Element {
+	return elm.AddClass(css1("text", side, vs...))
 }
-
-func (obj *Component) rmwh(property string) *Component {
-	obj.RemoveClass(property+Size25, property+Size50, property+Size75, property+Size100, property+SizeAuto)
-	return obj
-}
-
-// Width adds width style to component.
-func (obj *Component) Width(size Size) *Component {
-	return obj.wh("w-", size)
-}
-
-// RemoveWidth removes width style from component.
-func (obj *Component) RemoveWidth() *Component {
-	return obj.rmwh("w-").rmwh("mw-")
-}
-
-// Height adds height style to component.
-func (obj *Component) Height(size Size) *Component {
-	return obj.wh("h-", size)
-}
-
-// RemoveHeight removes height style from component.
-func (obj *Component) RemoveHeight() *Component {
-	return obj.rmwh("h-").rmwh("mh-")
-}
-
-// ----------------------------------------------------------------------------
-
-// Margin adds margin style to component.
-func (obj *Component) Margin(side Side, size Size, vs ...ViewportSize) *Component {
-	obj.AddClass(ccs2("m", side, size, vs...))
-	return obj
-}
-
-// RemoveMargin removes margin style from component.
-func (obj *Component) RemoveMargin(side Side, size Size, vs ...ViewportSize) *Component {
-	obj.RemoveClass(ccs2("m", side, size, vs...))
-	return obj
-}
-
-// NegativeMargin add negative margin style to component.
-func (obj *Component) NegativeMargin(side Side, size Size, vs ...ViewportSize) *Component {
-	return obj.Margin(side, Negative+size, vs...)
-}
-
-// RemoveNegativeMargin removes negative margin style from component.
-func (obj *Component) RemoveNegativeMargin(side Side, size Size, vs ...ViewportSize) *Component {
-	return obj.RemoveMargin(side, Negative+size, vs...)
-}
-
-// Center centers fixed-width component horizontally.
-func (obj *Component) Center() *Component {
-	obj.AddClass("mx-auto")
-	return obj
-}
-
-// RemoveCenter removes horizontally centering style from component.
-func (obj *Component) RemoveCenter() *Component {
-	obj.RemoveClass("mx-auto")
-	return obj
-}
-
-// ----------------------------------------------------------------------------
-
-// Padding add padding style to component.
-func (obj *Component) Padding(side Side, size Size, vs ...ViewportSize) *Component {
-	obj.AddClass(ccs2("p", side, size, vs...))
-	return obj
-}
-
-// RemovePadding removes paddind style from component.
-func (obj *Component) RemovePadding(side Side, size Size, vs ...ViewportSize) *Component {
-	obj.RemoveClass(ccs2("p", side, size, vs...))
-	return obj
-}
-
-// ----------------------------------------------------------------------------
 
 // TextAlign add text alignment style to component.
-func (obj *Component) TextAlign(side Side, vs ...ViewportSize) *Component {
-	obj.AddClass(css1("text", side, vs...))
+func (obj *Component) TextAlign(side string, vs ...string) *Component {
+	TextAlign(obj.Element, side, vs...)
 	return obj
+}
+
+// RemoveTextAlign removes text alignment style from element.
+func RemoveTextAlign(elm *dom.Element, side string, vs ...string) *dom.Element {
+	return elm.RemoveClass(css1("text", side, vs...))
 }
 
 // RemoveTextAlign removes text alignment style from component.
-func (obj *Component) RemoveTextAlign(side Side, vs ...ViewportSize) *Component {
-	obj.RemoveClass(css1("text", side, vs...))
+func (obj *Component) RemoveTextAlign(side string, vs ...string) *Component {
+	RemoveTextAlign(obj.Element, side, vs...)
 	return obj
 }
 
 // ----------------------------------------------------------------------------
 
 // VerticalAlign adds vertical alignment style to inline, inline-block, inline-table, and table cell elements.
-func (obj *Component) VerticalAlign(side Side) *Component {
-	obj.AddClass("align-" + side)
+func VerticalAlign(elm *dom.Element, side string) *dom.Element {
+	return elm.AddClass("align-" + side)
+}
+
+// VerticalAlign adds vertical alignment style to inline, inline-block, inline-table, and table cell elements.
+func (obj *Component) VerticalAlign(side string) *Component {
+	VerticalAlign(obj.Element, side)
 	return obj
 }
 
 // RemoveVerticalAlign removes vertical alignment style to inline, inline-block, inline-table, and table cell elements.
-func (obj *Component) RemoveVerticalAlign(side Side) *Component {
-	obj.RemoveClass("align-" + side)
+func RemoveVerticalAlign(elm *dom.Element, side string) *dom.Element {
+	return elm.RemoveClass("align-" + side)
+}
+
+// RemoveVerticalAlign removes vertical alignment style to inline, inline-block, inline-table, and table cell elements.
+func (obj *Component) RemoveVerticalAlign(side string) *Component {
+	RemoveVerticalAlign(obj.Element, side)
 	return obj
 }
 
 // ----------------------------------------------------------------------------
 
+// Float adds float style to element.
+func Float(elm *dom.Element, side string, vs ...string) *dom.Element {
+	return elm.AddClass(css1("float", side, vs...))
+}
+
 // Float adds float style to component.
-func (obj *Component) Float(side Side, vs ...ViewportSize) *Component {
-	obj.AddClass(css1("float", side, vs...))
+func (obj *Component) Float(side string, vs ...string) *Component {
+	Float(obj.Element, side, vs...)
 	return obj
+}
+
+// RemoveFloat removes float style from element.
+func RemoveFloat(elm *dom.Element, side string, vs ...string) *dom.Element {
+	return elm.RemoveClass(css1("float", side, vs...))
 }
 
 // RemoveFloat removes float style from component.
-func (obj *Component) RemoveFloat(side Side, vs ...ViewportSize) *Component {
-	obj.RemoveClass(css1("float", side, vs...))
+func (obj *Component) RemoveFloat(side string, vs ...string) *Component {
+	RemoveFloat(obj.Element, side, vs...)
 	return obj
 }
 
 // ----------------------------------------------------------------------------
 
+// Color adds foreground, backgroup or gradient colors to element.
+func Color(elm *dom.Element, color ...string) *dom.Element {
+	return elm.AddClass(color...)
+}
+
 // Color adds foreground, backgroup or gradient colors to component.
-func (obj *Component) Color(color ...Color) *Component {
-	obj.AddClass(color...)
+func (obj *Component) Color(color ...string) *Component {
+	Color(obj.Element, color...)
 	return obj
 }
 
+// RemoveColor removes foreground, backgroup or gradient colors from element.
+func RemoveColor(elm *dom.Element, color ...string) *dom.Element {
+	return elm.RemoveClass(color...)
+}
+
 // RemoveColor removes foreground, backgroup or gradient colors from component.
-func (obj *Component) RemoveColor(color ...Color) *Component {
-	obj.RemoveClass(color...)
+func (obj *Component) RemoveColor(color ...string) *Component {
+	RemoveColor(obj.Element, color...)
 	return obj
 }
 
@@ -267,4 +213,44 @@ func (obj *Component) Show() *Component {
 func (obj *Component) Hide() *Component {
 	obj.RemoveClass("visible").AddClass("invisible")
 	return obj
+}
+
+// ----------------------------------------------------------------------------
+
+func flexNoVS(elm *dom.Element, box bool) *dom.Element {
+	if box {
+		elm.AddClass("d-flex")
+	} else {
+		elm.AddClass("d-inline-flex")
+	}
+	return elm
+}
+
+func flex(elm *dom.Element, box bool, vs ...string) *dom.Element {
+	if len(vs) <= 0 {
+		return flexNoVS(elm, box)
+	}
+
+	s := vs[0]
+	if s == VSExtraSmall {
+		return flexNoVS(elm, box)
+	}
+
+	if box {
+		elm.AddClass("d-" + s + "-flex")
+	} else {
+		elm.AddClass("d-" + s + "-inline-flex")
+	}
+
+	return elm
+}
+
+// Flex applies Bootstrap d-flex-*.
+func Flex(elm *dom.Element, vs ...string) *dom.Element {
+	return flex(elm, true, vs...)
+}
+
+// FlexInline applies Bootstrap d-inline-flex-*.
+func FlexInline(elm *dom.Element, vs ...string) *dom.Element {
+	return flex(elm, false, vs...)
 }

@@ -15,7 +15,7 @@ func Attach(id string) *Spinner {
 	return &Spinner{bs.Attach(id)}
 }
 
-func generate(typ string, fgColor bs.Color) *Spinner {
+func generate(typ string, fgColor string) *Spinner {
 	s := &Spinner{bs.ComponentOf(dom.CreateElement("div"))}
 	s.Color(fgColor).
 		AddClass("spinner-"+typ).
@@ -25,12 +25,12 @@ func generate(typ string, fgColor bs.Color) *Spinner {
 }
 
 // Border returns a border spinner.
-func Border(fgColor bs.Color) *Spinner {
+func Border(fgColor string) *Spinner {
 	return generate("border", fgColor)
 }
 
 // Grow returns grow spinner.
-func Grow(fgColor bs.Color) *Spinner {
+func Grow(fgColor string) *Spinner {
 	return generate("grow", fgColor)
 }
 

@@ -14,7 +14,7 @@ type Bar struct {
 }
 
 // NewBar returns a Bootstrap progress bar.
-func NewBar(bgColor bs.Color, min, max, value int) *Bar {
+func NewBar(bgColor string, min, max, value int) *Bar {
 	b := &Bar{bs.ComponentOf(dom.CreateElement("div")), 0, 0, 0}
 	b.SetMax(max).
 		SetMin(min).
@@ -98,7 +98,7 @@ type Progress struct {
 }
 
 // New returns a progress.
-func New(bgColor bs.Color, min, max, value int) *Progress {
+func New(bgColor string, min, max, value int) *Progress {
 	b := NewBar(bgColor, min, max, value)
 	p := &Progress{bs.ComponentOf(dom.CreateElement("div")), nil}
 	p.AddClass("progress")
