@@ -29,6 +29,7 @@ const (
 	// margin, padding
 	SideNegative = "n"
 	SideBlank    = ""
+	SideAll      = ""
 	SideX        = "x"
 	SideY        = "y"
 
@@ -37,6 +38,13 @@ const (
 	SideBaseline   = "baseline"
 	SideTextTop    = "text-top"
 	SideTextBottom = "text-bottom"
+
+	// flex justify content.
+	SideStart   = "start"
+	SideEnd     = "end"
+	SideBetween = "between"
+	SideAround  = "around"
+	SideStretch = "stretch"
 )
 
 // pre-defined bootstrap size values.
@@ -87,6 +95,7 @@ const (
 
 // ----------------------------------------------------------------------------
 
+// Property-Side-ViewportSize.
 func css1(property string, side string, vs ...string) string {
 	if len(vs) > 0 {
 		return fmt.Sprintf("%s-%s-%s", property, side, vs[0])
@@ -94,6 +103,7 @@ func css1(property string, side string, vs ...string) string {
 	return fmt.Sprintf("%s-%s", property, side)
 }
 
+// PropertySide-Size-ViewportSize
 func ccs2(property string, side string, size string, vs ...string) string {
 	if side != SideBlank {
 		side = side[0:1]
@@ -213,44 +223,4 @@ func (obj *Component) Show() *Component {
 func (obj *Component) Hide() *Component {
 	obj.RemoveClass("visible").AddClass("invisible")
 	return obj
-}
-
-// ----------------------------------------------------------------------------
-
-func flexNoVS(elm *dom.Element, box bool) *dom.Element {
-	if box {
-		elm.AddClass("d-flex")
-	} else {
-		elm.AddClass("d-inline-flex")
-	}
-	return elm
-}
-
-func flex(elm *dom.Element, box bool, vs ...string) *dom.Element {
-	if len(vs) <= 0 {
-		return flexNoVS(elm, box)
-	}
-
-	s := vs[0]
-	if s == VSExtraSmall {
-		return flexNoVS(elm, box)
-	}
-
-	if box {
-		elm.AddClass("d-" + s + "-flex")
-	} else {
-		elm.AddClass("d-" + s + "-inline-flex")
-	}
-
-	return elm
-}
-
-// Flex applies Bootstrap d-flex-*.
-func Flex(elm *dom.Element, vs ...string) *dom.Element {
-	return flex(elm, true, vs...)
-}
-
-// FlexInline applies Bootstrap d-inline-flex-*.
-func FlexInline(elm *dom.Element, vs ...string) *dom.Element {
-	return flex(elm, false, vs...)
 }
