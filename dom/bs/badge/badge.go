@@ -30,8 +30,10 @@ func New(style bs.Style, content ...interface{}) *Badge {
 }
 
 // Link returns a Bootstrap badge with link (<a>).
-func Link(style bs.Style, content ...interface{}) *Badge {
-	return generate("a", style, content...)
+func Link(style bs.Style, link string, content ...interface{}) *Badge {
+	b := generate("a", style, content...)
+	b.SetAttr("href", link)
+	return b
 }
 
 // Pill adds pill style.
