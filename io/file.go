@@ -8,19 +8,22 @@ import (
 
 // File represents javascript File. https://developer.mozilla.org/en-US/docs/Web/API/File
 type File struct {
-	ref js.Value
+	*Blob
 }
 
+/*
 // JSValue ...
 func (f *File) JSValue() js.Value {
 	return f.ref
 }
+*/
 
 // FileOf returns a File object.
 func FileOf(x interface{}) *File {
-	return &File{ref: js.ValueOf(x)}
+	return &File{&Blob{ref: js.ValueOf(x)}}
 }
 
+/*
 // Size https://developer.mozilla.org/en-US/docs/Web/API/Blob/size
 func (f *File) Size() int {
 	return f.ref.Get("size").Int()
@@ -30,6 +33,7 @@ func (f *File) Size() int {
 func (f *File) FileType() string {
 	return f.ref.Get("type").String()
 }
+*/
 
 // Name https://developer.mozilla.org/en-US/docs/Web/API/File/name
 func (f *File) Name() string {
