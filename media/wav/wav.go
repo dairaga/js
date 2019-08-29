@@ -74,7 +74,7 @@ func Read(raw []byte) (*Info, error) {
 	var size uint32
 
 	// RIFF
-	if err := binary.Read(reader, binary.BigEndian, id); err != nil {
+	if err := binary.Read(reader, binary.LittleEndian, id); err != nil {
 		return nil, err
 	}
 	info.RIFF.ID = string(id)
@@ -86,12 +86,12 @@ func Read(raw []byte) (*Info, error) {
 	info.FileSize = info.RIFF.Size + 8
 
 	// WAVE
-	if err := binary.Read(reader, binary.BigEndian, id); err != nil {
+	if err := binary.Read(reader, binary.LittleEndian, id); err != nil {
 		return nil, err
 	}
 	info.RIFF.Format = string(id)
 
-	if err := binary.Read(reader, binary.BigEndian, id); err != nil {
+	if err := binary.Read(reader, binary.LittleEndian, id); err != nil {
 		return nil, err
 	}
 
@@ -106,7 +106,7 @@ func Read(raw []byte) (*Info, error) {
 		if _, err := reader.Seek(int64(size), io.SeekCurrent); err != nil {
 			return nil, err
 		}
-		if err := binary.Read(reader, binary.BigEndian, id); err != nil {
+		if err := binary.Read(reader, binary.LittleEndian, id); err != nil {
 			return nil, err
 		}
 	}
@@ -143,13 +143,13 @@ func Read(raw []byte) (*Info, error) {
 
 	if size-16 > 0 {
 		info.Format.Extra = make([]byte, size-16)
-		if err := binary.Read(reader, binary.BigEndian, info.Format.Extra); err != nil {
+		if err := binary.Read(reader, binary.LittleEndian, info.Format.Extra); err != nil {
 			return nil, err
 		}
 	}
 
 	// fllr
-	if err := binary.Read(reader, binary.BigEndian, id); err != nil {
+	if err := binary.Read(reader, binary.LittleEndian, id); err != nil {
 		return nil, err
 	}
 
@@ -162,7 +162,7 @@ func Read(raw []byte) (*Info, error) {
 			return nil, err
 		}
 
-		binary.Read(reader, binary.BigEndian, id)
+		binary.Read(reader, binary.LittleEndian, id)
 	}
 
 	// data
@@ -175,4 +175,82 @@ func Read(raw []byte) (*Info, error) {
 	d := total / float64((info.Format.SampleRate * uint32((info.Format.BitPerSample / 8)) * uint32(info.Format.Channels)))
 	info.Duration = int64(d * 1000)
 	return info, nil
+}
+
+// Write ...
+func Write(sampleRate uint32, bitPerSample, numOfChannels uint16, raw []byte) ([]byte, error) {
+	size := uint32(len(raw))
+	if size <= 0 {
+		return nil, fmt.Errorf("raw data is empty")
+	}
+	writer := bytes.NewBuffer(make([]byte, 0, size+36+8))
+
+	// RIFF
+	if err := binary.Write(writer, binary.LittleEndian, []byte("RIFF")); err != nil {
+		return nil, err
+	}
+
+	// Size
+	if err := binary.Write(writer, binary.LittleEndian, size+36); err != nil {
+		return nil, err
+	}
+
+	// WAVE
+	if err := binary.Write(writer, binary.LittleEndian, []byte{'W', 'A', 'V', 'E'}); err != nil {
+		return nil, err
+	}
+
+	// fmt
+	if err := binary.Write(writer, binary.LittleEndian, []byte{'f', 'm', 't', ' '}); err != nil {
+		return nil, err
+	}
+
+	// fmt size
+	if err := binary.Write(writer, binary.LittleEndian, uint32(16)); err != nil {
+		return nil, err
+	}
+
+	//  fmt format (PCM)
+	if err := binary.Write(writer, binary.LittleEndian, uint16(1)); err != nil {
+		return nil, err
+	}
+
+	// number of channels
+	if err := binary.Write(writer, binary.LittleEndian, numOfChannels); err != nil {
+		return nil, err
+	}
+
+	// sample rate
+	if err := binary.Write(writer, binary.LittleEndian, sampleRate); err != nil {
+		return nil, err
+	}
+
+	// ByteRate
+	byteRate := sampleRate * uint32(bitPerSample) / 8
+	if err := binary.Write(writer, binary.LittleEndian, byteRate); err != nil {
+		return nil, err
+	}
+
+	// block alignment
+	blockAlign := numOfChannels * bitPerSample / 8
+	if err := binary.Write(writer, binary.LittleEndian, blockAlign); err != nil {
+		return nil, err
+	}
+
+	if err := binary.Write(writer, binary.LittleEndian, bitPerSample); err != nil {
+		return nil, err
+	}
+
+	if err := binary.Write(writer, binary.LittleEndian, []byte{'d', 'a', 't', 'a'}); err != nil {
+		return nil, err
+	}
+	if err := binary.Write(writer, binary.LittleEndian, size); err != nil {
+		return nil, err
+	}
+
+	if _, err := writer.Write(raw); err != nil {
+		return nil, err
+	}
+
+	return writer.Bytes(), nil
 }
