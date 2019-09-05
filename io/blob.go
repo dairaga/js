@@ -9,8 +9,7 @@ type Blob struct {
 
 // NewBlob returns a blob object.
 func NewBlob(raw []byte, mineType ...string) *Blob {
-	typedArr := js.TypedArrayOf(raw)
-	defer typedArr.Release()
+	typedArr := js.ToJSUint8Array(raw)
 
 	if len(mineType) > 0 {
 		return &Blob{ref: js.New("Blob", []interface{}{typedArr}, map[string]interface{}{"type": mineType})}

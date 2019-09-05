@@ -19,9 +19,10 @@ func (buf *Buffer) JSValue() js.Value {
 
 // Append adds bytes to buffer.
 func (buf *Buffer) Append(raw []byte) *Buffer {
-	typedArr := js.TypedArrayOf(raw)
+	//typedArr := js.TypedArrayOf(raw)
+	typedArr := js.ToJSUint8Array(raw)
 	buf.ref.Call("appendBuffer", typedArr)
-	typedArr.Release()
+	//typedArr.Release()
 
 	return buf
 }

@@ -218,9 +218,10 @@ func (cli *Client) Do(req *Request) *Client {
 	}
 
 	if len(req.body) > 0 {
-		arr := js.TypedArrayOf(req.body)
+		//arr := js.TypedArrayOf(req.body)
+		arr := js.ToJSUint8Array(req.body)
 		cli.ref.Call("send", arr)
-		arr.Release()
+		//arr.Release()
 	} else {
 		cli.ref.Call("send")
 	}

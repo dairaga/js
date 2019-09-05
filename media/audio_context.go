@@ -35,13 +35,11 @@ func toFloat32Slice(srcFloat32Array js.Value) []float32 {
 	if !size.Truthy() {
 		return nil
 	}
-
 	ret := make([]float32, size.Int())
-	destArray := js.TypedArrayOf(ret)
 
-	destArray.Call("set", srcFloat32Array, 0)
-
-	destArray.Release()
+	for i := 0; i < size.Int(); i++ {
+		ret[i] = float32(srcFloat32Array.Index(i).Float())
+	}
 
 	return ret
 }

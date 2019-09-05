@@ -125,7 +125,7 @@ func (ws *WebSocket) SendText(data string) *WebSocket {
 func (ws *WebSocket) SendBinary(data interface{}) *WebSocket {
 	arr := js.TypedArrayOf(data)
 	ws.ref.JSValue().Call("send", arr)
-	arr.Release()
+	//arr.Release()
 	return ws
 }
 
@@ -136,7 +136,7 @@ var arrayBuffer = js.Global().Get("ArrayBuffer")
 
 // Connect connects to server.
 func Connect(url string) *WebSocket {
-	ws := &WebSocket{ref: js.EventTargetOf(js.Global().Get("WebSocket").New(url))}
+	ws := &WebSocket{ref: js.EventTargetOf(js.New("WebSocket", url))}
 	ws.ref.JSValue().Set("binaryType", "arraybuffer")
 	return ws
 }
