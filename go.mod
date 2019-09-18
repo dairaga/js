@@ -3,7 +3,6 @@ module github.com/dairaga/js
 go 1.12
 
 require (
-	cicd.icu/cyberon/log v1.0.1
 	github.com/agnivade/wasmbrowsertest v0.3.0 // indirect
 	github.com/dairaga/webkit v0.0.0-20190820144517-bd7ab10bed51
 	github.com/golang/protobuf v1.3.2
