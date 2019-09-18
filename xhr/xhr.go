@@ -124,6 +124,16 @@ func (resp *Response) GetHeader(key string) string {
 	return ""
 }
 
+func (resp *Response) String() string {
+	codestr := fmt.Sprintf(`"code": %d`, resp.code)
+	bodystr := fmt.Sprintf(`"body": %s`, string(resp.body))
+	headers := ""
+	for k, v := range resp.headers {
+		headers += fmt.Sprintf(`%q: %q,`, k, v)
+	}
+	return fmt.Sprintf(`{%s, headers: {%s}}, %s`, codestr, headers[:len(headers)-1], bodystr)
+}
+
 //-----------------------------------------------------------------------------
 
 // Client ...
