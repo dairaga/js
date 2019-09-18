@@ -1,3 +1,5 @@
+// +build js,wasm
+
 /*Package alert wraps Bootstrap Alert component */
 package alert
 
@@ -33,6 +35,14 @@ func New(style bs.Style, close bool, content ...interface{}) *Alert {
 	return a
 }
 
+// Show ...
+func Show(parent *bs.Component, style bs.Style, close bool, content ...interface{}) *Alert {
+	a := New(style, close, content...)
+	parent.Prepend(a)
+	a.Alert()
+	return a
+}
+
 // Alert shows alert component.
 func (a *Alert) Alert() *Alert {
 	js.Global().Call("$", a.JSValue()).Call("alert")
@@ -42,5 +52,15 @@ func (a *Alert) Alert() *Alert {
 // Close hide and dispose alert component.
 func (a *Alert) Close() *Alert {
 	js.Global().Call("$", a.JSValue()).Call("alert", "close")
+	return a
+}
+
+// OnClose add on close event.
+func (a *Alert) OnClose(cb func(_this *Alert)) *Alert {
+	f := js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
+		cb(a)
+		return nil
+	})
+	js.Global().Call("$", a.JSValue()).Call("on", "closed.bs.alert", f)
 	return a
 }
