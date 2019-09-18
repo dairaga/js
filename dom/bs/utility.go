@@ -215,12 +215,12 @@ func (obj *Component) RemoveColor(color ...string) *Component {
 
 // Show add .visible and remove .invisible to show component.
 func (obj *Component) Show() *Component {
-	obj.RemoveClass("invisible").AddClass("visible")
+	obj.RemoveClass("invisible", "d-none").AddClass("visible")
 	return obj
 }
 
 // Hide add .invisible and remove .visible to hide component.
 func (obj *Component) Hide() *Component {
-	obj.RemoveClass("visible").AddClass("invisible")
+	obj.RemoveClass("visible").AddClass("invisible", "d-none")
 	return obj
 }
