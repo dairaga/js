@@ -172,10 +172,10 @@ func (e *Element) TagName() string {
 func (e *Element) Val() string {
 
 	switch e.TagName() {
-	case "input", "select":
+	case "input", "select", "textarea":
 		return e.JSValue().Get("value").String()
-	case "textarea":
-		return e.JSValue().Get("innerText").String()
+		//case "textarea":
+		///	return e.JSValue().Get("innerText").String()
 	}
 	return gojs.Undefined().String()
 }
@@ -183,10 +183,10 @@ func (e *Element) Val() string {
 // SetVal set value to input, select, or textarea element.
 func (e *Element) SetVal(val interface{}) *Element {
 	switch e.TagName() {
-	case "input", "select":
+	case "input", "select", "textarea":
 		e.JSValue().Set("value", val)
-	case "textarea":
-		e.JSValue().Set("innerText", val)
+		//case "textarea":
+		//	e.JSValue().Set("innerText", val)
 	}
 	return e
 }
