@@ -213,14 +213,30 @@ func (obj *Component) RemoveColor(color ...string) *Component {
 
 // ----------------------------------------------------------------------------
 
+// OnShow add callback function when showing.
+func (obj *Component) OnShow(cb func(*Component)) {
+	obj.show = cb
+}
+
+// OnHide add callback function when hiding.
+func (obj *Component) OnHide(cb func(*Component)) {
+	obj.hide = cb
+}
+
 // Show add .visible and remove .invisible to show component.
 func (obj *Component) Show() *Component {
 	obj.RemoveClass("invisible", "d-none").AddClass("visible")
+	if obj.show != nil {
+		obj.show(obj)
+	}
 	return obj
 }
 
 // Hide add .invisible and remove .visible to hide component.
 func (obj *Component) Hide() *Component {
 	obj.RemoveClass("visible").AddClass("invisible", "d-none")
+	if obj.hide != nil {
+		obj.hide(obj)
+	}
 	return obj
 }
