@@ -51,17 +51,17 @@ func (m Modal) SetHTML(html string) Modal {
 
 // Show ...
 func (m Modal) Show() {
-	js.Call("$", m.Attr("id")).Call("modal", "show")
+	js.Call("$", "#"+m.Attr("id")).Call("modal", "show")
 }
 
 // Hide ...
 func (m Modal) Hide() {
-	js.Call("$", m.Attr("id")).Call("modal", "hide")
+	js.Call("$", "#"+m.Attr("id")).Call("modal", "hide")
 }
 
 // Dispose ...
 func (m Modal) Dispose() {
-	js.Call("$", m.Attr("id")).Call("modal", "dispose")
+	js.Call("$", "#"+m.Attr("id")).Call("modal", "dispose")
 }
 
 // ----------------------------------------------------------------------------
