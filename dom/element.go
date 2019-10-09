@@ -225,6 +225,13 @@ func (e *Element) Clone() *Element {
 	return ElementOf(e.JSValue().Call("cloneNode", true))
 }
 
+// Free disposes this element.
+func (e *Element) Free() {
+	if e != nil {
+		e.Prop("parentNode").Call("removeChild", e)
+	}
+}
+
 // ----------------------------------------------------------------------------
 
 // On add listener for some event.

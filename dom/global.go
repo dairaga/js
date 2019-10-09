@@ -22,7 +22,8 @@ func AppendChild(child interface{}) {
 
 // RemoveChild removes child form document.
 func RemoveChild(child *Element) {
-	document.Call("removeChild", child)
+	//document.Call("removeChild", child)
+	document.Prop("body").Call("removeChild", child)
 }
 
 // S returns one element in document with query selector condition.
