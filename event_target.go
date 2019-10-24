@@ -27,6 +27,9 @@ func (e *EventTarget) Release() {
 
 // Register ...
 func (e *EventTarget) Register(event string, cb Func) *EventTarget {
+	if e.cb == nil {
+		e.cb = make(map[string]Func)
+	}
 	old, ok := e.cb[event]
 	if ok && old.Truthy() {
 		old.Release()
