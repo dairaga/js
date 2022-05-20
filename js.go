@@ -8,6 +8,17 @@ import (
 	"github.com/dairaga/js/v2/builtin"
 )
 
+const (
+	TypeUndefined = js.TypeUndefined
+	TypeNull      = js.TypeNull
+	TypeBoolean   = js.TypeBoolean
+	TypeNumber    = js.TypeNumber
+	TypeString    = js.TypeString
+	TypeSymbol    = js.TypeSymbol
+	TypeObject    = js.TypeObject
+	TypeFunction  = js.TypeFunction
+)
+
 type Value = js.Value
 type Func = js.Func
 type Type = js.Func

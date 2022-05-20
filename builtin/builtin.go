@@ -35,4 +35,9 @@ const (
 	Float64Array      = Constructor("Float64Array")
 	BigInt64Array     = Constructor("BigInt64Array")
 	BigUint64Array    = Constructor("BigUint64Array")
+
+	URL          = Constructor("URL")
+	XHTTPRequest = Constructor("XMLHttpRequest")
+
+	Blob = Constructor("Blob")
 )

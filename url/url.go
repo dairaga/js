@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/dairaga/js/v2"
+	"github.com/dairaga/js/v2/builtin"
 )
 
 type URL js.Value
@@ -207,7 +208,7 @@ func (u URL) JSON() string {
 // -----------------------------------------------------------------------------
 
 func New(url string) URL {
-	return URL(constructor.New(url))
+	return URL(builtin.URL.New(url))
 }
 
 // TODO: createObjectURL, revokeObjectURL()
