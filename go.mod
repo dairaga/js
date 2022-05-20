@@ -1,11 +1,3 @@
-module github.com/dairaga/js
+module github.com/dairaga/js/v2
 
-go 1.12
-
-require (
-	github.com/agnivade/wasmbrowsertest v0.3.0 // indirect
-	github.com/dairaga/webkit v0.0.0-20190820144517-bd7ab10bed51
-	github.com/golang/protobuf v1.3.2
-	github.com/shurcooL/go v0.0.0-20190704215121-7189cc372560 // indirect
-	github.com/shurcooL/go-goon v0.0.0-20170922171312-37c2f522c041 // indirect
-)
+go 1.18

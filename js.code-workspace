@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"go.testEnvVars": {
+			"GOOS": "js",
+			"GOARCH": "wasm"
+		},
+		"go.toolsEnvVars": {
+			"GOOS": "js",
+			"GOARCH": "wasm"
+		}
+	}
+}
