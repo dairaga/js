@@ -2,7 +2,11 @@
 
 package js
 
-import "syscall/js"
+import (
+	"syscall/js"
+
+	"github.com/dairaga/js/v2/builtin"
+)
 
 type Value = js.Value
 type Func = js.Func
@@ -15,15 +19,9 @@ var global = js.Global()
 
 // -----------------------------------------------------------------------------
 
-type Wrapper interface {
-	JSValue() Value
-}
-
-// -----------------------------------------------------------------------------
-
 func ValueOf(x any) Value {
 	switch v := x.(type) {
-	case Wrapper:
+	case builtin.Wrapper:
 		return v.JSValue()
 	case Value:
 		return v
