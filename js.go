@@ -59,3 +59,9 @@ func ParseFloat(val string, radix int) (float64, bool) {
 
 	return x.Float(), true
 }
+
+// -----------------------------------------------------------------------------
+
+func Global() Value {
+	return global
+}
