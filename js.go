@@ -33,3 +33,29 @@ func ValueOf(x any) Value {
 }
 
 // -----------------------------------------------------------------------------
+
+func FuncOf(fn JSFunc) Func {
+	return js.FuncOf(fn)
+}
+
+// -----------------------------------------------------------------------------
+
+func ParseInt(val string, radix int) (int, bool) {
+	x := global.Call("parseInt", val, radix)
+	if x.IsNaN() {
+		return 0, false
+	}
+
+	return x.Int(), true
+}
+
+// -----------------------------------------------------------------------------
+
+func ParseFloat(val string, radix int) (float64, bool) {
+	x := global.Call("parseFloat", val, radix)
+	if x.IsNaN() {
+		return 0.0, false
+	}
+
+	return x.Float(), true
+}
