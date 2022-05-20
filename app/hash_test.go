@@ -6,10 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dairaga/js/v2"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/dairaga/js/v2/url"
 )
 
 type serv struct {
@@ -31,25 +28,23 @@ func TestHash(t *testing.T) {
 		ch: make(chan struct{}, 1),
 	}
 
-	curURL := url.New(js.Global().Get("location").Get("href").String())
+	//curURL := url.New(js.Global().Get("location").Get("href").String())
 	ServHash(serv)
 	<-serv.ch
 	assert.Equal(t, "", serv.a)
 	assert.Equal(t, "", serv.b)
 
-	curURL.SetHash("#a100")
-	js.Global().Get("location").Set("href", curURL.String())
+	SetHash("#a100")
 	<-serv.ch
 	assert.Equal(t, "", serv.a)
 	assert.Equal(t, "#a100", serv.b)
 
-	curURL.SetHash("#b100")
-	js.Global().Get("location").Set("href", curURL.String())
+	SetHash("#b100")
 	<-serv.ch
 	assert.Equal(t, "#a100", serv.a)
 	assert.Equal(t, "#b100", serv.b)
 
-	js.Global().Get("location").Set("href", curURL.String())
+	SetHash("#b100")
 	select {
 	case <-time.After(3 * time.Second):
 	case <-serv.ch:
