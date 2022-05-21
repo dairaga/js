@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/dairaga/js/v2/url"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,7 +17,7 @@ type serv struct {
 	b  string
 }
 
-func (s *serv) ServeHash(oldHash, newHash string) {
+func (s *serv) ServeHash(curURL url.URL, oldHash, newHash string) {
 	s.a = oldHash
 	s.b = newHash
 	s.ch <- struct{}{}

@@ -39,5 +39,6 @@ const (
 	URL          = Constructor("URL")
 	XHTTPRequest = Constructor("XMLHttpRequest")
 
-	Blob = Constructor("Blob")
+	FormData = Constructor("FormData")
+	Blob     = Constructor("Blob")
 )
