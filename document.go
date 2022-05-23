@@ -2,10 +2,6 @@
 
 package js
 
-import (
-	"syscall/js"
-)
-
 type Appendable interface {
 	Wrapper
 	Ref() Value
@@ -13,7 +9,7 @@ type Appendable interface {
 
 // -----------------------------------------------------------------------------
 
-var document = js.Global().Get("document")
+var document = global.Get("document")
 var body = document.Get("body")
 
 // -----------------------------------------------------------------------------
