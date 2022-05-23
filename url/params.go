@@ -13,19 +13,19 @@ func (p Params) JSValue() js.Value {
 // -----------------------------------------------------------------------------
 
 func (p Params) String() string {
-	return p.JSValue().Call("toString").String()
+	return js.Value(p).Call("toString").String()
 }
 
 // -----------------------------------------------------------------------------
 
 func (p Params) Has(name string) bool {
-	return p.JSValue().Call("has", name).Bool()
+	return js.Value(p).Call("has", name).Bool()
 }
 
 // -----------------------------------------------------------------------------
 
 func (p Params) Get(name string) (val string, ok bool) {
-	x := p.JSValue().Call("get", name)
+	x := js.Value(p).Call("get", name)
 	if ok = !x.IsNull(); ok {
 		val = x.String()
 	}
@@ -35,7 +35,7 @@ func (p Params) Get(name string) (val string, ok bool) {
 // -----------------------------------------------------------------------------
 
 func (p Params) GetAll(name string) []string {
-	x := p.JSValue().Call("getAll", name)
+	x := js.Value(p).Call("getAll", name)
 	if !x.Truthy() {
 		return []string{}
 	}
@@ -51,19 +51,19 @@ func (p Params) GetAll(name string) []string {
 // -----------------------------------------------------------------------------
 
 func (p Params) Set(name, val string) {
-	p.JSValue().Call("set", name, val)
+	js.Value(p).Call("set", name, val)
 }
 
 // -----------------------------------------------------------------------------
 
 func (p Params) Append(name, val string) {
-	p.JSValue().Call("append", name, val)
+	js.Value(p).Call("append", name, val)
 }
 
 // -----------------------------------------------------------------------------
 
 func (p Params) Delete(name string) {
-	p.JSValue().Call("delete", name)
+	js.Value(p).Call("delete", name)
 }
 
 // -----------------------------------------------------------------------------
@@ -74,6 +74,6 @@ func (p Params) Foreach(fn func(key, val string)) {
 		return nil
 	})
 
-	p.JSValue().Call("forEach", cb)
+	js.Value(p).Call("forEach", cb)
 	cb.Release()
 }

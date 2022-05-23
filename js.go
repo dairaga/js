@@ -23,6 +23,8 @@ func ValueOf(x any) Value {
 	switch v := x.(type) {
 	case Wrapper:
 		return v.JSValue()
+	case Appendable:
+		return v.Ref()
 	case Value:
 		return v
 	default:
@@ -55,4 +57,14 @@ func Uint8Array(src []byte) Value {
 	dst := builtin.Uint8Array.New(len(src))
 	js.CopyBytesToJS(dst, src)
 	return dst
+}
+
+// -----------------------------------------------------------------------------
+
+func ArrayBufferToBytes(src Value) []byte {
+	if !builtin.IsArrayBuffer(src) {
+		panic("src is not an ArrayBuffer")
+	}
+
+	return GoBytes(builtin.Uint8Array.New(src))
 }

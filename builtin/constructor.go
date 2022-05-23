@@ -35,13 +35,17 @@ const (
 	BigInt64Array     = Constructor("BigInt64Array")
 	BigUint64Array    = Constructor("BigUint64Array")
 
-	URL          = Constructor("URL")
-	XHTTPRequest = Constructor("XMLHttpRequest")
+	URL            = Constructor("URL")
+	XMLHttpRequest = Constructor("XMLHttpRequest")
 
 	FormData = Constructor("FormData")
 	Blob     = Constructor("Blob")
 
 	WebSocket = Constructor("WebSocket")
+
+	Element = Constructor("Element")
+
+	HTMLInputElement = Constructor("HTMLInputElement")
 )
 
 // -----------------------------------------------------------------------------
@@ -76,4 +80,16 @@ func IsArrayBufferView(v js.Value) bool {
 
 func IsUint8Array(v js.Value) bool {
 	return v.InstanceOf(Uint8Array.JSValue()) || v.InstanceOf(Uint8ClampedArray.JSValue())
+}
+
+// -----------------------------------------------------------------------------
+
+func IsElement(v js.Value) bool {
+	return v.InstanceOf(Element.JSValue())
+}
+
+// -----------------------------------------------------------------------------
+
+func IsInputElement(v js.Value) bool {
+	return v.InstanceOf(HTMLInputElement.JSValue())
 }
