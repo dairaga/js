@@ -56,6 +56,7 @@ type Element interface {
 
 	Value() string
 	SetValue(val string) Element
+	Files() []File
 
 	Add(clz string, at ...string) Element
 	Remove(clz string, at ...string) Element
@@ -220,6 +221,20 @@ func (e element) SetValue(val string) Element {
 		Value(e).Set("value", val)
 	}
 	return e
+}
+
+// -----------------------------------------------------------------------------
+
+func (e element) Files() []File {
+	if builtin.IsInputElement(Value(e)) && "file" == e.Attr("type") {
+		lst := Value(e).Get("files")
+		size := lst.Length()
+		ret := make([]File, size)
+		for i := 0; i < size; i++ {
+			ret[i] = FileOf(lst.Index(i))
+		}
+	}
+	return []File{}
 }
 
 // -----------------------------------------------------------------------------

@@ -1,49 +1,48 @@
 //go:build js && wasm
 
-package io
+package js
 
 import (
 	"fmt"
 	"time"
 
-	"github.com/dairaga/js/v2"
 	"github.com/dairaga/js/v2/builtin"
 )
 
-type File js.Value
+type File Value
 
-func (f File) JSValue() js.Value {
-	return js.Value(f)
+func (f File) JSValue() Value {
+	return Value(f)
 }
 
 // -----------------------------------------------------------------------------
 
 func (f File) Name() string {
-	return js.Value(f).Get("name").String()
+	return Value(f).Get("name").String()
 }
 
 // -----------------------------------------------------------------------------
 
 func (f File) Type() string {
-	return js.Value(f).Get("type").String()
+	return Value(f).Get("type").String()
 }
 
 // -----------------------------------------------------------------------------
 
 func (f File) LastModified() time.Time {
-	m := int64(js.Value(f).Get("lastModified").Int())
+	m := int64(Value(f).Get("lastModified").Int())
 	return time.Unix(0, m*int64(time.Millisecond))
 }
 
 // -----------------------------------------------------------------------------
 
 func (f File) WebkitRelativePath() string {
-	return js.Value(f).Get("webkitRelativePath").String()
+	return Value(f).Get("webkitRelativePath").String()
 }
 
 // -----------------------------------------------------------------------------
 
-func fileSupported(v js.Value) bool {
+func fileSupported(v Value) bool {
 	return v.Truthy() && (builtin.IsArrayBuffer(v) ||
 		builtin.IsArrayBufferView(v) ||
 		builtin.IsBlob(v))
@@ -65,15 +64,15 @@ func FileOf(x any, opts ...string) File {
 		opt["type"] = opts[1]
 	}
 
-	val := js.Null()
+	val := Null()
 	switch v := x.(type) {
 	case string:
 		return File(builtin.File.New([]any{v}, name, opt))
 	case []byte:
-		return File(builtin.File.New([]any{js.Uint8Array(v)}, name, opt))
-	case js.Wrapper:
+		return File(builtin.File.New([]any{Uint8Array(v)}, name, opt))
+	case Wrapper:
 		val = v.JSValue()
-	case js.Value:
+	case Value:
 		val = v
 	}
 
