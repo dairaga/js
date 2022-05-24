@@ -1,6 +1,6 @@
 //go:build js && wasm
 
-package app
+package mvvm
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ var triggers map[string][]reflect.Value
 
 // -----------------------------------------------------------------------------
 
-func initMVVM() {
+func InitMVVM() {
 	models = make(map[string]reflect.Value)
 	triggers = make(map[string][]reflect.Value)
 }
@@ -54,4 +54,14 @@ func Trigger(sender, name string) {
 			callbacks[i].Call(args)
 		}
 	}
+}
+
+// -----------------------------------------------------------------------------
+
+func Watch(name string, fn any) {
+	val := reflect.ValueOf(fn)
+	if reflect.Func != val.Kind() {
+		panic(fmt.Sprintf("x must be a function, but %v", val.Kind()))
+	}
+	triggers[name] = append(triggers[name], val)
 }

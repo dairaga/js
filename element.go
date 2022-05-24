@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/dairaga/js/v2/builtin"
+	"github.com/dairaga/js/v2/mvvm"
 )
 
 type HTML string
@@ -72,6 +73,8 @@ type Element interface {
 
 	Empty() Element
 	Relese()
+
+	Trigger(name string, at ...string)
 }
 
 // -----------------------------------------------------------------------------
@@ -109,7 +112,9 @@ func (e element) Tattoo() string {
 
 func (e element) at(a ...string) Value {
 	if len(a) > 0 {
-		return Value(e).Call("querySelector", a[0])
+		v := Value(e).Call("querySelector", a[0])
+		element(v).tattoo()
+		return v
 	}
 	return Value(e)
 }
@@ -313,6 +318,13 @@ func (e element) Empty() Element {
 
 func (e element) Relese() {
 	Value(e).Call("remove")
+}
+
+// -----------------------------------------------------------------------------
+
+func (e element) Trigger(name string, at ...string) {
+	v := e.at(at...)
+	mvvm.Trigger(v.Call("getAttribute", _tattoo).String(), name)
 }
 
 // -----------------------------------------------------------------------------

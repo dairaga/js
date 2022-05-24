@@ -7,6 +7,9 @@ import (
 	"fmt"
 	"reflect"
 	"time"
+
+	"github.com/dairaga/js/v2/app"
+	"github.com/dairaga/js/v2/url"
 )
 
 type MyData struct {
@@ -14,6 +17,22 @@ type MyData struct {
 	Name    string    `json:"name"`
 	Created time.Time `json:"created"`
 }
+
+// -----------------------------------------------------------------------------
+
+type serv struct {
+	cur string
+	old string
+}
+
+// -----------------------------------------------------------------------------
+
+func (s *serv) Serve(curURL url.URL, curHash, oldHash string) {
+	s.old = oldHash
+	s.cur = curHash
+}
+
+// -----------------------------------------------------------------------------
 
 func main() {
 	fmt.Println("hello world")
@@ -32,4 +51,7 @@ func main() {
 	}
 
 	_ = reflect.ValueOf(100)
+
+	app.Init(&serv{})
+	app.Start()
 }

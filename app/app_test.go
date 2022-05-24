@@ -48,7 +48,7 @@ func TestHash(t *testing.T) {
 
 	ChangeHash("#b100")
 	select {
-	case <-time.After(3 * time.Second):
+	case <-time.After(1 * time.Second):
 	case <-serv.ch:
 	}
 	// the hashchange event is not triggered.
