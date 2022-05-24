@@ -28,6 +28,10 @@ const (
 	PATCH  = "PATCH"
 )
 
+var (
+	defaultWithCredentials = true
+)
+
 // -----------------------------------------------------------------------------
 
 type HandleFunc = func(*Response, error)
@@ -151,7 +155,7 @@ func New(fn HandleFunc, timeout ...time.Duration) *Client {
 	if len(timeout) > 0 {
 		cli.ref.Set("timeout", timeout[0].Milliseconds())
 	}
-	cli.ref.Set("withCredentials", false)
+	cli.ref.Set("withCredentials", defaultWithCredentials)
 
 	cli.listener.Add(cli.ref, "timeout", func(js.Value, []js.Value) any {
 		cli.lastErr = xhr.ErrTimeout

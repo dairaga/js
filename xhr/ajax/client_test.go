@@ -34,6 +34,7 @@ const apiURL = `http://127.0.0.1:8080/api/v1`
 
 func TestMain(m *testing.M) {
 	headless := os.Getenv("WASM_HEADLESS")
+	defaultWithCredentials = false
 	exitVal := m.Run()
 
 	if headless == "off" {
