@@ -52,7 +52,6 @@ func (a *app) changeHash(new string) {
 // -----------------------------------------------------------------------------
 
 func Init(h Handler) {
-	initMVVM()
 	_app = &app{
 		window:     js.Window(),
 		currentURL: url.New(js.Window().Get("location").Get("href").String()),
