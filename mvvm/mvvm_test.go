@@ -17,6 +17,11 @@ func TestMVVM(t *testing.T) {
 	Add("a", &a)
 	Add("b", &b)
 
+	assert.Panics(t, func() { Add("xa", a) })
+	assert.Panics(t, func() { Add("xa", b) })
+	assert.Panics(t, func() { Add("a", b) })
+	assert.Panics(t, func() { Add("b", a) })
+
 	triggerA := false
 	triggerB := false
 	Watch("a", func(sender string, v bool) {

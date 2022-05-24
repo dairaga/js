@@ -51,7 +51,6 @@ func TestMain(m *testing.M) {
 func TestGet(t *testing.T) {
 	ch := make(chan struct{})
 	testURL := apiURL + "/categories"
-	t.Log(testURL)
 	cli, err := Get(testURL, func(resp *Response, err error) {
 		assert.Nil(t, err)
 		assert.Equal(t, `application/json; charset=UTF-8`, resp.Header("Content-Type"))
@@ -77,4 +76,43 @@ func TestGet(t *testing.T) {
 	assert.True(t, cli.released)
 	assert.Equal(t, xhr.ErrReleased, cli.Do(nil))
 
+}
+
+// -----------------------------------------------------------------------------
+
+func TestPost(t *testing.T) {
+	ch := make(chan struct{})
+	testURL := apiURL + "/categories"
+
+	testData := &category{
+		ID:     0,
+		Name:   "PC",
+		Parent: 1,
+	}
+
+	cli, err := Post(testURL, func(resp *Response, err error) {
+		assert.Nil(t, err)
+		assert.Equal(t, `application/json; charset=UTF-8`, resp.Header("Content-Type"))
+
+		t.Log(string(resp.Body()))
+		data := new(respData)
+		err = json.Unmarshal(resp.Body(), data)
+		assert.Nil(t, err)
+
+		assert.Equal(t, http.StatusOK, data.Code)
+
+		cate := category{}
+		err = json.Unmarshal(data.Data, &cate)
+		assert.Nil(t, err)
+		assert.Equal(t, uint64(2), cate.ID)
+		assert.Equal(t, testData.Name, cate.Name)
+		assert.Equal(t, testData.Parent, cate.Parent)
+
+		ch <- struct{}{}
+	}, testData)
+	assert.Nil(t, err)
+	<-ch
+	cli.Release()
+	assert.True(t, cli.released)
+	assert.Equal(t, xhr.ErrReleased, cli.Do(nil))
 }

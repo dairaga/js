@@ -3,8 +3,6 @@
 package ajax
 
 import (
-	"encoding/json"
-
 	"github.com/dairaga/js/v2"
 	"github.com/dairaga/js/v2/builtin"
 	"github.com/dairaga/js/v2/xhr"
@@ -50,24 +48,8 @@ func (cli *Client) JSValue() js.Value {
 // -----------------------------------------------------------------------------
 
 func (cli *Client) do(method string, url string, x ...any) (err error) {
-
-	var data []byte
-
-	switch len(x) {
-	case 0:
-		data = nil
-	case 1:
-		data, err = json.Marshal(x[0])
-	default:
-		data, err = json.Marshal(x)
-	}
-
-	if err != nil {
-		return
-	}
-
 	var req *Request
-	req, err = NewRequest(method, url, data)
+	req, err = NewRequest(method, url, x...)
 	if err != nil {
 		return
 	}
@@ -193,7 +175,7 @@ func New(fn HandleFunc, timeout ...int64) *Client {
 
 func do(method, url string, fn HandleFunc, x ...any) (cli *Client, err error) {
 	cli = New(fn)
-	err = cli.do(method, url)
+	err = cli.do(method, url, x...)
 	return
 }
 

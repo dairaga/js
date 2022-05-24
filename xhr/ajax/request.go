@@ -62,31 +62,38 @@ func (req *Request) SetHeader(key, value string) *Request {
 
 // -----------------------------------------------------------------------------
 
-func guess(x any) (mime string, data []byte, err error) {
-	if x != nil {
-		switch v := x.(type) {
+func guess(x ...any) (mime string, data []byte, err error) {
+
+	switch len(x) {
+	case 0:
+		data = nil
+	case 1:
+		switch v := x[0].(type) {
 		case string:
-			mime = MimeText
 			data = []byte(v)
+			return
 		case []byte:
 			mime = MimeStream
-			data = v
+			data = []byte(v)
+			return
 		default:
-			data, err = json.Marshal(x)
-			if err == nil {
-				mime = MimeJSON
-			}
+			data, err = json.Marshal(v)
 		}
+	default:
+		data, err = json.Marshal(x)
 	}
 
+	if err == nil {
+		mime = MimeJSON
+	}
 	return
 }
 
 // -----------------------------------------------------------------------------
 
 // NewRequest returns a request.
-func NewRequest(method, url string, x any) (req *Request, err error) {
-	mime, data, err := guess(x)
+func NewRequest(method, url string, x ...any) (req *Request, err error) {
+	mime, data, err := guess(x...)
 	if err != nil {
 		return nil, err
 	}
