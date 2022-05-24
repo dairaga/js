@@ -52,6 +52,7 @@ func main() {
 
 	_ = reflect.ValueOf(100)
 
+	time.Now()
 	app.Init(&serv{})
 	app.Start()
 }
