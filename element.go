@@ -24,7 +24,7 @@ func (p Plain) JSValue() Value {
 
 // -----------------------------------------------------------------------------
 
-func (p Plain) Value() Value {
+func (p Plain) Ref() Value {
 	return p.JSValue()
 }
 
@@ -32,6 +32,8 @@ func (p Plain) Value() Value {
 
 type Element interface {
 	Appendable
+
+	Tattoo() string
 
 	Query(selector string) Element
 	QueryAll(selector string) Elements
@@ -67,6 +69,9 @@ type Element interface {
 	Click(at ...string) Element
 	Foucs(at ...string) Element
 	Blur(at ...string) Element
+
+	Empty() Element
+	Relese()
 }
 
 // -----------------------------------------------------------------------------
@@ -96,6 +101,12 @@ func (e element) tattoo() element {
 
 // -----------------------------------------------------------------------------
 
+func (e element) Tattoo() string {
+	return e.Attr(_tattoo)
+}
+
+// -----------------------------------------------------------------------------
+
 func (e element) at(a ...string) Value {
 	if len(a) > 0 {
 		return Value(e).Call("querySelector", a[0])
@@ -106,13 +117,13 @@ func (e element) at(a ...string) Value {
 // -----------------------------------------------------------------------------
 
 func (e element) Query(selector string) Element {
-	return query(Value(e), selector)
+	return elementOf(query(Value(e), selector))
 }
 
 // -----------------------------------------------------------------------------
 
 func (e element) QueryAll(selector string) Elements {
-	return queryAll(Value(e), selector)
+	return ElementsOf(queryAll(Value(e), selector))
 }
 
 // -----------------------------------------------------------------------------
@@ -288,6 +299,24 @@ func (e element) Blur(at ...string) Element {
 
 // -----------------------------------------------------------------------------
 
+func (e element) Empty() Element {
+	children := Value(e).Get("children")
+	size := children.Length()
+
+	for i := 0; i < size; i++ {
+		children.Index(i).Call("remove")
+	}
+	return e
+}
+
+// -----------------------------------------------------------------------------
+
+func (e element) Relese() {
+	Value(e).Call("remove")
+}
+
+// -----------------------------------------------------------------------------
+
 func elementOf(v Value) element {
 	if builtin.IsElement(v) {
 		return element(v).tattoo()
@@ -299,12 +328,16 @@ func elementOf(v Value) element {
 
 func ElementOf(x any) Element {
 	switch v := x.(type) {
+	case HTML:
+		tmpl := createElement("template")
+		tmpl.Set("innerHTML", v.JSValue())
+		return elementOf(fragment(tmpl.Get("content")))
+	case string:
+		return Query(v)
+	case Wrapper:
+		return elementOf(v.JSValue())
 	case Value:
 		return elementOf(v)
-	case Wrapper:
-		return ElementOf(v.JSValue())
-	case HTML:
-		// TODO: DocumentFragment
 	}
-	return nil
+	panic(fmt.Sprintf("unsupport type %T", x))
 }

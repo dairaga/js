@@ -152,7 +152,7 @@ func ElementsOf(v Value) (ret Elements) {
 	ret = make([]Element, size)
 
 	for i := 0; i < size; i++ {
-		ret[i] = ElementOf(v.Index(i))
+		ret[i] = elementOf(v.Index(i))
 	}
 
 	return

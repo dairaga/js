@@ -72,7 +72,7 @@ func (cli *Client) do(method string, url string, x ...any) (err error) {
 		return
 	}
 
-	cli.Do(req)
+	err = cli.Do(req)
 	return
 }
 
@@ -121,6 +121,36 @@ func (cli *Client) Do(req *Request) error {
 
 // -----------------------------------------------------------------------------
 
+func (cli *Client) Get(url string, x ...any) error {
+	return cli.do(GET, url, x...)
+}
+
+// -----------------------------------------------------------------------------
+
+func (cli *Client) Post(url string, x ...any) error {
+	return cli.do(POST, url, x...)
+}
+
+// -----------------------------------------------------------------------------
+
+func (cli *Client) Put(url string, x ...any) error {
+	return cli.do(PUT, url, x...)
+}
+
+// -----------------------------------------------------------------------------
+
+func (cli *Client) Delete(url string, x ...any) error {
+	return cli.do(DELETE, url, x...)
+}
+
+// -----------------------------------------------------------------------------
+
+func (cli *Client) Patch(url string, x ...any) error {
+	return cli.do(PATCH, url, x...)
+}
+
+// -----------------------------------------------------------------------------
+
 func New(fn HandleFunc, timeout ...int64) *Client {
 	cli := new(Client)
 	cli.ref = builtin.XMLHttpRequest.New()
@@ -148,10 +178,51 @@ func New(fn HandleFunc, timeout ...int64) *Client {
 	})
 
 	cli.listener.Add(cli.ref, "loadend", func(js.Value, []js.Value) any {
-		resp := fill(cli.ref)
+		var resp *Response
+		if cli.lastErr == nil {
+			resp = fill(cli.ref)
+		}
 		fn(resp, cli.lastErr)
 		return nil
 	})
 
 	return cli
+}
+
+// -----------------------------------------------------------------------------
+
+func do(method, url string, fn HandleFunc, x ...any) (cli *Client, err error) {
+	cli = New(fn)
+	err = cli.do(method, url)
+	return
+}
+
+// -----------------------------------------------------------------------------
+
+func Get(url string, fn HandleFunc, x ...any) (cli *Client, err error) {
+	return do(GET, url, fn, x...)
+}
+
+// -----------------------------------------------------------------------------
+
+func Post(url string, fn HandleFunc, x ...any) (cli *Client, err error) {
+	return do(POST, url, fn, x...)
+}
+
+// -----------------------------------------------------------------------------
+
+func Put(url string, fn HandleFunc, x ...any) (cli *Client, err error) {
+	return do(PUT, url, fn, x...)
+}
+
+// -----------------------------------------------------------------------------
+
+func Delete(url string, fn HandleFunc, x ...any) (cli *Client, err error) {
+	return do(DELETE, url, fn, x...)
+}
+
+// -----------------------------------------------------------------------------
+
+func Patch(url string, fn HandleFunc, x ...any) (cli *Client, err error) {
+	return do(PATCH, url, fn, x...)
 }
