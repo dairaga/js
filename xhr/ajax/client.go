@@ -15,11 +15,11 @@ const (
 	MimeJSON   string = "application/json; charset=utf8"
 	MimeStream string = "application/octet-stream"
 
-	Unsent          = 0
-	Opened          = 1
-	HeadersReceived = 2
-	Loading         = 3
-	Done            = 4
+	//Unsent          = 0
+	//Opened          = 1
+	//HeadersReceived = 2
+	//Loading         = 3
+	//Done            = 4
 
 	GET    = "GET"
 	POST   = "POST"

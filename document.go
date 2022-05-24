@@ -11,11 +11,6 @@ type Appendable interface {
 
 // -----------------------------------------------------------------------------
 
-var document = global.Get("document")
-var body = document.Get("body")
-
-// -----------------------------------------------------------------------------
-
 func Query(selector string) Element {
 	return elementOf(query(document, selector))
 }

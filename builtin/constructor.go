@@ -39,13 +39,15 @@ const (
 	XMLHttpRequest = Constructor("XMLHttpRequest")
 
 	FormData = Constructor("FormData")
-	Blob     = Constructor("Blob")
 
 	WebSocket = Constructor("WebSocket")
 
 	Element = Constructor("Element")
 
 	HTMLInputElement = Constructor("HTMLInputElement")
+
+	Blob = Constructor("Blob")
+	File = Constructor("File")
 )
 
 // -----------------------------------------------------------------------------
@@ -92,4 +94,16 @@ func IsElement(v js.Value) bool {
 
 func IsInputElement(v js.Value) bool {
 	return v.InstanceOf(HTMLInputElement.JSValue())
+}
+
+// -----------------------------------------------------------------------------
+
+func IsFile(v js.Value) bool {
+	return v.InstanceOf(File.JSValue())
+}
+
+// -----------------------------------------------------------------------------
+
+func IsBlob(v js.Value) bool {
+	return v.InstanceOf(Blob.JSValue())
 }

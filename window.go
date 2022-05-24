@@ -7,8 +7,6 @@ import (
 	"syscall/js"
 )
 
-var global = js.Global()
-
 func Window() js.Value {
 	return global
 }

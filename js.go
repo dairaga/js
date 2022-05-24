@@ -8,14 +8,24 @@ import (
 	"github.com/dairaga/js/v2/builtin"
 )
 
-type Value = js.Value
-type Type = js.Type
-type Func = js.Func
-type JSFunc = func(Value, []Value) any
+type (
+	Value  = js.Value
+	Type   = js.Type
+	Func   = js.Func
+	JSFunc = func(Value, []Value) any
+)
 
 type Wrapper interface {
 	JSValue() Value
 }
+
+var (
+	global    = js.Global()
+	document  = global.Get("document")
+	body      = document.Get("body")
+	null      = js.Null()
+	undefined = js.Undefined()
+)
 
 // -----------------------------------------------------------------------------
 
@@ -67,4 +77,16 @@ func ArrayBufferToBytes(src Value) []byte {
 	}
 
 	return GoBytes(builtin.Uint8Array.New(src))
+}
+
+// -----------------------------------------------------------------------------
+
+func Null() Value {
+	return null
+}
+
+// -----------------------------------------------------------------------------
+
+func Undefined() Value {
+	return undefined
 }
