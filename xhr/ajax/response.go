@@ -65,12 +65,11 @@ func fill(xhr js.Value) *Response {
 	resp.code = xhr.Get("status").Int()
 
 	resp.body = js.ArrayBufferToBytes(xhr.Get("response"))
-
 	headers := strings.TrimSpace(xhr.Call("getAllResponseHeaders").String())
 
 	tmp := strings.Split(headers, "\r\n")
+	resp.headers = make(map[string]string)
 	if size := len(tmp); size > 0 {
-		resp.headers = make(map[string]string, size)
 		for _, x := range tmp {
 			x := strings.TrimSpace(x)
 			if strings.Contains(x, ":") {

@@ -3,6 +3,8 @@
 package ajax
 
 import (
+	"time"
+
 	"github.com/dairaga/js/v2"
 	"github.com/dairaga/js/v2/builtin"
 	"github.com/dairaga/js/v2/xhr"
@@ -76,6 +78,12 @@ func (cli *Client) Released() bool {
 
 // -----------------------------------------------------------------------------
 
+func (cli *Client) WithCredentials(flag bool) {
+	cli.ref.Set("withCredentials", flag)
+}
+
+// -----------------------------------------------------------------------------
+
 func (cli *Client) Do(req *Request) error {
 	if cli.released {
 		return xhr.ErrReleased
@@ -133,7 +141,7 @@ func (cli *Client) Patch(url string, x ...any) error {
 
 // -----------------------------------------------------------------------------
 
-func New(fn HandleFunc, timeout ...int64) *Client {
+func New(fn HandleFunc, timeout ...time.Duration) *Client {
 	cli := new(Client)
 	cli.ref = builtin.XMLHttpRequest.New()
 	cli.listener = make(js.Listener)
@@ -141,8 +149,9 @@ func New(fn HandleFunc, timeout ...int64) *Client {
 
 	cli.ref.Set("responseType", "arraybuffer")
 	if len(timeout) > 0 {
-		cli.ref.Set("timeout", timeout)
+		cli.ref.Set("timeout", timeout[0].Milliseconds())
 	}
+	cli.ref.Set("withCredentials", false)
 
 	cli.listener.Add(cli.ref, "timeout", func(js.Value, []js.Value) any {
 		cli.lastErr = xhr.ErrTimeout
