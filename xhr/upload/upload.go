@@ -68,10 +68,14 @@ type Client struct {
 
 // -----------------------------------------------------------------------------
 
-func (cli *Client) Upload(url, jobID string, form form.FormData) {
+func (cli *Client) Upload(url, jobID string, form form.FormData) error {
+	if cli.released {
+		return xhr.ErrReleased
+	}
 	cli.jobID = jobID
 	cli.ref.Call("open", xhr.POST, url, true)
 	cli.ref.Call("send", form.JSValue())
+	return nil
 }
 
 // -----------------------------------------------------------------------------
@@ -84,6 +88,17 @@ func (cli *Client) Abort() {
 
 func (cli *Client) WithCredentials(flag bool) {
 	cli.ref.Set("withCredentials", flag)
+}
+
+// -----------------------------------------------------------------------------
+
+func (cli *Client) Release() {
+	if cli.released {
+		return
+	}
+	cli.released = true
+	cli.upload.listener.Release()
+	cli.listener.Release()
 }
 
 // -----------------------------------------------------------------------------
