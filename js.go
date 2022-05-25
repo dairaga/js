@@ -8,16 +8,18 @@ import (
 	"github.com/dairaga/js/v2/builtin"
 )
 
-type (
-	Value  = js.Value
-	Type   = js.Type
-	Func   = js.Func
-	JSFunc = func(Value, []Value) any
+const (
+	TypeUndefined = js.TypeUndefined
+	TypeNull      = js.TypeNull
+	TypeBoolean   = js.TypeBoolean
+	TypeNumber    = js.TypeNumber
+	TypeString    = js.TypeString
+	TypeSymbol    = js.TypeSymbol
+	TypeObject    = js.TypeObject
+	TypeFunction  = js.TypeFunction
 )
 
-type Wrapper interface {
-	JSValue() Value
-}
+// -----------------------------------------------------------------------------
 
 var (
 	global    = js.Global()
@@ -26,6 +28,21 @@ var (
 	null      = js.Null()
 	undefined = js.Undefined()
 )
+
+// -----------------------------------------------------------------------------
+
+type (
+	Value  = js.Value
+	Type   = js.Type
+	Func   = js.Func
+	JSFunc = func(Value, []Value) any
+)
+
+// -----------------------------------------------------------------------------
+
+type Wrapper interface {
+	JSValue() Value
+}
 
 // -----------------------------------------------------------------------------
 

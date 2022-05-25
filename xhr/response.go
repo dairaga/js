@@ -1,6 +1,6 @@
 //go:build js && wasm
 
-package ajax
+package xhr
 
 import (
 	"encoding/json"
@@ -8,8 +8,11 @@ import (
 	"strings"
 
 	"github.com/dairaga/js/v2"
-	"github.com/dairaga/js/v2/xhr"
 )
+
+type HandleFunc = func(*Response, error)
+
+// -----------------------------------------------------------------------------
 
 type Response struct {
 	code    int
@@ -30,7 +33,7 @@ func (r *Response) StatusCode() int {
 // -----------------------------------------------------------------------------
 
 func (r *Response) StatusText() string {
-	return xhr.StatusText(r.code)
+	return StatusText(r.code)
 }
 
 // -----------------------------------------------------------------------------
@@ -49,7 +52,7 @@ func (r *Response) Header(key string) string {
 // -----------------------------------------------------------------------------
 
 func (r *Response) OK() bool {
-	return r.code >= xhr.StatusContinue && r.code < xhr.StatusBadRequest
+	return r.code >= StatusOK && r.code <= StatusIMUsed
 }
 
 // -----------------------------------------------------------------------------
@@ -60,7 +63,7 @@ func (r *Response) Unmarshal(x any) error {
 
 // -----------------------------------------------------------------------------
 
-func fill(xhr js.Value) *Response {
+func ResponseOf(xhr js.Value) *Response {
 	resp := new(Response)
 	resp.code = xhr.Get("status").Int()
 

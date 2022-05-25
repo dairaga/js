@@ -20,21 +20,11 @@ const (
 	//HeadersReceived = 2
 	//Loading         = 3
 	//Done            = 4
-
-	GET    = "GET"
-	POST   = "POST"
-	PUT    = "PUT"
-	DELETE = "DELETE"
-	PATCH  = "PATCH"
 )
 
 var (
 	defaultWithCredentials = true
 )
-
-// -----------------------------------------------------------------------------
-
-type HandleFunc = func(*Response, error)
 
 // -----------------------------------------------------------------------------
 
@@ -116,36 +106,36 @@ func (cli *Client) Do(req *Request) error {
 // -----------------------------------------------------------------------------
 
 func (cli *Client) Get(url string, x ...any) error {
-	return cli.do(GET, url, x...)
+	return cli.do(xhr.GET, url, x...)
 }
 
 // -----------------------------------------------------------------------------
 
 func (cli *Client) Post(url string, x ...any) error {
-	return cli.do(POST, url, x...)
+	return cli.do(xhr.POST, url, x...)
 }
 
 // -----------------------------------------------------------------------------
 
 func (cli *Client) Put(url string, x ...any) error {
-	return cli.do(PUT, url, x...)
+	return cli.do(xhr.PUT, url, x...)
 }
 
 // -----------------------------------------------------------------------------
 
 func (cli *Client) Delete(url string, x ...any) error {
-	return cli.do(DELETE, url, x...)
+	return cli.do(xhr.DELETE, url, x...)
 }
 
 // -----------------------------------------------------------------------------
 
 func (cli *Client) Patch(url string, x ...any) error {
-	return cli.do(PATCH, url, x...)
+	return cli.do(xhr.PATCH, url, x...)
 }
 
 // -----------------------------------------------------------------------------
 
-func New(fn HandleFunc, timeout ...time.Duration) *Client {
+func New(fn xhr.HandleFunc, timeout ...time.Duration) *Client {
 	cli := new(Client)
 	cli.ref = builtin.XMLHttpRequest.New()
 	cli.listener = make(js.Listener)
@@ -173,9 +163,9 @@ func New(fn HandleFunc, timeout ...time.Duration) *Client {
 	})
 
 	cli.listener.Add(cli.ref, "loadend", func(js.Value, []js.Value) any {
-		var resp *Response
+		var resp *xhr.Response = nil
 		if cli.lastErr == nil {
-			resp = fill(cli.ref)
+			resp = xhr.ResponseOf(cli.ref)
 		}
 		fn(resp, cli.lastErr)
 		return nil
@@ -186,7 +176,7 @@ func New(fn HandleFunc, timeout ...time.Duration) *Client {
 
 // -----------------------------------------------------------------------------
 
-func do(method, url string, fn HandleFunc, x ...any) (cli *Client, err error) {
+func do(method, url string, fn xhr.HandleFunc, x ...any) (cli *Client, err error) {
 	cli = New(fn)
 	err = cli.do(method, url, x...)
 	return
@@ -194,30 +184,30 @@ func do(method, url string, fn HandleFunc, x ...any) (cli *Client, err error) {
 
 // -----------------------------------------------------------------------------
 
-func Get(url string, fn HandleFunc, x ...any) (cli *Client, err error) {
-	return do(GET, url, fn, x...)
+func Get(url string, fn xhr.HandleFunc, x ...any) (cli *Client, err error) {
+	return do(xhr.GET, url, fn, x...)
 }
 
 // -----------------------------------------------------------------------------
 
-func Post(url string, fn HandleFunc, x ...any) (cli *Client, err error) {
-	return do(POST, url, fn, x...)
+func Post(url string, fn xhr.HandleFunc, x ...any) (cli *Client, err error) {
+	return do(xhr.POST, url, fn, x...)
 }
 
 // -----------------------------------------------------------------------------
 
-func Put(url string, fn HandleFunc, x ...any) (cli *Client, err error) {
-	return do(PUT, url, fn, x...)
+func Put(url string, fn xhr.HandleFunc, x ...any) (cli *Client, err error) {
+	return do(xhr.PUT, url, fn, x...)
 }
 
 // -----------------------------------------------------------------------------
 
-func Delete(url string, fn HandleFunc, x ...any) (cli *Client, err error) {
-	return do(DELETE, url, fn, x...)
+func Delete(url string, fn xhr.HandleFunc, x ...any) (cli *Client, err error) {
+	return do(xhr.DELETE, url, fn, x...)
 }
 
 // -----------------------------------------------------------------------------
 
-func Patch(url string, fn HandleFunc, x ...any) (cli *Client, err error) {
-	return do(PATCH, url, fn, x...)
+func Patch(url string, fn xhr.HandleFunc, x ...any) (cli *Client, err error) {
+	return do(xhr.PATCH, url, fn, x...)
 }

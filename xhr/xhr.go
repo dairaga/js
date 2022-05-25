@@ -13,6 +13,12 @@ const (
 	ErrFailed   Error = -2
 	ErrTimeout  Error = -3
 	ErrReleased Error = -4
+
+	GET    = "GET"
+	POST   = "POST"
+	PUT    = "PUT"
+	DELETE = "DELETE"
+	PATCH  = "PATCH"
 )
 
 func (e Error) Error() string {

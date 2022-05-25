@@ -1,4 +1,4 @@
-.PHONY: clean test app builtin url xhr xhr/ajax example mvvm
+.PHONY: clean test app builtin url xhr xhr/ajax example mvvm xhr/upload
 
 GOPATH=$(shell go env GOPATH)
 WASMEXEC=${GOPATH}/bin/wasmbrowsertest
@@ -21,6 +21,9 @@ url:
 
 xhr/ajax:
 	env WASM_HEADLESS=${WASM_HEADLESS} GOOS=js GOARCH=wasm go test -p 1 github.com/dairaga/js/v2/xhr/ajax -exec=${WASMEXEC} -test.v
+
+xhr/upload:
+	env WASM_HEADLESS=off GOOS=js GOARCH=wasm go test -p 1 github.com/dairaga/js/v2/xhr/upload -exec=${WASMEXEC} -test.v
 
 example:
 	env GOOS=js GOARCH=wasm go build -o example/wasm.wasm github.com/dairaga/js/v2/example

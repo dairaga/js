@@ -52,7 +52,7 @@ func TestMain(m *testing.M) {
 func TestGet(t *testing.T) {
 	ch := make(chan struct{})
 	testURL := apiURL + "/categories"
-	cli, err := Get(testURL, func(resp *Response, err error) {
+	cli, err := Get(testURL, func(resp *xhr.Response, err error) {
 		assert.Nil(t, err)
 		assert.Equal(t, `application/json; charset=UTF-8`, resp.Header("Content-Type"))
 
@@ -91,7 +91,7 @@ func TestPost(t *testing.T) {
 		Parent: 1,
 	}
 
-	cli, err := Post(testURL, func(resp *Response, err error) {
+	cli, err := Post(testURL, func(resp *xhr.Response, err error) {
 		assert.Nil(t, err)
 		assert.Equal(t, `application/json; charset=UTF-8`, resp.Header("Content-Type"))
 
