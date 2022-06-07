@@ -15,6 +15,14 @@ type Handler interface {
 
 // -----------------------------------------------------------------------------
 
+type HandleFunc func(url.URL, string, string)
+
+func (f HandleFunc) Serve(curURL url.URL, curHash, oldHash string) {
+	f(curURL, curHash, oldHash)
+}
+
+// -----------------------------------------------------------------------------
+
 type app struct {
 	window     js.Value
 	currentURL url.URL
@@ -29,10 +37,11 @@ var _app *app
 func (a *app) init() {
 
 	cb := js.FuncOf(func(_ js.Value, args []js.Value) any {
-		old := url.New(args[0].Get("oldURL").String())
-		new := url.New(args[0].Get("newURL").String())
-
-		a.handler.Serve(a.currentURL, new.Hash(), old.Hash())
+		if a.handler != nil {
+			old := url.New(args[0].Get("oldURL").String())
+			new := url.New(args[0].Get("newURL").String())
+			a.handler.Serve(a.currentURL, new.Hash(), old.Hash())
+		}
 		return nil
 	})
 	a.hashFunc = cb
@@ -51,11 +60,17 @@ func (a *app) changeHash(new string) {
 
 // -----------------------------------------------------------------------------
 
-func Init(h Handler) {
+func Init(h ...Handler) {
+	var handler Handler = nil
+
+	if len(h) > 0 {
+		handler = h[0]
+	}
+
 	_app = &app{
 		window:     js.Window(),
 		currentURL: url.New(js.Window().Get("location").Get("href").String()),
-		handler:    h,
+		handler:    handler,
 	}
 	_app.init()
 }
@@ -74,7 +89,12 @@ func ChangeHash(new string) {
 
 // -----------------------------------------------------------------------------
 
-func Start() {
-	_app.handler.Serve(_app.currentURL, _app.currentURL.Hash(), "")
+func Start(h ...Handler) {
+	if len(h) > 0 {
+		h[0].Serve(_app.currentURL, _app.currentURL.Hash(), "")
+	} else {
+		_app.handler.Serve(_app.currentURL, _app.currentURL.Hash(), "")
+	}
+
 	select {}
 }
