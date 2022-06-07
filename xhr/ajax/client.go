@@ -14,12 +14,6 @@ const (
 	MimeText   string = "text/plain; charset=utf8"
 	MimeJSON   string = "application/json; charset=utf8"
 	MimeStream string = "application/octet-stream"
-
-	//Unsent          = 0
-	//Opened          = 1
-	//HeadersReceived = 2
-	//Loading         = 3
-	//Done            = 4
 )
 
 var (
