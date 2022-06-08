@@ -45,10 +45,14 @@ const (
 
 	Element = Constructor("Element")
 
-	HTMLInputElement = Constructor("HTMLInputElement")
+	HTMLInputElement    = Constructor("HTMLInputElement")
+	HTMLSelectElement   = Constructor("HTMLSelectElement")
+	HTMLTextAreaElement = Constructor("HTMLTextAreaElement")
 
 	Blob = Constructor("Blob")
 	File = Constructor("File")
+
+	RegExp = Constructor("RegExp")
 )
 
 // -----------------------------------------------------------------------------
@@ -95,6 +99,14 @@ func IsElement(v js.Value) bool {
 
 func IsInputElement(v js.Value) bool {
 	return v.InstanceOf(HTMLInputElement.JSValue())
+}
+
+// -----------------------------------------------------------------------------
+
+func HasValueProperty(v js.Value) bool {
+	return v.InstanceOf(HTMLInputElement.JSValue()) ||
+		v.InstanceOf(HTMLSelectElement.JSValue()) ||
+		v.InstanceOf(HTMLTextAreaElement.JSValue())
 }
 
 // -----------------------------------------------------------------------------

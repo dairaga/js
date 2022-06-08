@@ -92,7 +92,7 @@ func ChangeHash(new string) {
 func Start(h ...Handler) {
 	if len(h) > 0 {
 		h[0].Serve(_app.currentURL, _app.currentURL.Hash(), "")
-	} else {
+	} else if _app.handler != nil {
 		_app.handler.Serve(_app.currentURL, _app.currentURL.Hash(), "")
 	}
 

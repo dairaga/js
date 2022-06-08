@@ -76,6 +76,7 @@ type Element interface {
 	Relese()
 
 	Trigger(name string, at ...string)
+	Bind(name string, val *string, cb func(string, string))
 }
 
 // -----------------------------------------------------------------------------
@@ -208,7 +209,7 @@ func (e element) SetHTML(html HTML) Element {
 // -----------------------------------------------------------------------------
 
 func (e element) Value() string {
-	if builtin.IsInputElement(Value(e)) {
+	if builtin.HasValueProperty(Value(e)) {
 		return Value(e).Get("value").String()
 	}
 	return ""
@@ -217,7 +218,7 @@ func (e element) Value() string {
 // -----------------------------------------------------------------------------
 
 func (e element) SetValue(val string) Element {
-	if builtin.IsInputElement(Value(e)) {
+	if builtin.HasValueProperty(Value(e)) {
 		Value(e).Set("value", val)
 	}
 	return e
@@ -226,7 +227,7 @@ func (e element) SetValue(val string) Element {
 // -----------------------------------------------------------------------------
 
 func (e element) Files() []File {
-	if builtin.IsInputElement(Value(e)) && "file" == e.Attr("type") {
+	if builtin.IsInputElement(Value(e)) && e.Attr("type") == "file" {
 		lst := Value(e).Get("files")
 		size := lst.Length()
 		ret := make([]File, size)
@@ -344,6 +345,17 @@ func (e element) Trigger(name string, at ...string) {
 
 // -----------------------------------------------------------------------------
 
+func (e element) Bind(name string, val *string, cb func(string, string)) {
+	mvvm.Add(name, val)
+	mvvm.Watch(name, cb)
+	e.OnChange(func(_ Element) {
+		*val = e.Value()
+		e.Trigger(name)
+	})
+}
+
+// -----------------------------------------------------------------------------
+
 func elementOf(v Value) element {
 	if builtin.IsElement(v) {
 		return element(v).tattoo()
@@ -367,4 +379,11 @@ func ElementOf(x any) Element {
 		return elementOf(v)
 	}
 	panic(fmt.Sprintf("unsupport type %T", x))
+}
+
+// -----------------------------------------------------------------------------
+
+func BindValue(elm any, name string, val *string, cb func(string, string)) {
+	e := ElementOf(elm)
+	e.Bind(name, val, cb)
 }

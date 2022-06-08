@@ -7,15 +7,8 @@ import (
 	"reflect"
 )
 
-var models map[string]reflect.Value
-var triggers map[string][]reflect.Value
-
-// -----------------------------------------------------------------------------
-
-func InitMVVM() {
-	models = make(map[string]reflect.Value)
-	triggers = make(map[string][]reflect.Value)
-}
+var models map[string]reflect.Value = make(map[string]reflect.Value)
+var triggers map[string][]reflect.Value = make(map[string][]reflect.Value)
 
 // -----------------------------------------------------------------------------
 
@@ -25,9 +18,13 @@ func Add(name string, x any) {
 		panic(fmt.Sprintf("x must be ptr, but %v", v.Kind()))
 	}
 
-	_, ok := models[name]
+	old, ok := models[name]
 	if ok {
-		panic(fmt.Sprintf("%s existed", name))
+		oldv := reflect.ValueOf(old)
+		if oldv != v {
+			panic(fmt.Sprintf("%s existed", name))
+		}
+		return
 	}
 	models[name] = v
 }

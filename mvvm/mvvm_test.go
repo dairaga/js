@@ -9,7 +9,6 @@ import (
 )
 
 func TestMVVM(t *testing.T) {
-	InitMVVM()
 
 	a := false
 	b := []string{}
