@@ -77,7 +77,7 @@ func (cli *Client) Do(req *Request) error {
 		return xhr.ErrReleased
 	}
 
-	if "" != req.User && "" != req.Password {
+	if req.User != "" && req.Password != "" {
 		cli.ref.Call("open", req.method, req.url, true, req.User, req.Password)
 	} else {
 		cli.ref.Call("open", req.method, req.url, true)
@@ -178,30 +178,30 @@ func do(method, url string, fn xhr.HandleFunc, x ...any) (cli *Client, err error
 
 // -----------------------------------------------------------------------------
 
-func Get(url string, fn xhr.HandleFunc, x ...any) (cli *Client, err error) {
+func Get(url string, fn xhr.HandleFunc, x ...any) (*Client, error) {
 	return do(xhr.GET, url, fn, x...)
 }
 
 // -----------------------------------------------------------------------------
 
-func Post(url string, fn xhr.HandleFunc, x ...any) (cli *Client, err error) {
+func Post(url string, fn xhr.HandleFunc, x ...any) (*Client, error) {
 	return do(xhr.POST, url, fn, x...)
 }
 
 // -----------------------------------------------------------------------------
 
-func Put(url string, fn xhr.HandleFunc, x ...any) (cli *Client, err error) {
+func Put(url string, fn xhr.HandleFunc, x ...any) (*Client, error) {
 	return do(xhr.PUT, url, fn, x...)
 }
 
 // -----------------------------------------------------------------------------
 
-func Delete(url string, fn xhr.HandleFunc, x ...any) (cli *Client, err error) {
+func Delete(url string, fn xhr.HandleFunc, x ...any) (*Client, error) {
 	return do(xhr.DELETE, url, fn, x...)
 }
 
 // -----------------------------------------------------------------------------
 
-func Patch(url string, fn xhr.HandleFunc, x ...any) (cli *Client, err error) {
+func Patch(url string, fn xhr.HandleFunc, x ...any) (*Client, error) {
 	return do(xhr.PATCH, url, fn, x...)
 }
