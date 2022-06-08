@@ -349,7 +349,12 @@ func (e element) Bind(name string, val *string, cb func(string, string)) {
 	mvvm.Add(name, val)
 	mvvm.Watch(name, cb)
 	e.OnChange(func(_ Element) {
-		*val = e.Value()
+		if e.Attr("type") == "checkbox" && !e.Prop("checked").Bool() {
+			*val = ""
+		} else {
+			*val = e.Value()
+		}
+
 		e.Trigger(name)
 	})
 }
