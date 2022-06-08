@@ -48,10 +48,10 @@ type Wrapper interface {
 
 func ValueOf(x any) Value {
 	switch v := x.(type) {
-	case Wrapper:
-		return v.JSValue()
 	case Appendable:
 		return v.Ref()
+	case Wrapper:
+		return v.JSValue()
 	case Value:
 		return v
 	default:
