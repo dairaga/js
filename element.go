@@ -75,8 +75,8 @@ type Element interface {
 	Empty() Element
 	Relese()
 
-	Trigger(name string, at ...string)
-	Bind(name string, val *string, cb func(string, string))
+	Trigger(name string) Element
+	Bind(name string, val *string, cb func(string, string)) Element
 }
 
 // -----------------------------------------------------------------------------
@@ -338,14 +338,14 @@ func (e element) Relese() {
 
 // -----------------------------------------------------------------------------
 
-func (e element) Trigger(name string, at ...string) {
-	v := e.at(at...)
-	mvvm.Trigger(v.Call("getAttribute", _tattoo).String(), name)
+func (e element) Trigger(name string) Element {
+	mvvm.Trigger(e.Tattoo(), name)
+	return e
 }
 
 // -----------------------------------------------------------------------------
 
-func (e element) Bind(name string, val *string, cb func(string, string)) {
+func (e element) Bind(name string, val *string, cb func(string, string)) Element {
 	mvvm.Add(name, val)
 	mvvm.Watch(name, cb)
 	e.OnChange(func(_ Element) {
@@ -357,6 +357,7 @@ func (e element) Bind(name string, val *string, cb func(string, string)) {
 
 		e.Trigger(name)
 	})
+	return e
 }
 
 // -----------------------------------------------------------------------------
