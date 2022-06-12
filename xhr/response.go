@@ -10,7 +10,7 @@ import (
 	"github.com/dairaga/js/v2"
 )
 
-type HandleFunc = func(*Response, error)
+type HandlerFunc = func(*Response, error)
 
 // -----------------------------------------------------------------------------
 
@@ -47,6 +47,12 @@ func (r *Response) Body() []byte {
 func (r *Response) Header(key string) string {
 	key = strings.ToLower(key)
 	return r.headers[key]
+}
+
+// -----------------------------------------------------------------------------
+
+func (r *Response) Headers() map[string]string {
+	return r.headers
 }
 
 // -----------------------------------------------------------------------------

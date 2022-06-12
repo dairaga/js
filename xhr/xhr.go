@@ -21,6 +21,8 @@ const (
 	PATCH  = "PATCH"
 )
 
+// -----------------------------------------------------------------------------
+
 func (e Error) Error() string {
 	switch e {
 	case ErrAbort:

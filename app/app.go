@@ -15,9 +15,9 @@ type Handler interface {
 
 // -----------------------------------------------------------------------------
 
-type HandleFunc func(url.URL, string, string)
+type HandlerFunc func(url.URL, string, string)
 
-func (f HandleFunc) Serve(curURL url.URL, curHash, oldHash string) {
+func (f HandlerFunc) Serve(curURL url.URL, curHash, oldHash string) {
 	f(curURL, curHash, oldHash)
 }
 
@@ -35,7 +35,6 @@ var _app *app
 // -----------------------------------------------------------------------------
 
 func (a *app) init() {
-
 	cb := js.FuncOf(func(_ js.Value, args []js.Value) any {
 		if a.handler != nil {
 			old := url.New(args[0].Get("oldURL").String())

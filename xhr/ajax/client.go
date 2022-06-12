@@ -129,7 +129,7 @@ func (cli *Client) Patch(url string, x ...any) error {
 
 // -----------------------------------------------------------------------------
 
-func New(fn xhr.HandleFunc, timeout ...time.Duration) *Client {
+func New(fn xhr.HandlerFunc, timeout ...time.Duration) *Client {
 	cli := new(Client)
 	cli.ref = builtin.XMLHttpRequest.New()
 	cli.listener = make(js.Listener)
@@ -170,7 +170,7 @@ func New(fn xhr.HandleFunc, timeout ...time.Duration) *Client {
 
 // -----------------------------------------------------------------------------
 
-func do(method, url string, fn xhr.HandleFunc, x ...any) (cli *Client, err error) {
+func do(method, url string, fn xhr.HandlerFunc, x ...any) (cli *Client, err error) {
 	cli = New(fn)
 	err = cli.do(method, url, x...)
 	return
@@ -178,30 +178,30 @@ func do(method, url string, fn xhr.HandleFunc, x ...any) (cli *Client, err error
 
 // -----------------------------------------------------------------------------
 
-func Get(url string, fn xhr.HandleFunc, x ...any) (*Client, error) {
+func Get(url string, fn xhr.HandlerFunc, x ...any) (*Client, error) {
 	return do(xhr.GET, url, fn, x...)
 }
 
 // -----------------------------------------------------------------------------
 
-func Post(url string, fn xhr.HandleFunc, x ...any) (*Client, error) {
+func Post(url string, fn xhr.HandlerFunc, x ...any) (*Client, error) {
 	return do(xhr.POST, url, fn, x...)
 }
 
 // -----------------------------------------------------------------------------
 
-func Put(url string, fn xhr.HandleFunc, x ...any) (*Client, error) {
+func Put(url string, fn xhr.HandlerFunc, x ...any) (*Client, error) {
 	return do(xhr.PUT, url, fn, x...)
 }
 
 // -----------------------------------------------------------------------------
 
-func Delete(url string, fn xhr.HandleFunc, x ...any) (*Client, error) {
+func Delete(url string, fn xhr.HandlerFunc, x ...any) (*Client, error) {
 	return do(xhr.DELETE, url, fn, x...)
 }
 
 // -----------------------------------------------------------------------------
 
-func Patch(url string, fn xhr.HandleFunc, x ...any) (*Client, error) {
+func Patch(url string, fn xhr.HandlerFunc, x ...any) (*Client, error) {
 	return do(xhr.PATCH, url, fn, x...)
 }
