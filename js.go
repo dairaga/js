@@ -1,5 +1,7 @@
 //go:build js && wasm
 
+// Package 主要目的，是使用 Golang 來開發前端功能，達到前/後端分離。
+// 封裝常用的 DOM 功能，Javascript 常用的 Class 與 Function；並實作 MVVM 架構。
 package js
 
 import (
@@ -22,15 +24,16 @@ const (
 // -----------------------------------------------------------------------------
 
 var (
-	global    = js.Global()
-	document  = global.Get("document")
-	body      = document.Get("body")
-	null      = js.Null()
-	undefined = js.Undefined()
+	global    = js.Global()            // global 物件，也是 javascript 的 window 物件。
+	document  = global.Get("document") // Document 物件。
+	body      = document.Get("body")   // Document 下的 Body。
+	null      = js.Null()              // javascript null。
+	undefined = js.Undefined()         // javascript undefined。
 )
 
 // -----------------------------------------------------------------------------
 
+// alias syscall/js 的物件，讓 import 比較方便
 type (
 	Value  = js.Value
 	Type   = js.Type
@@ -40,12 +43,14 @@ type (
 
 // -----------------------------------------------------------------------------
 
+// Wrapper 原 goland 的 Wrapper interface，覺得很好用，保留。
 type Wrapper interface {
 	JSValue() Value
 }
 
 // -----------------------------------------------------------------------------
 
+// ValueOf 仿 syscall/js 的 ValueOf。x 可以是 Wrapper 或是原生 js.Value，否則則以 syscall/js 的定義為準。
 func ValueOf(x any) Value {
 	switch v := x.(type) {
 	case Appendable:
@@ -61,12 +66,14 @@ func ValueOf(x any) Value {
 
 // -----------------------------------------------------------------------------
 
+// FuncOf 原 syscall/js 的 FuncOf。
 func FuncOf(fn JSFunc) Func {
 	return js.FuncOf(fn)
 }
 
 // -----------------------------------------------------------------------------
 
+// GoBytes 將 javascript 的 Uint8Array 轉成 golang 的 []byte。src 必須是 javascript 的 Uint8Array。
 func GoBytes(src Value) []byte {
 	if !builtin.IsUint8Array(src) {
 		panic("src is not an Uint8Array")
@@ -80,6 +87,7 @@ func GoBytes(src Value) []byte {
 
 // -----------------------------------------------------------------------------
 
+// Uint8Array 將 golang 的 []byte 轉成 javascript 的 Uint8Array。
 func Uint8Array(src []byte) Value {
 	dst := builtin.Uint8Array.New(len(src))
 	js.CopyBytesToJS(dst, src)
@@ -88,6 +96,7 @@ func Uint8Array(src []byte) Value {
 
 // -----------------------------------------------------------------------------
 
+// ArrayBufferToBytes 將 javascript 的 ArrayBuffer 轉成 golang []byte。src 必須是 javascript 的 ArrayBuffer。
 func ArrayBufferToBytes(src Value) []byte {
 	if !builtin.IsArrayBuffer(src) {
 		panic("src is not an ArrayBuffer")
@@ -98,12 +107,14 @@ func ArrayBufferToBytes(src Value) []byte {
 
 // -----------------------------------------------------------------------------
 
+// Null 回傳 javascript 的 null。
 func Null() Value {
 	return null
 }
 
 // -----------------------------------------------------------------------------
 
+// Undefined 回傳 javascript 的 Undefined。
 func Undefined() Value {
 	return undefined
 }
