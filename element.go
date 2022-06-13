@@ -31,6 +31,10 @@ func (p Plain) Ref() Value {
 
 // -----------------------------------------------------------------------------
 
+type HandlerFunc func(Element, Event)
+
+// -----------------------------------------------------------------------------
+
 type Element interface {
 	Appendable
 
@@ -64,9 +68,9 @@ type Element interface {
 	Replace(oldClz, newClz string, at ...string) Element
 	Toggle(clz string, at ...string) Element
 
-	On(typ string, fn func(sender Element), at ...string) Element
-	OnClick(fn func(sender Element), at ...string) Element
-	OnChange(fn func(sender Element), at ...string) Element
+	On(typ string, fn HandlerFunc, at ...string) Element
+	OnClick(fn HandlerFunc, at ...string) Element
+	OnChange(fn HandlerFunc, at ...string) Element
 
 	Click(at ...string) Element
 	Foucs(at ...string) Element
@@ -274,10 +278,11 @@ func (e element) Toggle(clz string, at ...string) Element {
 
 // -----------------------------------------------------------------------------
 
-func (e element) On(typ string, fn func(sender Element), at ...string) Element {
+func (e element) On(typ string, fn HandlerFunc, at ...string) Element {
 	cb := FuncOf(func(_this Value, args []Value) any {
-		elm := elementOf(args[0].Get("target"))
-		fn(elm)
+		evt := event(args[0])
+		elm := elementOf(evt.Get("target"))
+		fn(elm, evt)
 		return nil
 	})
 
@@ -287,13 +292,13 @@ func (e element) On(typ string, fn func(sender Element), at ...string) Element {
 
 // -----------------------------------------------------------------------------
 
-func (e element) OnClick(fn func(sender Element), at ...string) Element {
+func (e element) OnClick(fn HandlerFunc, at ...string) Element {
 	return e.On("click", fn, at...)
 }
 
 // -----------------------------------------------------------------------------
 
-func (e element) OnChange(fn func(sender Element), at ...string) Element {
+func (e element) OnChange(fn HandlerFunc, at ...string) Element {
 	return e.On("change", fn, at...)
 }
 
@@ -348,7 +353,7 @@ func (e element) Trigger(name string) Element {
 func (e element) Bind(name string, val *string, cb func(string, string)) Element {
 	mvvm.Add(name, val)
 	mvvm.Watch(name, cb)
-	e.OnChange(func(_ Element) {
+	e.OnChange(func(_ Element, _ Event) {
 		if e.Attr("type") == "checkbox" && !e.Prop("checked").Bool() {
 			*val = ""
 		} else {

@@ -73,7 +73,7 @@ func TestUpload(t *testing.T) {
 	cli := New(&testHander{})
 
 	btn.SetText("upload")
-	btn.OnClick(func(sender js.Element) {
+	btn.OnClick(func(_ js.Element, _ js.Event) {
 		f := form.FormDataOf("#myform")
 		cli.Upload(uploadURL, "xxx", f)
 	})
