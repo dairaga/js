@@ -14,29 +14,28 @@ import (
 
 // Handler responds to event when URL's hash changed.
 type Handler interface {
-	Serve(oldURL, curURL url.URL, state any)
+	Serve(oldURL, curURL url.URL)
 }
 
 // -----------------------------------------------------------------------------
 
 // The HandlerFunc type is an adapter to allow the use of ordinary functions as app Handler.
 // If f is a function with appropriate signature, HandlerFunc(f) is a Handler that calls f.
-type HandlerFunc func(url.URL, url.URL, any)
+type HandlerFunc func(url.URL, url.URL)
 
-func (f HandlerFunc) Serve(oldURL, newURL url.URL, state any) {
-	f(oldURL, newURL, state)
+func (f HandlerFunc) Serve(oldURL, newURL url.URL) {
+	f(oldURL, newURL)
 }
 
 // -----------------------------------------------------------------------------
 
 // The app type represents a WASM application.
 type app struct {
-	window     js.Value       // javascript Window.
-	history    js.Value       // javascript Window.history.
-	currentURL url.URL        // current web page URL.
-	handler    Handler        // app Handler called when url's hash changed.
-	hashFunc   js.Func        // listener function to handle event that url's hash changed.
-	states     map[string]any // store history.state
+	window     js.Value // javascript Window.
+	history    js.Value // javascript Window.history.
+	currentURL url.URL  // current web page URL.
+	handler    Handler  // app Handler called when url's hash changed.
+	hashFunc   js.Func  // listener function to handle event that url's hash changed.
 }
 
 var _app *app
@@ -48,8 +47,7 @@ func (a *app) init() {
 		if a.handler != nil {
 			old := url.New(args[0].Get("oldURL").String())
 			new := url.New(args[0].Get("newURL").String())
-			state := a.state()
-			a.handler.Serve(old, new, state)
+			a.handler.Serve(old, new)
 		}
 		return nil
 	})
@@ -75,26 +73,13 @@ func (a *app) url() url.URL {
 
 // -----------------------------------------------------------------------------
 
-func (a *app) state() any {
-	tmp := a.history.Get("state")
-	if tmp.Truthy() && tmp.Type() == js.TypeString {
-		return a.states[tmp.String()]
-	}
-	return nil
-}
-
-// -----------------------------------------------------------------------------
-
-func (a *app) pushState(newURL, state string, x any) {
+func (a *app) push(newURL string) {
 	oldURL := a.currentURL
-	if state != "" {
-		a.states[state] = x
-	}
-	a.history.Call("pushState", state, "", newURL)
+	a.history.Call("pushState", js.Null(), "", newURL)
 	a.currentURL = a.url()
 
 	if a.handler != nil {
-		a.handler.Serve(oldURL, a.currentURL, x)
+		a.handler.Serve(oldURL, a.currentURL)
 	}
 }
 
@@ -107,10 +92,8 @@ func (a *app) _go(delta int) {
 		a.currentURL = a.url()
 	}
 
-	state := a.state()
-
 	if a.handler != nil {
-		a.handler.Serve(oldURL, a.currentURL, state)
+		a.handler.Serve(oldURL, a.currentURL)
 	}
 }
 
@@ -128,7 +111,6 @@ func Init(h ...Handler) {
 		history:    js.Window().Get("history"),
 		currentURL: url.New(js.Window().Get("location").Get("href").String()),
 		handler:    handler,
-		states:     make(map[string]any),
 	}
 	_app.init()
 }
@@ -147,20 +129,8 @@ func ChangeHash(new string) {
 
 // -----------------------------------------------------------------------------
 
-func PushState(newURL, state string, data any) {
-	_app.pushState(newURL, state, data)
-}
-
-// -----------------------------------------------------------------------------
-
 func Push(newURL string) {
-	_app.pushState(newURL, "", nil)
-}
-
-// -----------------------------------------------------------------------------
-
-func State() any {
-	return _app.state()
+	_app.push(newURL)
 }
 
 // -----------------------------------------------------------------------------
@@ -185,9 +155,9 @@ func Back() {
 
 func Start(h ...Handler) {
 	if len(h) > 0 {
-		h[0].Serve(_app.currentURL, _app.currentURL, "")
+		h[0].Serve(_app.currentURL, _app.currentURL)
 	} else if _app.handler != nil {
-		_app.handler.Serve(_app.currentURL, _app.currentURL, "")
+		_app.handler.Serve(_app.currentURL, _app.currentURL)
 	}
 
 	select {}
