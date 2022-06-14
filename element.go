@@ -80,6 +80,7 @@ type Element interface {
 	Relese()
 
 	Trigger(name string) Element
+	Var(val *string) Element
 	Bind(name string, val *string, cb func(string, string)) Element
 }
 
@@ -354,14 +355,20 @@ func (e element) Bind(name string, val *string, cb func(string, string)) Element
 	mvvm.Add(name, val)
 	mvvm.Watch(name, cb)
 	e.OnChange(func(_ Element, _ Event) {
-		if e.Attr("type") == "checkbox" && !e.Prop("checked").Bool() {
-			*val = ""
-		} else {
-			*val = e.Value()
-		}
-
+		e.Var(val)
 		e.Trigger(name)
 	})
+	return e
+}
+
+// -----------------------------------------------------------------------------
+
+func (e element) Var(val *string) Element {
+	if e.Attr("type") == "checkbox" && !e.Prop("checked").Bool() {
+		*val = ""
+	} else {
+		*val = e.Value()
+	}
 	return e
 }
 
@@ -397,4 +404,11 @@ func ElementOf(x any) Element {
 func BindValue(elm any, name string, val *string, cb func(string, string)) {
 	e := ElementOf(elm)
 	e.Bind(name, val, cb)
+}
+
+// -----------------------------------------------------------------------------
+
+func Var(elm any, val *string) {
+	e := ElementOf(elm)
+	e.Var(val)
 }
