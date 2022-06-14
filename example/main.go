@@ -27,9 +27,9 @@ type serv struct {
 
 // -----------------------------------------------------------------------------
 
-func (s *serv) Serve(curURL url.URL, curHash, oldHash string) {
-	s.old = oldHash
-	s.cur = curHash
+func (s *serv) Serve(oldURL, curURL url.URL, state any) {
+	s.old = oldURL.Hash()
+	s.cur = curURL.Hash()
 }
 
 // -----------------------------------------------------------------------------

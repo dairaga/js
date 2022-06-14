@@ -17,9 +17,9 @@ type serv struct {
 	old string
 }
 
-func (s *serv) Serve(curURL url.URL, curHash, oldHash string) {
-	s.old = oldHash
-	s.cur = curHash
+func (s *serv) Serve(oldURL, newURL url.URL, state any) {
+	s.old = oldURL.Hash()
+	s.cur = newURL.Hash()
 	s.ch <- struct{}{}
 }
 
@@ -31,7 +31,7 @@ func TestHash(t *testing.T) {
 
 	//curURL := url.New(js.Global().Get("location").Get("href").String())
 	Init(serv)
-	_app.handler.Serve(_app.currentURL, _app.currentURL.Hash(), "")
+	_app.handler.Serve(_app.currentURL, _app.currentURL, "")
 	<-serv.ch
 	assert.Equal(t, "", serv.old)
 	assert.Equal(t, "", serv.cur)
@@ -54,4 +54,17 @@ func TestHash(t *testing.T) {
 	// the hashchange event is not triggered.
 	assert.Equal(t, "#a100", serv.old)
 	assert.Equal(t, "#b100", serv.cur)
+
+	PushState("/test_state#1", "abc", "abc")
+	<-serv.ch
+	assert.Equal(t, "#b100", serv.old)
+	assert.Equal(t, "#1", serv.cur)
+	assert.Equal(t, "abc", State().(string))
+
+	PushState("/test_state#2", "def", "def")
+	<-serv.ch
+	assert.Equal(t, "#1", serv.old)
+	assert.Equal(t, "#2", serv.cur)
+	assert.Equal(t, "def", State().(string))
+
 }
