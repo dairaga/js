@@ -53,6 +53,8 @@ const (
 	File = Constructor("File")
 
 	RegExp = Constructor("RegExp")
+
+	Array = Constructor("Array")
 )
 
 // -----------------------------------------------------------------------------
@@ -125,4 +127,10 @@ func IsBlob(v js.Value) bool {
 
 func IsForm(v js.Value) bool {
 	return v.InstanceOf(HTMLFormElement.JSValue())
+}
+
+// -----------------------------------------------------------------------------
+
+func IsArray(v js.Value) bool {
+	return v.InstanceOf(Array.JSValue())
 }
