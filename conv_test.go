@@ -53,18 +53,28 @@ func TestConv(t *testing.T) {
 		},
 	}
 
-	jsa, err := Marshal(a)
-	if err != nil {
-		t.Error(err)
-		return
+	testConv := func(t *testing.T, name string, src, tmp, ans any) {
+		jsv, err := Marshal(src)
+		if err != nil {
+			t.Error(name, err)
+			return
+		}
+
+		if err := Unmarshal(jsv, tmp); err != nil {
+			t.Error(name, err)
+			return
+		}
+
+		assert.Equal(t, tmp, ans, name)
 	}
 
-	b := new(myTest)
+	testConv(t, "struct", a, new(myTest), a)
 
-	if err := Unmarshal(jsa, b); err != nil {
-		t.Error(err)
-		return
-	}
+	boola := true
+	boolb := false
+	testConv(t, "boolean", boola, &boolb, &boola)
 
-	assert.Equal(t, a, b)
+	stra := "ABC"
+	strb := ""
+	testConv(t, "string", stra, &strb, &stra)
 }

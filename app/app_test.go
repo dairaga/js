@@ -10,6 +10,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+type myState struct {
+	Name string
+	Age  int
+}
+
 type serv struct {
 	t   *testing.T
 	ch  chan struct{}
@@ -55,13 +60,26 @@ func TestHash(t *testing.T) {
 	assert.Equal(t, "#a100", serv.old)
 	assert.Equal(t, "#b100", serv.cur)
 
-	Push("/test_state#1")
+	s := &myState{
+		Name: "abc",
+		Age:  10,
+	}
+
+	s1 := new(myState)
+
+	Push("/test_state#1", s)
 	<-serv.ch
 	assert.Equal(t, "#b100", serv.old)
 	assert.Equal(t, "#1", serv.cur)
+	assert.NoError(t, State(s1))
+	assert.Equal(t, s, s1)
 
-	Push("/test_state#2")
+	s.Name = "def"
+	s.Age = 20
+	Push("/test_state#2", s)
 	<-serv.ch
 	assert.Equal(t, "#1", serv.old)
 	assert.Equal(t, "#2", serv.cur)
+	assert.NoError(t, State(s1))
+	assert.Equal(t, s, s1)
 }

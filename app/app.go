@@ -6,6 +6,8 @@
 package app
 
 import (
+	"fmt"
+
 	"github.com/dairaga/js/v2"
 	"github.com/dairaga/js/v2/url"
 )
@@ -73,14 +75,34 @@ func (a *app) url() url.URL {
 
 // -----------------------------------------------------------------------------
 
-func (a *app) push(newURL string) {
+func (a *app) push(newURL string, x ...any) {
+	state := js.Null()
+	size := len(x)
+	var err error
+	if size == 1 {
+		state, err = js.Marshal(x[0])
+	} else if size > 1 {
+		state, err = js.Marshal(x)
+	}
+	if err != nil {
+		fmt.Println("warn: push state:", err)
+	}
+
 	oldURL := a.currentURL
-	a.history.Call("pushState", js.Null(), "", newURL)
+	a.history.Call("pushState", state, "", newURL)
 	a.currentURL = a.url()
 
 	if a.handler != nil {
 		a.handler.Serve(oldURL, a.currentURL)
 	}
+}
+
+// -----------------------------------------------------------------------------
+
+func (a *app) state(x any) (err error) {
+	state := a.history.Get("state")
+	err = js.Unmarshal(state, x)
+	return
 }
 
 // -----------------------------------------------------------------------------
@@ -129,8 +151,14 @@ func ChangeHash(new string) {
 
 // -----------------------------------------------------------------------------
 
-func Push(newURL string) {
-	_app.push(newURL)
+func Push(newURL string, x ...any) {
+	_app.push(newURL, x...)
+}
+
+// -----------------------------------------------------------------------------
+
+func State(x any) error {
+	return _app.state(x)
 }
 
 // -----------------------------------------------------------------------------
