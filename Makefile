@@ -28,3 +28,6 @@ xhr/upload:
 example:
 	env GOOS=js GOARCH=wasm go build -o example/wasm.wasm github.com/dairaga/js/v2/example
 	tinygo build -o example/tiny.wasm -target wasm github.com/dairaga/js/v2/example
+
+doc:
+	env GOOS=js GOARCH=wasm godoc -http=:6060

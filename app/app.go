@@ -1,8 +1,24 @@
 //go:build js && wasm
 
-// Package is a WASM application. Invoking app.Init first with given handler called when URL's hash changed,
-// and than app.Start with given handler called when application starting.
+// Package is a WASM application. Invoking app.Init first with given handler responses to URL changed event.
+//
+// And than invoking app.Start with given handler called when application starting.
+//
 // Handler in app.Init will be called when application starting, if there is no handler in app.Start.
+//
+// Example Usage
+//
+//		func main() {
+//			app.Init(app.HandlerFunc(func(old, new url.URL) {
+//
+//			}))
+//
+//			app.Start(app.HandlerFunc(func(old, new url.URL) {
+//
+//			}))
+//
+//		}
+//
 package app
 
 import (
@@ -85,6 +101,7 @@ func (a *app) push(newURL string, x ...any) {
 		state, err = js.Marshal(x)
 	}
 	if err != nil {
+		// console.log error, do not panic to interrupt application.
 		fmt.Println("warn: push state:", err)
 	}
 
@@ -99,6 +116,7 @@ func (a *app) push(newURL string, x ...any) {
 
 // -----------------------------------------------------------------------------
 
+// state returns current state in the
 func (a *app) state(x any) (err error) {
 	state := a.history.Get("state")
 	err = js.Unmarshal(state, x)
@@ -121,6 +139,7 @@ func (a *app) _go(delta int) {
 
 // -----------------------------------------------------------------------------
 
+// Init initialize WASM application and add a handler reponses to URL changed event.
 func Init(h ...Handler) {
 	var handler Handler = nil
 
@@ -139,48 +158,62 @@ func Init(h ...Handler) {
 
 // -----------------------------------------------------------------------------
 
+// URL returns current url.
 func URL() url.URL {
 	return _app.currentURL
 }
 
 // -----------------------------------------------------------------------------
 
+// ChangeHash changes current url hash. It will invoke Handler given to app.Init.
 func ChangeHash(new string) {
 	_app.changeHash(new)
 }
 
 // -----------------------------------------------------------------------------
 
+// Push changes current url. It will invoke Handler given to app.Init.
+// It makes current url changed, but browser does not load this url.
 func Push(newURL string, x ...any) {
 	_app.push(newURL, x...)
 }
 
 // -----------------------------------------------------------------------------
 
+// State returns current state added by Push.
 func State(x any) error {
 	return _app.state(x)
 }
 
 // -----------------------------------------------------------------------------
 
+// Go is javascript window.history.go(detla).
+// See https://developer.mozilla.org/en-US/docs/Web/API/History/go
 func Go(delta int) {
 	_app._go(delta)
 }
 
 // -----------------------------------------------------------------------------
 
+// Forward is javascript window.history.forward.
+// See https://developer.mozilla.org/en-US/docs/Web/API/History/forward
 func Forward() {
 	_app._go(1)
 }
 
 // -----------------------------------------------------------------------------
 
+// Back is javascript window.history.back.
+// https://developer.mozilla.org/en-US/docs/Web/API/History/back
 func Back() {
 	_app._go(-1)
 }
 
 // -----------------------------------------------------------------------------
 
+// Start starts a WASM application with a given Hanlder.
+// The given Handler will be invoked when appication started.
+// Handler given to app.Init will be invoked if no hanlder is for Start.
 func Start(h ...Handler) {
 	if len(h) > 0 {
 		h[0].Serve(_app.currentURL, _app.currentURL)
@@ -188,5 +221,5 @@ func Start(h ...Handler) {
 		_app.handler.Serve(_app.currentURL, _app.currentURL)
 	}
 
-	select {}
+	select {} // block main
 }
