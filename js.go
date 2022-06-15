@@ -29,7 +29,7 @@ var (
 	body      = document.Get("body")   // Document 下的 Body。
 	null      = js.Null()              // javascript null。
 	undefined = js.Undefined()         // javascript undefined。
-	object    = global.Get("Object")   // javascript object.
+	jsjson    = global.Get("JSON")     // javascript JSON.
 )
 
 // -----------------------------------------------------------------------------
