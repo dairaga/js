@@ -1,28 +1,10 @@
 //go:build js && wasm
 
-// Package is a WASM application. Invoking app.Init first with given handler responses to URL changed event.
-//
-// And than invoking app.Start with given handler called when application starting.
-//
-// Handler in app.Init will be called when application starting, if there is no handler in app.Start.
-//
-// Example Usage
-//
-//		func main() {
-//			app.Init(app.HandlerFunc(func(old, new url.URL) {
-//
-//			}))
-//
-//			app.Start(app.HandlerFunc(func(old, new url.URL) {
-//
-//			}))
-//
-//		}
-//
 package app
 
 import (
 	"fmt"
+	"reflect"
 
 	"github.com/dairaga/js/v2"
 	"github.com/dairaga/js/v2/url"
@@ -30,57 +12,24 @@ import (
 
 // -----------------------------------------------------------------------------
 
-// Handler responds to event when URL's hash changed.
-type Handler interface {
-	Serve(oldURL, curURL url.URL)
-}
-
-// -----------------------------------------------------------------------------
-
-// The HandlerFunc type is an adapter to allow the use of ordinary functions as app Handler.
-// If f is a function with appropriate signature, HandlerFunc(f) is a Handler that calls f.
-type HandlerFunc func(url.URL, url.URL)
-
-func (f HandlerFunc) Serve(oldURL, newURL url.URL) {
-	f(oldURL, newURL)
-}
-
-// -----------------------------------------------------------------------------
-
-// The app type represents a WASM application.
 type app struct {
-	window     js.Value // javascript Window.
-	history    js.Value // javascript Window.history.
-	currentURL url.URL  // current web page URL.
-	handler    Handler  // app Handler called when url's hash changed.
-	hashFunc   js.Func  // listener function to handle event that url's hash changed.
+	window   js.Value
+	history  js.Value
+	models   map[string]reflect.Value
+	triggers map[string][]reflect.Value
+	//hander   StateHandler
 }
 
-var _app *app
+var _app = &app{
+	models:   make(map[string]reflect.Value),
+	triggers: make(map[string][]reflect.Value),
+}
 
 // -----------------------------------------------------------------------------
 
 func (a *app) init() {
-	cb := js.FuncOf(func(_ js.Value, args []js.Value) any {
-		if a.handler != nil {
-			old := url.New(args[0].Get("oldURL").String())
-			new := url.New(args[0].Get("newURL").String())
-			a.handler.Serve(old, new)
-		}
-		return nil
-	})
-	a.hashFunc = cb
-
-	a.window.Call("addEventListener", "hashchange", cb)
-
-	a.currentURL = a.url()
-}
-
-// -----------------------------------------------------------------------------
-
-func (a *app) changeHash(new string) {
-	a.currentURL.SetHash(new)
-	js.Redirect(a.currentURL.String())
+	a.window = js.Window()
+	a.history = a.window.Get("history")
 }
 
 // -----------------------------------------------------------------------------
@@ -91,32 +40,6 @@ func (a *app) url() url.URL {
 
 // -----------------------------------------------------------------------------
 
-func (a *app) push(newURL string, x ...any) {
-	state := js.Null()
-	size := len(x)
-	var err error
-	if size == 1 {
-		state, err = js.Marshal(x[0])
-	} else if size > 1 {
-		state, err = js.Marshal(x)
-	}
-	if err != nil {
-		// console.log error, do not panic to interrupt application.
-		fmt.Println("warn: push state:", err)
-	}
-
-	oldURL := a.currentURL
-	a.history.Call("pushState", state, "", newURL)
-	a.currentURL = a.url()
-
-	if a.handler != nil {
-		a.handler.Serve(oldURL, a.currentURL)
-	}
-}
-
-// -----------------------------------------------------------------------------
-
-// state returns current state in the
 func (a *app) state(x any) (err error) {
 	state := a.history.Get("state")
 	err = js.Unmarshal(state, x)
@@ -125,62 +48,158 @@ func (a *app) state(x any) (err error) {
 
 // -----------------------------------------------------------------------------
 
-func (a *app) _go(delta int) {
-	oldURL := a.currentURL
-	if delta != 0 {
-		a.history.Call("go", delta)
-		a.currentURL = a.url()
+func (a *app) change(method string, x any, newURL ...string) error {
+	state, err := js.Marshal(x)
+
+	if err != nil {
+		return err
 	}
 
-	if a.handler != nil {
-		a.handler.Serve(oldURL, a.currentURL)
+	if len(newURL) > 0 {
+		a.history.Call(method, state, "", newURL[0])
+	} else {
+		a.history.Call(method, state, "")
+	}
+
+	return nil
+}
+
+// -----------------------------------------------------------------------------
+
+func (a *app) push(x any, newURL ...string) error {
+	return a.change("pushState", x, newURL...)
+}
+
+// -----------------------------------------------------------------------------
+
+func (a *app) replace(x any, newURL ...string) error {
+	return a.change("replaceState", x, newURL...)
+}
+
+// -----------------------------------------------------------------------------
+
+func (a *app) watch(name string, fn any) {
+	val := reflect.ValueOf(fn)
+	if reflect.Func != val.Kind() {
+		panic(fmt.Sprintf("x must be a function, but %v", val.Kind()))
+	}
+	a.triggers[name] = append(a.triggers[name], val)
+}
+
+// -----------------------------------------------------------------------------
+
+func (a *app) _go(delta int) {
+	if delta != 0 {
+		a.history.Call("go", delta)
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-// Init initialize WASM application and add a handler reponses to URL changed event.
-func Init(h ...Handler) {
-	var handler Handler = nil
+func (a *app) changeHash(new string) {
+	cur := a.url()
+	cur.SetHash(new)
+	js.Redirect(cur.String())
+}
 
-	if len(h) > 0 {
-		handler = h[0]
+// -----------------------------------------------------------------------------
+
+func (a *app) _var(val any, name string, fn any) {
+	v := reflect.ValueOf(val)
+	if reflect.Ptr != v.Kind() {
+		panic(fmt.Sprintf("x must be ptr, but %v", v.Kind()))
 	}
 
-	_app = &app{
-		window:     js.Window(),
-		history:    js.Window().Get("history"),
-		currentURL: url.New(js.Window().Get("location").Get("href").String()),
-		handler:    handler,
+	old, ok := a.models[name]
+	if ok {
+		oldv := reflect.ValueOf(old)
+		if oldv != v {
+			panic(fmt.Sprintf("%s existed", name))
+		}
+		return
 	}
+	a.models[name] = v
+	a.watch(name, fn)
+}
+
+// -----------------------------------------------------------------------------
+
+func (a *app) remove(name string) {
+	delete(a.models, name)
+	delete(a.triggers, name)
+}
+
+// -----------------------------------------------------------------------------
+
+func (a *app) trigger(sender, name string) {
+	val, ok := a.models[name]
+	if !ok {
+		return
+	}
+
+	callbacks := a.triggers[name]
+	size := len(callbacks)
+	if size > 0 {
+		args := []reflect.Value{reflect.ValueOf(sender), val.Elem()}
+		for i := 0; i < size; i++ {
+			callbacks[i].Call(args)
+		}
+	}
+}
+
+// -----------------------------------------------------------------------------
+
+func (a *app) bindElement(x any, val *string, name string, fn func(string, string)) js.Element {
+	elm := js.ElementOf(x)
+	a._var(val, name, fn)
+	return elm.OnChange(func(e js.Element, _ js.Event) {
+		e.Var(val)
+		a.trigger(e.Tattoo(), name)
+	})
+}
+
+// -----------------------------------------------------------------------------
+
+func init() {
 	_app.init()
+}
+
+// -----------------------------------------------------------------------------
+
+func Start(fn ...func()) {
+	for i := range fn {
+		fn[i]()
+	}
+	select {}
 }
 
 // -----------------------------------------------------------------------------
 
 // URL returns current url.
 func URL() url.URL {
-	return _app.currentURL
+	return _app.url()
 }
 
 // -----------------------------------------------------------------------------
 
-// ChangeHash changes current url hash. It will invoke Handler given to app.Init.
 func ChangeHash(new string) {
 	_app.changeHash(new)
 }
 
 // -----------------------------------------------------------------------------
 
-// Push changes current url. It will invoke Handler given to app.Init.
-// It makes current url changed, but browser does not load this url.
-func Push(newURL string, x ...any) {
-	_app.push(newURL, x...)
+func Push(x any, newURL ...string) error {
+	return _app.push(x, newURL...)
 }
 
 // -----------------------------------------------------------------------------
 
-// State returns current state added by Push.
+func Replace(x any, newURL ...string) error {
+	return _app.replace(x, newURL...)
+}
+
+// -----------------------------------------------------------------------------
+
 func State(x any) error {
 	return _app.state(x)
 }
@@ -211,15 +230,30 @@ func Back() {
 
 // -----------------------------------------------------------------------------
 
-// Start starts a WASM application with a given Hanlder.
-// The given Handler will be invoked when appication started.
-// Handler given to app.Init will be invoked if no hanlder is for Start.
-func Start(h ...Handler) {
-	if len(h) > 0 {
-		h[0].Serve(_app.currentURL, _app.currentURL)
-	} else if _app.handler != nil {
-		_app.handler.Serve(_app.currentURL, _app.currentURL)
-	}
+func Var(val any, name string, fn any) {
+	_app._var(val, name, fn)
+}
 
-	select {} // block main
+// -----------------------------------------------------------------------------
+
+func Watch(name string, fn any) {
+	_app.watch(name, fn)
+}
+
+// -----------------------------------------------------------------------------
+
+func Remove(name string) {
+	_app.remove(name)
+}
+
+// -----------------------------------------------------------------------------
+
+func Trigger(sender, name string) {
+	_app.trigger(sender, name)
+}
+
+// -----------------------------------------------------------------------------
+
+func BindElement(x any, val *string, name string, fn func(string, string)) js.Element {
+	return _app.bindElement(x, val, name, fn)
 }

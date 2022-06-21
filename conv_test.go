@@ -3,6 +3,7 @@
 package js
 
 import (
+	"syscall/js"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -77,4 +78,11 @@ func TestConv(t *testing.T) {
 	stra := "ABC"
 	strb := ""
 	testConv(t, "string", stra, &strb, &stra)
+
+	c := new(myTest)
+	if err := Unmarshal(js.Null(), c); err != nil {
+		t.Log("nil", err)
+	} else {
+		t.Log("test nil", c)
+	}
 }

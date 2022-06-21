@@ -1,7 +1,120 @@
 //go:build js && wasm
 
-package app
+package app_test
 
+import (
+	"os"
+	"os/signal"
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/dairaga/js/v2"
+	"github.com/dairaga/js/v2/app"
+	"github.com/stretchr/testify/assert"
+)
+
+func TestMain(m *testing.M) {
+	headless := os.Getenv("WASM_HEADLESS")
+	exitVal := m.Run()
+
+	if headless == "off" {
+		c := make(chan os.Signal, 1)
+		signal.Notify(c, os.Interrupt)
+		// Block until a signal is received.
+		<-c
+	}
+
+	os.Exit(exitVal)
+}
+
+// -----------------------------------------------------------------------------
+
+type testState struct {
+	URL   string
+	Name  string
+	Index int
+}
+
+// -----------------------------------------------------------------------------
+
+func TestMVVM(t *testing.T) {
+
+	triggerA := false
+	triggerB := false
+
+	a := false
+	b := []string{}
+
+	app.Var(&a, "a", func(sender string, v bool) {
+		triggerA = true
+		assert.Equal(t, a, v)
+	})
+
+	app.Var(&b, "b", func(sender string, v []string) {
+		triggerB = true
+		assert.Equal(t, b, v)
+	})
+
+	a = true
+	app.Trigger("_test_", "a")
+	assert.True(t, triggerA)
+
+	b = append(b, "A", "B", "C")
+	app.Trigger("_test_", "b")
+	assert.True(t, triggerB)
+}
+
+// -----------------------------------------------------------------------------
+
+func TestState(t *testing.T) {
+	curURL := app.URL().String()
+	assert.Equal(t, js.Window().Get("location").Get("href").String(), curURL)
+
+	data := []*testState{
+		{
+			URL:   "?q=1",
+			Name:  "a1",
+			Index: 0,
+		},
+		{
+			URL:   "?q=2",
+			Name:  "a2",
+			Index: 1,
+		},
+		{
+			URL:   "?q=3",
+			Name:  "a3",
+			Index: 2,
+		},
+	}
+
+	for _, x := range data {
+		assert.NoError(t, app.Push(x, x.URL))
+		assert.Equal(t, js.Window().Get("location").Get("href").String(), app.URL().String())
+		assert.True(t, strings.HasSuffix(app.URL().String(), x.URL))
+		x1 := new(testState)
+		assert.NoError(t, app.State(x1))
+		assert.Equal(t, x, x1)
+	}
+
+	app.Go(-len(data))
+	time.Sleep(500 * time.Millisecond) // need to wait browser changes url.
+	assert.Equal(t, curURL, app.URL().String())
+
+	for _, x := range data {
+		app.Forward()
+		time.Sleep(500 * time.Millisecond)
+		assert.Equal(t, js.Window().Get("location").Get("href").String(), app.URL().String())
+		assert.True(t, strings.HasSuffix(app.URL().String(), x.URL))
+		x1 := new(testState)
+		assert.NoError(t, app.State(x1))
+		assert.Equal(t, x, x1)
+	}
+
+}
+
+/*
 import (
 	"testing"
 	"time"
@@ -83,3 +196,4 @@ func TestHash(t *testing.T) {
 	assert.NoError(t, State(s1))
 	assert.Equal(t, s, s1)
 }
+*/

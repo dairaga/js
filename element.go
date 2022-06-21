@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"github.com/dairaga/js/v2/builtin"
-	"github.com/dairaga/js/v2/mvvm"
 )
 
 type HTML string
@@ -60,6 +59,8 @@ type Element interface {
 
 	Value() string
 	SetValue(val string) Element
+	Var(val *string) Element
+
 	Files() []File
 
 	Add(clz string, at ...string) Element
@@ -78,10 +79,6 @@ type Element interface {
 
 	Empty() Element
 	Relese()
-
-	Trigger(name string) Element
-	Var(val *string) Element
-	Bind(name string, val *string, cb func(string, string)) Element
 }
 
 // -----------------------------------------------------------------------------
@@ -344,25 +341,6 @@ func (e element) Relese() {
 
 // -----------------------------------------------------------------------------
 
-func (e element) Trigger(name string) Element {
-	mvvm.Trigger(e.Tattoo(), name)
-	return e
-}
-
-// -----------------------------------------------------------------------------
-
-func (e element) Bind(name string, val *string, cb func(string, string)) Element {
-	mvvm.Add(name, val)
-	mvvm.Watch(name, cb)
-	e.OnChange(func(_ Element, _ Event) {
-		e.Var(val)
-		e.Trigger(name)
-	})
-	return e
-}
-
-// -----------------------------------------------------------------------------
-
 func (e element) Var(val *string) Element {
 	if e.Attr("type") == "checkbox" && !e.Prop("checked").Bool() {
 		*val = ""
@@ -397,13 +375,6 @@ func ElementOf(x any) Element {
 		return elementOf(v)
 	}
 	panic(fmt.Sprintf("unsupport type %T", x))
-}
-
-// -----------------------------------------------------------------------------
-
-func BindValue(elm any, name string, val *string, cb func(string, string)) {
-	e := ElementOf(elm)
-	e.Bind(name, val, cb)
 }
 
 // -----------------------------------------------------------------------------

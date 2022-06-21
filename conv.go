@@ -4,13 +4,12 @@ package js
 
 import (
 	"encoding/json"
-	"syscall/js"
 )
 
 // -----------------------------------------------------------------------------
 
 func Marshal(x any) (ret Value, err error) {
-	ret = js.Null()
+	ret = Null()
 	var dataBytes []byte
 
 	if dataBytes, err = json.Marshal(x); err != nil {
