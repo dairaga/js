@@ -3,9 +3,6 @@
 package app
 
 import (
-	"fmt"
-	"reflect"
-
 	"github.com/dairaga/js/v2"
 	"github.com/dairaga/js/v2/url"
 )
@@ -13,16 +10,16 @@ import (
 // -----------------------------------------------------------------------------
 
 type app struct {
-	window   js.Value
-	history  js.Value
-	models   map[string]reflect.Value
-	triggers map[string][]reflect.Value
+	window  js.Value
+	history js.Value
+	//models   map[string]reflect.Value
+	triggers map[string][]func(string)
 	//hander   StateHandler
 }
 
 var _app = &app{
-	models:   make(map[string]reflect.Value),
-	triggers: make(map[string][]reflect.Value),
+	//models:   make(map[string]reflect.Value),
+	triggers: make(map[string][]func(string)),
 }
 
 // -----------------------------------------------------------------------------
@@ -78,16 +75,6 @@ func (a *app) replace(x any, newURL ...string) error {
 
 // -----------------------------------------------------------------------------
 
-func (a *app) watch(name string, fn any) {
-	val := reflect.ValueOf(fn)
-	if reflect.Func != val.Kind() {
-		panic(fmt.Sprintf("x must be a function, but %v", val.Kind()))
-	}
-	a.triggers[name] = append(a.triggers[name], val)
-}
-
-// -----------------------------------------------------------------------------
-
 func (a *app) _go(delta int) {
 	if delta != 0 {
 		a.history.Call("go", delta)
@@ -104,54 +91,70 @@ func (a *app) changeHash(new string) {
 
 // -----------------------------------------------------------------------------
 
-func (a *app) _var(val any, name string, fn any) {
-	v := reflect.ValueOf(val)
-	if reflect.Ptr != v.Kind() {
-		panic(fmt.Sprintf("x must be ptr, but %v", v.Kind()))
-	}
-
-	old, ok := a.models[name]
-	if ok {
-		oldv := reflect.ValueOf(old)
-		if oldv != v {
-			panic(fmt.Sprintf("%s existed", name))
-		}
-		return
-	}
-	a.models[name] = v
-	a.watch(name, fn)
+func (a *app) watch(name string, fn func(string)) {
+	//val := reflect.ValueOf(fn)
+	//if reflect.Func != val.Kind() {
+	//	panic(fmt.Sprintf("x must be a function, but %v", val.Kind()))
+	//}
+	a.triggers[name] = append(a.triggers[name], fn)
 }
 
 // -----------------------------------------------------------------------------
 
+//func (a *app) _var(name string, fn func(string)) {
+//	//v := reflect.ValueOf(val)
+//	//if reflect.Ptr != v.Kind() {
+//	//	panic(fmt.Sprintf("x must be ptr, but %v", v.Kind()))
+//	//}
+//
+//	//old, ok := a.models[name]
+//	//if ok {
+//	//	oldv := reflect.ValueOf(old)
+//	//	if oldv != v {
+//	//		panic(fmt.Sprintf("%s existed", name))
+//	//	}
+//	//	return
+//	//}
+//	//a.models[name] = v
+//	a.watch(name, fn)
+//}
+
+// -----------------------------------------------------------------------------
+
 func (a *app) remove(name string) {
-	delete(a.models, name)
+	//delete(a.models, name)
 	delete(a.triggers, name)
 }
 
 // -----------------------------------------------------------------------------
 
 func (a *app) trigger(sender, name string) {
-	val, ok := a.models[name]
-	if !ok {
-		return
-	}
+	//val, ok := a.models[name]
+	//if !ok {
+	//	return
+	//}
 
-	callbacks := a.triggers[name]
-	size := len(callbacks)
-	if size > 0 {
-		args := []reflect.Value{reflect.ValueOf(sender), val.Elem()}
-		for i := 0; i < size; i++ {
-			callbacks[i].Call(args)
-		}
+	//callbacks := a.triggers[name]
+	//size := len(callbacks)
+	//if size > 0 {
+
+	//args := []reflect.Value{reflect.ValueOf(sender), val.Elem()}
+	//for i := 0; i < size; i++ {
+	//	callbacks[i].Call(args)
+	//}
+	//}
+
+	for _, cb := range a.triggers[name] {
+		cb(sender)
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-func (a *app) bindElement(x any, val *string, name string, fn func(string, string)) js.Element {
+func (a *app) bindElement(x any, val *string, name string, fn func(string)) js.Element {
 	elm := js.ElementOf(x)
-	a._var(val, name, fn)
+	a.watch(name, fn)
+	//a._var(val, name, fn)
 	return elm.OnChange(func(e js.Element, _ js.Event) {
 		e.Var(val)
 		a.trigger(e.Tattoo(), name)
@@ -230,13 +233,13 @@ func Back() {
 
 // -----------------------------------------------------------------------------
 
-func Var(val any, name string, fn any) {
-	_app._var(val, name, fn)
-}
+//func Var(val any, name string, fn any) {
+//	_app._var(val, name, fn)
+//}
 
 // -----------------------------------------------------------------------------
 
-func Watch(name string, fn any) {
+func Watch(name string, fn func(string)) {
 	_app.watch(name, fn)
 }
 
@@ -254,6 +257,6 @@ func Trigger(sender, name string) {
 
 // -----------------------------------------------------------------------------
 
-func BindElement(x any, val *string, name string, fn func(string, string)) js.Element {
+func BindElement(x any, val *string, name string, fn func(string)) js.Element {
 	return _app.bindElement(x, val, name, fn)
 }
