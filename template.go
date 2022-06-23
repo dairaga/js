@@ -15,7 +15,7 @@ var _ Appendable = Template{}
 
 // -----------------------------------------------------------------------------
 
-func (t Template) Set(selector string, fn func(int, Element)) Template {
+func (t Template) Travel(selector string, fn func(int, Element)) Template {
 	ElementsOf(queryAll(Value(t), selector)).Foreach(fn)
 	return t
 }
@@ -69,7 +69,7 @@ func (t Template) Prop(selector, p string) Value {
 // -----------------------------------------------------------------------------
 
 func (t Template) SetProp(selector, p string, val any) Template {
-	return t.Set(selector, func(_ int, child Element) {
+	return t.Travel(selector, func(_ int, child Element) {
 		child.SetProp(p, val)
 	})
 }
@@ -84,7 +84,7 @@ func (t Template) Attr(selector, a string) string {
 
 func (t Template) SetAttr(selector, a, val string) Template {
 	if a != _tattoo {
-		t.Set(selector, func(_ int, child Element) {
+		t.Travel(selector, func(_ int, child Element) {
 			setAttr(child.JSValue(), a, val)
 		})
 	}
@@ -101,7 +101,7 @@ func (t Template) Text(selector string) string {
 // -----------------------------------------------------------------------------
 
 func (t Template) SetText(selector string, txt string) Template {
-	return t.Set(selector, func(_ int, child Element) {
+	return t.Travel(selector, func(_ int, child Element) {
 		child.SetText(txt)
 	})
 }
@@ -115,7 +115,7 @@ func (t Template) HTML(selector string) HTML {
 // -----------------------------------------------------------------------------
 
 func (t Template) SetHTML(selector string, content HTML) Template {
-	return t.Set(selector, func(_ int, child Element) {
+	return t.Travel(selector, func(_ int, child Element) {
 		child.SetHTML(content)
 	})
 }
@@ -123,7 +123,7 @@ func (t Template) SetHTML(selector string, content HTML) Template {
 // -----------------------------------------------------------------------------
 
 func (t Template) Add(selector, clz string) Template {
-	return t.Set(selector, func(_ int, child Element) {
+	return t.Travel(selector, func(_ int, child Element) {
 		//child.Add(clz)
 		addClz(child.JSValue(), clz)
 	})
@@ -132,7 +132,7 @@ func (t Template) Add(selector, clz string) Template {
 // -----------------------------------------------------------------------------
 
 func (t Template) Remove(selector, clz string) Template {
-	return t.Set(selector, func(_ int, child Element) {
+	return t.Travel(selector, func(_ int, child Element) {
 		//child.Remove(clz)
 		removeClz(child.JSValue(), clz)
 	})
@@ -147,7 +147,7 @@ func (t Template) Has(selector, clz string) bool {
 // -----------------------------------------------------------------------------
 
 func (t Template) Replace(selector, old, new string) Template {
-	return t.Set(selector, func(_ int, child Element) {
+	return t.Travel(selector, func(_ int, child Element) {
 		//child.Replace(old, new)
 		replaceClz(child.JSValue(), old, new)
 	})
@@ -156,7 +156,7 @@ func (t Template) Replace(selector, old, new string) Template {
 // -----------------------------------------------------------------------------
 
 func (t Template) Toggle(selector, clz string) Template {
-	return t.Set(selector, func(_ int, child Element) {
+	return t.Travel(selector, func(_ int, child Element) {
 		//child.Toggle(clz)
 		toggleClz(child.JSValue(), clz)
 	})

@@ -112,20 +112,15 @@ func (e element) tattoo() element {
 
 // -----------------------------------------------------------------------------
 
-func (e element) Tattoo() string {
-	return e.Attr(_tattoo)
+func (e element) String() string {
+	return fmt.Sprintf(`{"tag": %q, "tattoo": %q, "id": %q, "class": %q}`, Value(e).Get("tagName").String(), e.Tattoo(), e.Attr("id"), e.Prop("classList").Get("value").String())
 }
 
 // -----------------------------------------------------------------------------
 
-//func (e element) at(a ...string) Value {
-//	if len(a) > 0 {
-//		v := Value(e).Call("querySelector", a[0])
-//		element(v).tattoo()
-//		return v
-//	}
-//	return Value(e)
-//}
+func (e element) Tattoo() string {
+	return e.Attr(_tattoo)
+}
 
 // -----------------------------------------------------------------------------
 
