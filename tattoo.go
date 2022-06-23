@@ -18,7 +18,8 @@ const (
 	letterIdxMask = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
 	letterIdxMax  = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
 
-	_tattoo = `data-dairaga`
+	_tattoo    = `data-dairaga`
+	_tattooLen = 10
 )
 
 var (
@@ -43,4 +44,15 @@ func tattoo(n int) string {
 	}
 
 	return *(*string)(unsafe.Pointer(&b))
+}
+
+// -----------------------------------------------------------------------------
+
+func tattoos(target Value) Value {
+	val := target.Call("getAttribute", _tattoo)
+	if val.Truthy() {
+		return target
+	}
+	target.Call("setAttribute", _tattoo, tattoo(_tattooLen))
+	return target
 }

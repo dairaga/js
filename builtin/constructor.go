@@ -48,6 +48,7 @@ const (
 	HTMLInputElement    = Constructor("HTMLInputElement")
 	HTMLSelectElement   = Constructor("HTMLSelectElement")
 	HTMLTextAreaElement = Constructor("HTMLTextAreaElement")
+	HTMLTemplateElement = Constructor("HTMLTemplateElement")
 
 	Blob = Constructor("Blob")
 	File = Constructor("File")
@@ -133,4 +134,10 @@ func IsForm(v js.Value) bool {
 
 func IsArray(v js.Value) bool {
 	return v.InstanceOf(Array.JSValue())
+}
+
+// -----------------------------------------------------------------------------
+
+func IsTemplate(v js.Value) bool {
+	return v.InstanceOf(HTMLTemplateElement.JSValue())
 }

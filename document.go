@@ -4,7 +4,7 @@ package js
 
 import "fmt"
 
-// Appendable 代表物件是可被加到 Body 或 HTMLElement 內。目前有實作的物件有：Element 及 HTML。
+// Appendable 代表物件是可被加到 Body 或 HTMLElement 內。目前有實作的物件有： Element, HTML, Plain, Template.
 type Appendable interface {
 	Wrapper
 	Ref() Value
@@ -27,15 +27,16 @@ func QueryAll(selector string) Elements {
 // -----------------------------------------------------------------------------
 
 // Append 將物件加到 Body 的尾端。
-func Append(a Appendable) {
-	body.Call("append", a.Ref())
+func Append(child Appendable, selector ...string) {
+	appendNode(at(body, selector...), child)
 }
 
 // -----------------------------------------------------------------------------
 
 // Prepend 將物件加到 Body 的前面。
-func Prepend(a Appendable) {
-	body.Call("prepend", a.Ref())
+func Prepend(child Appendable, selector ...string) {
+	//body.Call("prepend", a.Ref())
+	prependNode(at(body, selector...), child)
 }
 
 // -----------------------------------------------------------------------------

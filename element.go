@@ -85,6 +85,10 @@ type Element interface {
 
 type element Value
 
+var _ Appendable = element{}
+
+// -----------------------------------------------------------------------------
+
 func (e element) JSValue() Value {
 	return Value(e)
 }
@@ -114,14 +118,14 @@ func (e element) Tattoo() string {
 
 // -----------------------------------------------------------------------------
 
-func (e element) at(a ...string) Value {
-	if len(a) > 0 {
-		v := Value(e).Call("querySelector", a[0])
-		element(v).tattoo()
-		return v
-	}
-	return Value(e)
-}
+//func (e element) at(a ...string) Value {
+//	if len(a) > 0 {
+//		v := Value(e).Call("querySelector", a[0])
+//		element(v).tattoo()
+//		return v
+//	}
+//	return Value(e)
+//}
 
 // -----------------------------------------------------------------------------
 
@@ -137,47 +141,44 @@ func (e element) QueryAll(selector string) Elements {
 
 // -----------------------------------------------------------------------------
 
-func (e element) Append(child Appendable, at ...string) Element {
-	e.at(at...).Call("append", child.Ref())
+func (e element) Append(child Appendable, selector ...string) Element {
+	//at(Value(e), selector...).Call("append", child.Ref())
+	appendNode(at(Value(e), selector...), child)
 	return e
 }
 
 // -----------------------------------------------------------------------------
 
-func (e element) Prepend(child Appendable, at ...string) Element {
-	e.at(at...).Call("prepend", child.Ref())
+func (e element) Prepend(child Appendable, selector ...string) Element {
+	//at(Value(e), selector...).Call("prepend", child.Ref())
+	prependNode(at(Value(e), selector...), child)
 	return e
 }
 
 // -----------------------------------------------------------------------------
 
-func (e element) Prop(p string, at ...string) Value {
-	return e.at(at...).Get(p)
+func (e element) Prop(p string, selector ...string) Value {
+	return at(Value(e), selector...).Get(p)
 }
 
 // -----------------------------------------------------------------------------
 
-func (e element) SetProp(p string, val any, at ...string) Element {
-	e.at(at...).Set(p, val)
+func (e element) SetProp(p string, val any, selector ...string) Element {
+	at(Value(e), selector...).Set(p, val)
 	return e
 }
 
 // -----------------------------------------------------------------------------
 
-func (e element) Attr(a string, at ...string) string {
-	val := e.at(at...).Call("getAttribute", a)
-
-	if val.Truthy() {
-		return val.String()
-	}
-	return ""
+func (e element) Attr(a string, selector ...string) string {
+	return attr(at(Value(e), selector...), a)
 }
 
 // -----------------------------------------------------------------------------
 
-func (e element) SetAttr(a, val string, at ...string) Element {
+func (e element) SetAttr(a, val string, selector ...string) Element {
 	if _tattoo != a {
-		e.at(at...).Call("setAttribute", a, val)
+		setAttr(at(Value(e), selector...), a, val)
 	}
 	return e
 }
@@ -242,41 +243,46 @@ func (e element) Files() []File {
 
 // -----------------------------------------------------------------------------
 
-func (e element) Add(clz string, at ...string) Element {
-	e.Prop("classList", at...).Call("add", clz)
+func (e element) Add(clz string, selector ...string) Element {
+	addClz(at(Value(e), selector...), clz)
+	//e.Prop("classList", at...).Call("add", clz)
 	return e
 }
 
 // -----------------------------------------------------------------------------
 
-func (e element) Remove(clz string, at ...string) Element {
-	e.Prop("classList", at...).Call("remove", clz)
+func (e element) Remove(clz string, selector ...string) Element {
+	//e.Prop("classList", at...).Call("remove", clz)
+	removeClz(at(Value(e), selector...), clz)
 	return e
 }
 
 // -----------------------------------------------------------------------------
 
-func (e element) Has(clz string, at ...string) bool {
-	return e.Prop("classList", at...).Call("contains", clz).Bool()
+func (e element) Has(clz string, selector ...string) bool {
+	//return e.Prop("classList", at...).Call("contains", clz).Bool()
+	return hasClz(at(Value(e), selector...), clz)
 }
 
 // -----------------------------------------------------------------------------
 
-func (e element) Replace(oldClz, newClz string, at ...string) Element {
-	e.Prop("classList", at...).Call("replace", oldClz, newClz)
+func (e element) Replace(old, new string, selector ...string) Element {
+	//e.Prop("classList", at...).Call("replace", oldClz, newClz)
+	replaceClz(at(Value(e), selector...), old, new)
 	return e
 }
 
 // -----------------------------------------------------------------------------
 
-func (e element) Toggle(clz string, at ...string) Element {
-	e.Prop("classList", at...).Call("toggle", clz)
+func (e element) Toggle(clz string, selector ...string) Element {
+	//e.Prop("classList", at...).Call("toggle", clz)
+	toggleClz(at(Value(e), selector...), clz)
 	return e
 }
 
 // -----------------------------------------------------------------------------
 
-func (e element) On(typ string, fn HandlerFunc, at ...string) Element {
+func (e element) On(typ string, fn HandlerFunc, selector ...string) Element {
 	cb := FuncOf(func(_this Value, args []Value) any {
 		evt := event(args[0])
 		elm := elementOf(evt.Get("target"))
@@ -284,7 +290,7 @@ func (e element) On(typ string, fn HandlerFunc, at ...string) Element {
 		return nil
 	})
 
-	e.at(at...).Call("addEventListener", typ, cb)
+	at(Value(e), selector...).Call("addEventListener", typ, cb)
 	return e
 }
 
@@ -302,22 +308,22 @@ func (e element) OnChange(fn HandlerFunc, at ...string) Element {
 
 // -----------------------------------------------------------------------------
 
-func (e element) Click(at ...string) Element {
-	e.at(at...).Call("click")
+func (e element) Click(selector ...string) Element {
+	at(Value(e), selector...).Call("click")
 	return e
 }
 
 // -----------------------------------------------------------------------------
 
-func (e element) Foucs(at ...string) Element {
-	e.at(at...).Call("focus")
+func (e element) Foucs(selector ...string) Element {
+	at(Value(e), selector...).Call("focus")
 	return e
 }
 
 // -----------------------------------------------------------------------------
 
-func (e element) Blur(at ...string) Element {
-	e.at(at...).Call("blur")
+func (e element) Blur(selector ...string) Element {
+	at(Value(e), selector...).Call("blur")
 	return e
 }
 

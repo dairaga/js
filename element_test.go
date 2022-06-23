@@ -31,4 +31,6 @@ func TestElementOfByHTML(t *testing.T) {
 	assert.Equal(t, "create_element_by_html", elm.Attr("id"))
 	assert.Equal(t, document.Call("querySelector", "#create_element_by_html"), elm.JSValue())
 	assert.Equal(t, elm, Query("#create_element_by_html"))
+	elm.SetText("Change Content")
+	assert.Equal(t, Query("#create_element_by_html").Text(), elm.Text())
 }

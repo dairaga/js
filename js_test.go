@@ -1,6 +1,6 @@
 //go:build js && wasm
 
-package js
+package js_test
 
 import (
 	"os"
