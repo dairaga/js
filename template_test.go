@@ -44,9 +44,9 @@ func TestTemlateCreate(t *testing.T) {
 	assert.Equal(t, 3, tmpl.Length()) // <p> x 2 + <ul> x 1
 
 	// Print li
-	tmpl.Travel("li", func(i int, child js.Element) {
-		t.Log(i, child)
-	})
+	//tmpl.Travel("li", func(i int, child js.Element) {
+	//	t.Log(i, child)
+	//})
 
 	// Test Query
 	for i := range texts {
@@ -105,8 +105,20 @@ func TestTemlateCreate(t *testing.T) {
 	}
 	tmpl.Add("#"+texts[1][0], "clz-odd")
 
+	// Test Clone
+	clone := tmpl.Clone()
+	assert.Equal(t, 3, clone.Length()) // <p> x 2 + <ul> x 1
+	assert.Equal(t, "tmpl_p_first", clone.First().Attr("id"))
+	assert.Equal(t, "tmpl_p_last", clone.Last().Attr("id"))
+	clone.Travel("li", func(i int, child js.Element) {
+		assert.Equal(t, texts[i][0], child.Attr("id"))
+		assert.Equal(t, texts[i][1], child.Text())
+	})
+
 	// Append to body, and tmpl is empty.
 	js.Append(tmpl)
+
+	assert.Equal(t, 0, tmpl.Length())
 
 	for i := range texts {
 		assert.Equal(t, texts[i][1], js.Query("#"+texts[i][0]).Text())
