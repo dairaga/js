@@ -39,7 +39,8 @@ func TestTemlateCreate(t *testing.T) {
 	// Test Prepend, Append, First, and Last
 	tmpl.Prepend(js.CreateElement("p").SetAttr("id", "tmpl_p_first").SetText("first"))
 	tmpl.Append(js.CreateElement("p").SetAttr("id", "tmpl_p_last").SetText("last"))
-	assert.Equal(t, "tmpl_p_first", tmpl.First().Attr("id"))
+	first := tmpl.First()
+	assert.Equal(t, "tmpl_p_first", first.Attr("id"))
 	assert.Equal(t, "tmpl_p_last", tmpl.Last().Attr("id"))
 	assert.Equal(t, 3, tmpl.Length()) // <p> x 2 + <ul> x 1
 
@@ -133,4 +134,6 @@ func TestTemlateCreate(t *testing.T) {
 		assert.Equal(t, oddClz[i], js.Query("#"+texts[i][0]).Has("clz-odd"))
 	}
 
+	first.SetText("first,first")
+	assert.Equal(t, "first,first", js.Query("#tmpl_p_first").Text())
 }

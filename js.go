@@ -119,3 +119,15 @@ func Null() Value {
 func Undefined() Value {
 	return undefined
 }
+
+// -----------------------------------------------------------------------------
+
+func EncodeURI(src string) string {
+	return global.Call("encodeURIComponent", src).String()
+}
+
+// -----------------------------------------------------------------------------
+
+func DecodeURI(src string) string {
+	return global.Call("decodeURIComponent", src).String()
+}

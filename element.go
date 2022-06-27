@@ -37,6 +37,7 @@ type HandlerFunc func(Element, Event)
 type Element interface {
 	Appendable
 
+	Parent() Element
 	Tattoo() string
 
 	Query(selector string) Element
@@ -114,6 +115,16 @@ func (e element) tattoo() element {
 
 func (e element) String() string {
 	return fmt.Sprintf(`{"tag": %q, "tattoo": %q, "id": %q, "class": %q}`, Value(e).Get("tagName").String(), e.Tattoo(), e.Attr("id"), e.Prop("classList").Get("value").String())
+}
+
+// -----------------------------------------------------------------------------
+
+func (e element) Parent() Element {
+	p := e.Prop("parentElement")
+	if p.Truthy() && builtin.IsElement(p) {
+		return elementOf(p)
+	}
+	return nil
 }
 
 // -----------------------------------------------------------------------------
@@ -280,7 +291,8 @@ func (e element) Toggle(clz string, selector ...string) Element {
 func (e element) On(typ string, fn HandlerFunc, selector ...string) Element {
 	cb := FuncOf(func(_this Value, args []Value) any {
 		evt := event(args[0])
-		elm := elementOf(evt.Get("target"))
+		//elm := elementOf(evt.Get("target"))
+		elm := elementOf(_this)
 		fn(elm, evt)
 		return nil
 	})
@@ -325,11 +337,9 @@ func (e element) Blur(selector ...string) Element {
 // -----------------------------------------------------------------------------
 
 func (e element) Empty() Element {
-	children := Value(e).Get("children")
-	size := children.Length()
-
-	for i := 0; i < size; i++ {
-		children.Index(i).Call("remove")
+	v := Value(e)
+	for v.Get("firstChild").Truthy() {
+		v.Get("firstChild").Call("remove")
 	}
 	return e
 }
@@ -364,6 +374,8 @@ func elementOf(v Value) element {
 
 func ElementOf(x any) Element {
 	switch v := x.(type) {
+	case Element:
+		return v
 	case HTML:
 		tmpl := createElement("template")
 		tmpl.Set("innerHTML", v.JSValue())
