@@ -79,7 +79,8 @@ type Element interface {
 	Blur(at ...string) Element
 
 	Empty() Element
-	Relese()
+	//Relese()
+	Dispose()
 }
 
 // -----------------------------------------------------------------------------
@@ -346,7 +347,7 @@ func (e element) Empty() Element {
 
 // -----------------------------------------------------------------------------
 
-func (e element) Relese() {
+func (e element) Dispose() {
 	Value(e).Call("remove")
 }
 
