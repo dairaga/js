@@ -1,5 +1,6 @@
 //go:build js && wasm
 
+// Package url provides datastructure and functions about javascript URL.
 package url
 
 import (

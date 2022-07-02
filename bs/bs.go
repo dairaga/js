@@ -1,11 +1,13 @@
 //go:build js && wasm
 
+// Package bs is a helper toolkit for Bootstrap 5.0.
 package bs
 
 import "github.com/dairaga/js/v2"
 
-var global = js.Window().Get("bootstrap")
+var global = js.Window().Get("bootstrap") // an bootstrap object.
 
+// Global returns the global Bootstrap object.
 func Global() js.Value {
 	return global
 }

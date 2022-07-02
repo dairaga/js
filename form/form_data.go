@@ -9,38 +9,48 @@ import (
 	"github.com/dairaga/js/v2/builtin"
 )
 
+// ValueType is Form Value type. There are two types: String and Binary.
 type ValueType int
 
 const (
-	TypeString ValueType = ValueType(js.TypeString)
-	TypeBinary ValueType = ValueType(js.TypeObject)
+	TypeString ValueType = ValueType(js.TypeString) // StringType
+	TypeBinary ValueType = ValueType(js.TypeObject) // BinaryType
 )
 
 // -----------------------------------------------------------------------------
 
+// FormValue represents Javascript Form Value.
 type FormValue interface {
+	// Type returns the value type.
 	Type() ValueType
+
+	// ValueRef returns javascript value.
 	ValueRef() js.Value
 }
 
 // -----------------------------------------------------------------------------
 
+// String represents String value.
 type String string
 
+// ValueRef returns javascript value.
 func (s String) ValueRef() js.Value {
 	return js.ValueOf(string(s))
 }
 
 // -----------------------------------------------------------------------------
 
+// Type returns string type.
 func (s String) Type() ValueType {
 	return TypeString
 }
 
 // -----------------------------------------------------------------------------
 
+// Binary represents Binary value.
 type Binary js.Value
 
+// ValueRef returns javascript value.
 func (b Binary) ValueRef() js.Value {
 	v := js.Value(b)
 	if builtin.IsBlob(v) {
@@ -52,22 +62,27 @@ func (b Binary) ValueRef() js.Value {
 
 // -----------------------------------------------------------------------------
 
+// Type return binary type.
 func (b Binary) Type() ValueType {
 	return TypeBinary
 }
 
 // -----------------------------------------------------------------------------
 
+// FormData is javascript FormData.
+// See https://developer.mozilla.org/en-US/docs/Web/API/FormData.
 type FormData js.Value
 
 // -----------------------------------------------------------------------------
 
+// JSValue returns javascript value.
 func (f FormData) JSValue() js.Value {
 	return js.Value(f)
 }
 
 // -----------------------------------------------------------------------------
 
+// Get returns value corresponding to the given name.
 func (f FormData) Get(name string) FormValue {
 	val := js.Value(f).Call("get", name)
 	if js.TypeString == val.Type() {
@@ -79,6 +94,7 @@ func (f FormData) Get(name string) FormValue {
 
 // -----------------------------------------------------------------------------
 
+// Set sets value to the given name.
 func (f FormData) Set(name string, val FormValue, filename ...string) {
 	if len(filename) > 0 {
 		js.Value(f).Call("set", name, val.ValueRef(), filename[0])
@@ -89,6 +105,7 @@ func (f FormData) Set(name string, val FormValue, filename ...string) {
 
 // -----------------------------------------------------------------------------
 
+// Append appends value to the given name.
 func (f FormData) Append(name string, val FormValue, filename ...string) {
 	if len(filename) > 0 {
 		js.Value(f).Call("append", name, val.ValueRef(), filename[0])
@@ -99,12 +116,20 @@ func (f FormData) Append(name string, val FormValue, filename ...string) {
 
 // -----------------------------------------------------------------------------
 
+// Delete removes value corresponding to the given name.
 func (f FormData) Delete(name string) {
 	js.Value(f).Call("delete", name)
 }
 
 // -----------------------------------------------------------------------------
 
+// FormDataOf returns a new FormData instance. Construct a empty FormData if no arguments.
+//
+// Given x can be:
+//
+// 1. string as selector criteria.
+//
+// 2. javascript value or wrapper of javascript value.
 func FormDataOf(x ...any) FormData {
 	if len(x) <= 0 {
 		return FormData(builtin.FormData.New())

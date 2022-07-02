@@ -34,6 +34,7 @@ type HandlerFunc func(Element, Event)
 
 // -----------------------------------------------------------------------------
 
+// Element represents a DOM element, usually is a HTML element.
 type Element interface {
 	Appendable
 
