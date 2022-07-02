@@ -1,5 +1,7 @@
 //go:build js && wasm
 
+// Package ajax provides a simple way to make a JSON AJAX request. Payload must be bytes or glang objects like slice, map, and structs.
+// Bytes is dealed with application/octet-stream, and others are dealed with application/json.
 package ajax
 
 import (
@@ -17,26 +19,29 @@ const (
 )
 
 var (
-	defaultWithCredentials = true
+	defaultWithCredentials = false
 )
 
 // -----------------------------------------------------------------------------
 
+// Client is a AJAX client made by XHR.
 type Client struct {
-	ref      js.Value
-	lastErr  error
-	released bool
-	listener js.Listener
+	ref      js.Value    // javascript XMLHttpRequest instance.
+	lastErr  error       // last error.
+	released bool        // client is released or not.
+	listener js.Listener // all event listeners.
 }
 
 // -----------------------------------------------------------------------------
 
+// JSValue returns the underlying javascript XMLHttpRequest instance.
 func (cli *Client) JSValue() js.Value {
 	return cli.ref
 }
 
 // -----------------------------------------------------------------------------
 
+// do makes a request.
 func (cli *Client) do(method string, url string, x ...any) (err error) {
 	var req *Request
 	req, err = NewRequest(method, url, x...)
@@ -50,6 +55,7 @@ func (cli *Client) do(method string, url string, x ...any) (err error) {
 
 // -----------------------------------------------------------------------------
 
+// Release releases all listeners in the client.
 func (cli *Client) Release() {
 	if cli.released {
 		return
@@ -60,6 +66,7 @@ func (cli *Client) Release() {
 
 // -----------------------------------------------------------------------------
 
+// Released returns true if the client is released.
 func (cli *Client) Released() bool {
 	return cli.released
 }
