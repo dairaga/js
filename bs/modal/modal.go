@@ -13,6 +13,7 @@ var object = bs.Global().Get("Modal") // bootstrap modal component.
 // -----------------------------------------------------------------------------
 
 // Class represents Bootstrap modal component.
+//
 // See https://getbootstrap.com/docs/5.2/components/modal/
 type Class struct {
 	js.Element

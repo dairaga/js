@@ -70,6 +70,7 @@ func (b Binary) Type() ValueType {
 // -----------------------------------------------------------------------------
 
 // FormData is javascript FormData.
+//
 // See https://developer.mozilla.org/en-US/docs/Web/API/FormData.
 type FormData js.Value
 
@@ -82,7 +83,9 @@ func (f FormData) JSValue() js.Value {
 
 // -----------------------------------------------------------------------------
 
-// Get returns value corresponding to the given name.
+// Get returns value associated with the given name.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/FormData/get.
 func (f FormData) Get(name string) FormValue {
 	val := js.Value(f).Call("get", name)
 	if js.TypeString == val.Type() {
@@ -94,7 +97,9 @@ func (f FormData) Get(name string) FormValue {
 
 // -----------------------------------------------------------------------------
 
-// Set sets value to the given name.
+// Set sets value associated with the given name to the given value val.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/FormData/set.
 func (f FormData) Set(name string, val FormValue, filename ...string) {
 	if len(filename) > 0 {
 		js.Value(f).Call("set", name, val.ValueRef(), filename[0])
@@ -105,7 +110,9 @@ func (f FormData) Set(name string, val FormValue, filename ...string) {
 
 // -----------------------------------------------------------------------------
 
-// Append appends value to the given name.
+// Append appends the given value val onto the given key name.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/FormData/append.
 func (f FormData) Append(name string, val FormValue, filename ...string) {
 	if len(filename) > 0 {
 		js.Value(f).Call("append", name, val.ValueRef(), filename[0])
@@ -116,7 +123,9 @@ func (f FormData) Append(name string, val FormValue, filename ...string) {
 
 // -----------------------------------------------------------------------------
 
-// Delete removes value corresponding to the given name.
+// Delete removes all values associated with the given name.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/FormData/delete.
 func (f FormData) Delete(name string) {
 	js.Value(f).Call("delete", name)
 }

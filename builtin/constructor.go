@@ -59,32 +59,34 @@ const (
 	RegExp = Constructor("RegExp") // Javascript RegExp class.
 
 	Array = Constructor("Array") // Javascript Array class.
+
+	MediaSource = Constructor("MediaSource") // Javascript MediaSource class.
 )
 
 // -----------------------------------------------------------------------------
 
-// IsEventTarget returns true if given value v is an EventTarget.
+// IsEventTarget returns true if given instance v is an EventTarget.
 func IsEventTarget(v js.Value) bool {
 	return v.InstanceOf(EventTarget.JSValue())
 }
 
 // -----------------------------------------------------------------------------
 
-// IsEvent returns true if given value v is an Event.
+// IsEvent returns true if given instance v is an Event.
 func IsEvent(v js.Value) bool {
 	return v.InstanceOf(Event.JSValue())
 }
 
 // -----------------------------------------------------------------------------
 
-// IsArrayBuffer returns true if given value v is an ArrayBuffer.
+// IsArrayBuffer returns true if given instance v is an ArrayBuffer.
 func IsArrayBuffer(v js.Value) bool {
 	return v.InstanceOf(ArrayBuffer.JSValue())
 }
 
 // -----------------------------------------------------------------------------
 
-// IsArrayBufferView returns true if given value v is an ArrayBufferView.
+// IsArrayBufferView returns true if given instance v is an ArrayBufferView.
 func IsArrayBufferView(v js.Value) bool {
 	return v.InstanceOf(Int8Array.JSValue()) || v.InstanceOf(Uint8Array.JSValue()) || v.InstanceOf(Uint8ClampedArray.JSValue()) ||
 		v.InstanceOf(Int16Array.JSValue()) || v.InstanceOf(Uint16Array.JSValue()) ||
@@ -95,28 +97,28 @@ func IsArrayBufferView(v js.Value) bool {
 
 // -----------------------------------------------------------------------------
 
-// IsUint8Array returns true if given value v is a Uint8Array.
+// IsUint8Array returns true if given instance v is a Uint8Array.
 func IsUint8Array(v js.Value) bool {
 	return v.InstanceOf(Uint8Array.JSValue()) || v.InstanceOf(Uint8ClampedArray.JSValue())
 }
 
 // -----------------------------------------------------------------------------
 
-// IsElement returns true if given value v is an Element.
+// IsElement returns true if given instance v is an Element.
 func IsElement(v js.Value) bool {
 	return v.InstanceOf(Element.JSValue())
 }
 
 // -----------------------------------------------------------------------------
 
-// IsInputElement returns true if given value v is a HTMLInputElement.
+// IsInputElement returns true if given instance v is a HTMLInputElement.
 func IsInputElement(v js.Value) bool {
 	return v.InstanceOf(HTMLInputElement.JSValue())
 }
 
 // -----------------------------------------------------------------------------
 
-// HasValueProperty returns true if given value v has a `value` property.
+// HasValueProperty returns true if given instance v has a `value` property.
 func HasValueProperty(v js.Value) bool {
 	return v.InstanceOf(HTMLInputElement.JSValue()) ||
 		v.InstanceOf(HTMLSelectElement.JSValue()) ||
@@ -125,35 +127,42 @@ func HasValueProperty(v js.Value) bool {
 
 // -----------------------------------------------------------------------------
 
-// IsFile returns true if given value v is a File.
+// IsFile returns true if given instance v is a File.
 func IsFile(v js.Value) bool {
 	return v.InstanceOf(File.JSValue())
 }
 
 // -----------------------------------------------------------------------------
 
-// IsBlob returns true if given value v is a Blob.
+// IsBlob returns true if given instance v is a Blob.
 func IsBlob(v js.Value) bool {
 	return v.InstanceOf(Blob.JSValue())
 }
 
 // -----------------------------------------------------------------------------
 
-// IsForm returns true if given value v is a HTMLFormElement.
+// IsForm returns true if given instance v is a HTMLFormElement.
 func IsForm(v js.Value) bool {
 	return v.InstanceOf(HTMLFormElement.JSValue())
 }
 
 // -----------------------------------------------------------------------------
 
-// IsArray return s true if given value v is an Array.
+// IsArray return s true if given instance v is an Array.
 func IsArray(v js.Value) bool {
 	return v.InstanceOf(Array.JSValue())
 }
 
 // -----------------------------------------------------------------------------
 
-// isTemplate returns true if given value v is a HTMLTemplateElement.
+// isTemplate returns true if given instance v is a HTMLTemplateElement.
 func IsTemplate(v js.Value) bool {
 	return v.InstanceOf(HTMLTemplateElement.JSValue())
+}
+
+// -----------------------------------------------------------------------------
+
+// IsMediaSource returns true if given instance v is a MediaSource.
+func IsMediaSource(v js.Value) bool {
+	return v.InstanceOf(MediaSource.JSValue())
 }

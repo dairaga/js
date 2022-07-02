@@ -14,6 +14,7 @@ var object = bs.Global().Get("Alert")
 // -----------------------------------------------------------------------------
 
 // Class represents Bootstrap alert component.
+//
 // See https://getbootstrap.com/docs/5.2/components/alerts/
 type Class struct {
 	js.Element

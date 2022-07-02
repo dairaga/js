@@ -12,10 +12,10 @@ import (
 
 // app represents a application to handle web browser history and MVVM.
 type app struct {
-	window  js.Value // javascript window.
-	history js.Value // javascript history of window.
+	window  js.Value // Javascript window.
+	history js.Value // Javascript history of window.
 	//models   map[string]reflect.Value
-	triggers map[string][]func(string) // triggers when value changed.
+	triggers map[string][]func(string) // Callback functions when value changed.
 	//hander   StateHandler
 }
 
@@ -203,6 +203,8 @@ func URL() url.URL {
 // -----------------------------------------------------------------------------
 
 // ChangeHash changes hash of window url. It will trigger hashchange event.
+//
+// https://developer.mozilla.org/en-US/docs/Web/API/Window/hashchange_event.
 func ChangeHash(new string) {
 	_app.changeHash(new)
 }
@@ -210,6 +212,7 @@ func ChangeHash(new string) {
 // -----------------------------------------------------------------------------
 
 // PushState changes history state and push it to history.
+//
 // See https://developer.mozilla.org/en-US/docs/Web/API/History/pushState.
 func Push(x any, newURL ...string) error {
 	return _app.push(x, newURL...)
@@ -218,6 +221,7 @@ func Push(x any, newURL ...string) error {
 // -----------------------------------------------------------------------------
 
 // ReplaceState changes history state and replace it to history.
+//
 // See https://developer.mozilla.org/en-US/docs/Web/API/History/replaceState.
 func Replace(x any, newURL ...string) error {
 	return _app.replace(x, newURL...)
@@ -226,6 +230,8 @@ func Replace(x any, newURL ...string) error {
 // -----------------------------------------------------------------------------
 
 // State returns current state in history and unmarshal it to given x.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/History/state.
 func State(x any) error {
 	return _app.state(x)
 }
@@ -233,6 +239,7 @@ func State(x any) error {
 // -----------------------------------------------------------------------------
 
 // Go is javascript window.history.go(detla).
+//
 // See https://developer.mozilla.org/en-US/docs/Web/API/History/go.
 func Go(delta int) {
 	_app._go(delta)
@@ -241,6 +248,7 @@ func Go(delta int) {
 // -----------------------------------------------------------------------------
 
 // Forward is javascript window.history.forward.
+//
 // See https://developer.mozilla.org/en-US/docs/Web/API/History/forward
 func Forward() {
 	_app._go(1)
@@ -249,6 +257,7 @@ func Forward() {
 // -----------------------------------------------------------------------------
 
 // Back is javascript window.history.back.
+//
 // https://developer.mozilla.org/en-US/docs/Web/API/History/back
 func Back() {
 	_app._go(-1)
@@ -276,7 +285,7 @@ func Remove(name string) {
 
 // -----------------------------------------------------------------------------
 
-// Trigger is to fire all functions binded the value. Give a `sender` to mark who fires.
+// Trigger is to fire all functions binded the value. Give a `sender` to notify others who fires.
 func Trigger(sender, name string) {
 	_app.trigger(sender, name)
 }
