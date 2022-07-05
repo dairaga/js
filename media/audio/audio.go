@@ -63,8 +63,12 @@ func (d *device) Release() js.Promise {
 
 // -----------------------------------------------------------------------------
 
-func AttachDevice(id string, sampleRate int64) <-chan Device {
+func AttachDevice(id string, sampleRate int64) Device {
 	ch := make(chan Device)
+	defer func() {
+		close(ch)
+	}()
+
 	media.GetUserMedia(js.Obj{"video": false, "audio": js.Obj{"deviceId": id}}).Then(func(v js.Value) any {
 		d := &device{
 			id:         id,
@@ -75,13 +79,9 @@ func AttachDevice(id string, sampleRate int64) <-chan Device {
 		d.src = d.ctx.CreateMediaStreamSource(media.StreamOf(v))
 		d.analyser = d.ctx.CreateAnalyser()
 		d.src.Connect(d.analyser)
-
 		ch <- d
-		return nil
-	}).Finally(func() any {
-		close(ch)
 		return nil
 	})
 
-	return ch
+	return <-ch
 }

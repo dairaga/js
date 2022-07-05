@@ -1,5 +1,8 @@
 //go:build js && wasm
 
+// Packages media provides common media-related functionality.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices
 package media
 
 import (
@@ -13,12 +16,14 @@ var devices = navigator.Get("mediaDevices")
 // -----------------------------------------------------------------------------
 
 // Authorize is to request permission to use media devices.
+// It is an async function and returns a Promise.
 func Authorize(video, audio bool) js.Promise {
 	return js.PromiseOf(devices.Call("getUserMedia", js.Obj{"video": video, "audio": audio}))
 }
 
 // -----------------------------------------------------------------------------
 
+// AwaitAuthorize returns true if user authorizes to access devices.
 func AwaitAuthorize(video, audio bool) bool {
 	/*ch := make(chan bool)
 
@@ -64,7 +69,6 @@ func EnumerateDevices(fn func([]DeviceInfo), fails ...func(err js.Error)) {
 // -----------------------------------------------------------------------------
 
 // AwaitEnumerateDevices is to get media devices user authorized.
-// It is to read devices from channel to block process.
 func AwaitEnumerateDevices() []DeviceInfo {
 
 	ch := make(chan []DeviceInfo)
@@ -95,12 +99,16 @@ func OnDevicecChange(fn func([]DeviceInfo)) {
 
 // -----------------------------------------------------------------------------
 
+// GetUserMedia returns a Promise of a MediaStream object contains a video and/or audio track.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
 func GetUserMedia(opt js.Obj) js.Promise {
 	return js.PromiseOf(devices.Call("getUserMedia", opt))
 }
 
 // -----------------------------------------------------------------------------
 
+// AwaitGetUserMedia returns a MediaStream object that contains a video and/or audio track.
 func AwaitGetUserMedia(opt js.Obj) <-chan Stream {
 	ch := make(chan Stream)
 

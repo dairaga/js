@@ -50,6 +50,7 @@ type (
 
 // Wrapper 原 golang 的 Wrapper interface，覺得很好用，保留。
 type Wrapper interface {
+	// JSValue returns javascript value.
 	JSValue() Value
 }
 
