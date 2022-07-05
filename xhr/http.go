@@ -2,6 +2,8 @@
 
 package xhr
 
+// Copy from golang source code.
+
 const (
 	StatusContinue           = 100 // RFC 7231, 6.2.1
 	StatusSwitchingProtocols = 101 // RFC 7231, 6.2.2

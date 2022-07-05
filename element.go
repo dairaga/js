@@ -123,7 +123,7 @@ func (e element) String() string {
 
 func (e element) Parent() Element {
 	p := e.Prop("parentElement")
-	if p.Truthy() && builtin.IsElement(p) {
+	if p.Truthy() && builtin.Element.Is(p) {
 		return elementOf(p)
 	}
 	return nil
@@ -238,7 +238,7 @@ func (e element) SetValue(val string) Element {
 // -----------------------------------------------------------------------------
 
 func (e element) Files() []File {
-	if builtin.IsInputElement(Value(e)) && e.Attr("type") == "file" {
+	if builtin.HTMLInputElement.Is(Value(e)) && e.Attr("type") == "file" {
 		lst := Value(e).Get("files")
 		size := lst.Length()
 		ret := make([]File, size)
@@ -366,7 +366,7 @@ func (e element) Var(val *string) Element {
 // -----------------------------------------------------------------------------
 
 func elementOf(v Value) element {
-	if builtin.IsElement(v) {
+	if builtin.Element.Is(v) {
 		return element(v).tattoo()
 	}
 	panic(fmt.Sprintf("%s is not an Element", v.Type().String()))

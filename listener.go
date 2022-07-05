@@ -7,7 +7,7 @@ import "github.com/dairaga/js/v2/builtin"
 type Listener map[string]Func
 
 func (l Listener) Add(target Value, typ string, fn JSFunc) Func {
-	if !builtin.IsEventTarget(target) {
+	if !builtin.EventTarget.Is(target) {
 		panic("target is not an EventTarget")
 	}
 
@@ -23,7 +23,7 @@ func (l Listener) Add(target Value, typ string, fn JSFunc) Func {
 // -----------------------------------------------------------------------------
 
 func (l Listener) Remove(target Value, typ string) {
-	if !builtin.IsEventTarget(target) {
+	if !builtin.EventTarget.Is(target) {
 		panic("target is not an EventTarget")
 	}
 

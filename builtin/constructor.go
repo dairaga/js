@@ -21,7 +21,16 @@ func (c Constructor) New(args ...any) js.Value {
 
 // -----------------------------------------------------------------------------
 
+func (c Constructor) Is(v js.Value) bool {
+	return v.InstanceOf(c.JSValue())
+}
+
+// -----------------------------------------------------------------------------
+
 const (
+	Object  = Constructor("Object")  // Javascript Object class.
+	Promise = Constructor("Promise") // Javascript Promise class.
+
 	EventTarget = Constructor("EventTarget") // Javascript EventTarget class.
 	Event       = Constructor("Event")       // Javascript Event class.
 
@@ -60,9 +69,43 @@ const (
 
 	Array = Constructor("Array") // Javascript Array class.
 
-	MediaSource = Constructor("MediaSource") // Javascript MediaSource class.
+	MediaSource                = Constructor("MediaSource")                // Javascript MediaSource class.
+	MediaStream                = Constructor("MediaStream")                // Javascript MediaStream class.
+	MediaDeviceInfo            = Constructor("MediaDeviceInfo")            // Javascript MediaDeviceInfo class.
+	MediaStreamAudioSourceNode = Constructor("MediaStreamAudioSourceNode") // Javascript MediaStreamAudioSourceNode class.
+
+	AudioContext         = Constructor("AudioContext")         // Javascript AudioContext class.
+	AnalyserNode         = Constructor("AnalyserNode")         // Javascript AnalyserNode class.
+	AudioDestinationNode = Constructor("AudioDestinationNode") // Javascript AudioDestinationNode class.
 )
 
+// -----------------------------------------------------------------------------
+
+func Is(v js.Value, c Constructor) bool {
+	return c.Is(v)
+}
+
+// -----------------------------------------------------------------------------
+
+// IsArrayBufferView returns true if given instance v is an ArrayBufferView.
+func IsArrayBufferView(v js.Value) bool {
+	return v.InstanceOf(Int8Array.JSValue()) || v.InstanceOf(Uint8Array.JSValue()) || v.InstanceOf(Uint8ClampedArray.JSValue()) ||
+		v.InstanceOf(Int16Array.JSValue()) || v.InstanceOf(Uint16Array.JSValue()) ||
+		v.InstanceOf(Int32Array.JSValue()) || v.InstanceOf(Uint32Array.JSValue()) ||
+		v.InstanceOf(Float32Array.JSValue()) || v.InstanceOf(Float64Array.JSValue()) ||
+		v.InstanceOf(BigInt64Array.JSValue()) || v.InstanceOf(BigUint64Array.JSValue())
+}
+
+// -----------------------------------------------------------------------------
+
+// HasValueProperty returns true if given instance v has a `value` property.
+func HasValueProperty(v js.Value) bool {
+	return v.InstanceOf(HTMLInputElement.JSValue()) ||
+		v.InstanceOf(HTMLSelectElement.JSValue()) ||
+		v.InstanceOf(HTMLTextAreaElement.JSValue())
+}
+
+/*
 // -----------------------------------------------------------------------------
 
 // IsEventTarget returns true if given instance v is an EventTarget.
@@ -86,14 +129,7 @@ func IsArrayBuffer(v js.Value) bool {
 
 // -----------------------------------------------------------------------------
 
-// IsArrayBufferView returns true if given instance v is an ArrayBufferView.
-func IsArrayBufferView(v js.Value) bool {
-	return v.InstanceOf(Int8Array.JSValue()) || v.InstanceOf(Uint8Array.JSValue()) || v.InstanceOf(Uint8ClampedArray.JSValue()) ||
-		v.InstanceOf(Int16Array.JSValue()) || v.InstanceOf(Uint16Array.JSValue()) ||
-		v.InstanceOf(Int32Array.JSValue()) || v.InstanceOf(Uint32Array.JSValue()) ||
-		v.InstanceOf(Float32Array.JSValue()) || v.InstanceOf(Float64Array.JSValue()) ||
-		v.InstanceOf(BigInt64Array.JSValue()) || v.InstanceOf(BigUint64Array.JSValue())
-}
+
 
 // -----------------------------------------------------------------------------
 
@@ -118,12 +154,7 @@ func IsInputElement(v js.Value) bool {
 
 // -----------------------------------------------------------------------------
 
-// HasValueProperty returns true if given instance v has a `value` property.
-func HasValueProperty(v js.Value) bool {
-	return v.InstanceOf(HTMLInputElement.JSValue()) ||
-		v.InstanceOf(HTMLSelectElement.JSValue()) ||
-		v.InstanceOf(HTMLTextAreaElement.JSValue())
-}
+
 
 // -----------------------------------------------------------------------------
 
@@ -166,3 +197,25 @@ func IsTemplate(v js.Value) bool {
 func IsMediaSource(v js.Value) bool {
 	return v.InstanceOf(MediaSource.JSValue())
 }
+
+// -----------------------------------------------------------------------------
+
+// IsMediaStream returns true if given instance v is a MediaStream.
+func IsMediaStream(v js.Value) bool {
+	return v.InstanceOf(MediaStream.JSValue())
+}
+
+// -----------------------------------------------------------------------------
+
+// IsMediaDeviceInfo returns true if given instance v is a MediaDeviceInfo.
+func IsMediaDeviceInfo(v js.Value) bool {
+	return v.InstanceOf(MediaDeviceInfo.JSValue())
+}
+
+// -----------------------------------------------------------------------------
+
+// IsPromise returns true if given instance v is a Promise.
+func IsPromise(v js.Value) bool {
+	return v.InstanceOf(Promise.JSValue())
+}
+*/

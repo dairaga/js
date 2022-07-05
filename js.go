@@ -36,10 +36,14 @@ var (
 
 // alias syscall/js 的物件，讓 import 比較方便
 type (
-	Value  = js.Value
-	Type   = js.Type
-	Func   = js.Func
-	JSFunc = func(Value, []Value) any
+	Value      = js.Value
+	Type       = js.Type
+	Func       = js.Func
+	JSFunc     = func(Value, []Value) any
+	ValueError = js.ValueError
+	Error      = js.Error
+
+	Obj = map[string]any
 )
 
 // -----------------------------------------------------------------------------
@@ -76,7 +80,7 @@ func FuncOf(fn JSFunc) Func {
 
 // GoBytes 將 javascript 的 Uint8Array 轉成 golang 的 []byte。src 必須是 javascript 的 Uint8Array。
 func GoBytes(src Value) []byte {
-	if !builtin.IsUint8Array(src) {
+	if !builtin.Uint8Array.Is(src) {
 		panic("src is not an Uint8Array")
 	}
 
@@ -99,11 +103,29 @@ func Uint8Array(src []byte) Value {
 
 // ArrayBufferToBytes 將 javascript 的 ArrayBuffer 轉成 golang []byte。src 必須是 javascript 的 ArrayBuffer。
 func ArrayBufferToBytes(src Value) []byte {
-	if !builtin.IsArrayBuffer(src) {
+	if !builtin.ArrayBuffer.Is(src) {
 		panic("src is not an ArrayBuffer")
 	}
 
 	return GoBytes(builtin.Uint8Array.New(src))
+}
+
+// -----------------------------------------------------------------------------
+
+func Float32Array(src js.Value) []float32 {
+	if !builtin.Float32Array.Is(src) {
+		panic(ValueError{
+			Method: "FromFloat32Array",
+			Type:   src.Type(),
+		})
+	}
+
+	size := src.Length()
+	ret := make([]float32, size)
+	for i := 0; i < size; i++ {
+		ret[i] = float32(src.Index(i).Float())
+	}
+	return ret
 }
 
 // -----------------------------------------------------------------------------

@@ -212,3 +212,9 @@ func Delete(url string, fn xhr.HandlerFunc, x ...any) (*Client, error) {
 func Patch(url string, fn xhr.HandlerFunc, x ...any) (*Client, error) {
 	return do(xhr.PATCH, url, fn, x...)
 }
+
+// -----------------------------------------------------------------------------
+
+func SetDefaultCredentials(flag bool) {
+	defaultWithCredentials = flag
+}

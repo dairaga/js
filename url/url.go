@@ -279,7 +279,7 @@ func CreateObjectURL(x any) string {
 		panic(fmt.Sprintf("unsupported type %T", x))
 	}
 
-	if !builtin.IsMediaSource(resulted) && !builtin.IsBlob(resulted) && !builtin.IsFile(resulted) {
+	if !builtin.MediaSource.Is(resulted) && !builtin.Blob.Is(resulted) && !builtin.File.Is(resulted) {
 		panic(fmt.Sprintf("unsupported type %v", resulted.Type()))
 	}
 

@@ -53,7 +53,7 @@ type Binary js.Value
 // ValueRef returns javascript value.
 func (b Binary) ValueRef() js.Value {
 	v := js.Value(b)
-	if builtin.IsBlob(v) {
+	if builtin.Blob.Is(v) {
 		return v
 	}
 
@@ -154,7 +154,7 @@ func FormDataOf(x ...any) FormData {
 		val = v
 	}
 
-	if val.Truthy() && builtin.IsForm(val) {
+	if val.Truthy() && builtin.HTMLFormElement.Is(val) {
 		return FormData(builtin.FormData.New(val))
 	}
 

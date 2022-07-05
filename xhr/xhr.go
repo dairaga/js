@@ -1,5 +1,8 @@
 //go:build js && wasm
 
+// Package xhr is a wrapper of javascript XMLHttpRequest (XHR), and provides a simple way to make a JSON AJAX.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest.
 package xhr
 
 import (
@@ -9,16 +12,16 @@ import (
 type Error int
 
 const (
-	ErrAbort    Error = -1
-	ErrFailed   Error = -2
-	ErrTimeout  Error = -3
-	ErrReleased Error = -4
+	ErrAbort    Error = -1 // Request aborted.
+	ErrFailed   Error = -2 // Request failed.
+	ErrTimeout  Error = -3 // Request timeout.
+	ErrReleased Error = -4 // Request released.
 
-	GET    = "GET"
-	POST   = "POST"
-	PUT    = "PUT"
-	DELETE = "DELETE"
-	PATCH  = "PATCH"
+	GET    = "GET"    // HTTP GET method.
+	POST   = "POST"   // HTTP POST method.
+	PUT    = "PUT"    // HTTP PUT method.
+	DELETE = "DELETE" // HTTP DELETE method.
+	PATCH  = "PATCH"  // HTTP PATCH method.
 )
 
 // -----------------------------------------------------------------------------

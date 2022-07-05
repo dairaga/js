@@ -158,7 +158,7 @@ func Connect(url string, handler Handler) *Client {
 
 	ret.listener.Add(ret.ref, "message", func(_this js.Value, args []js.Value) any {
 		data := args[0].Get("data")
-		if builtin.IsArrayBuffer(data) {
+		if builtin.ArrayBuffer.Is(data) {
 			handler.ServeBinary(js.GoBytes(builtin.Uint8Array.New(data)))
 		} else {
 			handler.ServeText(data.String())

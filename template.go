@@ -206,7 +206,7 @@ func CreateTemplate(content HTML) Template {
 
 func CreateTemplateByID(id string) Template {
 	v := query(body, id)
-	if builtin.IsTemplate(v) {
+	if builtin.HTMLTemplateElement.Is(v) {
 		panic(fmt.Sprintf("%s is not a template", id))
 	}
 

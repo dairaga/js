@@ -3,6 +3,7 @@
 package builtin
 
 import (
+	"fmt"
 	"syscall/js"
 	"testing"
 
@@ -14,8 +15,7 @@ func TestConstructor(t *testing.T) {
 	target := EventTarget.New()
 
 	assert.True(t, target.InstanceOf(js.Global().Get("EventTarget")))
-	assert.True(t, IsEventTarget(target))
-
+	assert.True(t, EventTarget.Is(target))
 }
 
 // -----------------------------------------------------------------------------
@@ -29,22 +29,22 @@ type TestData struct {
 var testData = []TestData{
 	{
 		EventTarget.New(),
-		IsEventTarget,
+		EventTarget.Is,
 		true,
 	},
 	{
 		Event.New("abc"),
-		IsEventTarget,
+		EventTarget.Is,
 		false,
 	},
 	{
 		js.Global().Get("CustomEvent").New("abc"),
-		IsEvent,
+		Event.Is,
 		true,
 	},
 	{
 		EventTarget.New(),
-		IsEvent,
+		Event.Is,
 		false,
 	},
 	{
@@ -109,33 +109,33 @@ var testData = []TestData{
 	},
 	{
 		Uint8Array.New(1),
-		IsUint8Array,
+		Uint8Array.Is,
 		true,
 	},
 	{
 		Uint8ClampedArray.New(1),
-		IsUint8Array,
-		true,
+		Uint8Array.Is,
+		false,
 	},
 	{
 		Int16Array.New(1),
-		IsUint8Array,
+		Uint8Array.Is,
 		false,
 	},
 	{
 		ArrayBuffer.New(1),
-		IsArrayBuffer,
+		ArrayBuffer.Is,
 		true,
 	},
 	{
 		Int16Array.New(1),
-		IsArrayBuffer,
+		ArrayBuffer.Is,
 		false,
 	},
 }
 
 func TestIs(t *testing.T) {
-	for _, data := range testData {
-		assert.Equal(t, data.ans, data.fn(data.value))
+	for i, data := range testData {
+		assert.Equal(t, data.ans, data.fn(data.value), fmt.Sprintf("at %d", i))
 	}
 }

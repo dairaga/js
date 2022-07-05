@@ -10,14 +10,17 @@ import (
 	"github.com/dairaga/js/v2"
 )
 
+// HandlerFunc is a function to handle XHR response.
 type HandlerFunc = func(*Response, error)
 
 // -----------------------------------------------------------------------------
 
+// Respopnse is a XHR response to a XHR request.
+// Response imitate golang http Response.
 type Response struct {
-	code    int
-	headers map[string]string
-	body    []byte
+	code    int               // http status code.
+	headers map[string]string // response headers.
+	body    []byte            // response body as bytes default.
 }
 
 func (r *Response) String() string {
@@ -26,24 +29,28 @@ func (r *Response) String() string {
 
 // -----------------------------------------------------------------------------
 
+// StatusCode returns the response http status code.
 func (r *Response) StatusCode() int {
 	return r.code
 }
 
 // -----------------------------------------------------------------------------
 
+// StatusText returns the response status text string.
 func (r *Response) StatusText() string {
 	return StatusText(r.code)
 }
 
 // -----------------------------------------------------------------------------
 
+// Body returns response body.
 func (r *Response) Body() []byte {
 	return r.body
 }
 
 // -----------------------------------------------------------------------------
 
+// Header returns the value of the named header.
 func (r *Response) Header(key string) string {
 	key = strings.ToLower(key)
 	return r.headers[key]
@@ -51,24 +58,28 @@ func (r *Response) Header(key string) string {
 
 // -----------------------------------------------------------------------------
 
+// Headers returns all headers.
 func (r *Response) Headers() map[string]string {
 	return r.headers
 }
 
 // -----------------------------------------------------------------------------
 
+// OK returns true if the response is successful (code is between 200 and 299).
 func (r *Response) OK() bool {
 	return r.code >= StatusOK && r.code <= StatusIMUsed
 }
 
 // -----------------------------------------------------------------------------
 
+// Unmarshal decodes the response body to the given value x.
 func (r *Response) Unmarshal(x any) error {
 	return json.Unmarshal(r.body, x)
 }
 
 // -----------------------------------------------------------------------------
 
+// ResponseOf returns a Response from the given XHR request.
 func ResponseOf(xhr js.Value) *Response {
 	resp := new(Response)
 	resp.code = xhr.Get("status").Int()
