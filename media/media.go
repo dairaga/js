@@ -43,12 +43,12 @@ func AwaitAuthorize(video, audio bool) bool {
 
 // EnumerateDevices is to get media devices user authorized.
 // It is an async function and put resulted to given callback function fn.
-func EnumerateDevices(fn func([]Info), fails ...func(err js.Error)) {
+func EnumerateDevices(fn func([]DeviceInfo), fails ...func(err js.Error)) {
 	js.PromiseOf(devices.Call("enumerateDevices")).Then(func(result js.Value) any {
 		size := result.Length()
-		infos := make([]Info, size)
+		infos := make([]DeviceInfo, size)
 		for i := 0; i < size; i++ {
-			infos[i] = InfoOf(result.Index(i))
+			infos[i] = DeviceInfoOf(result.Index(i))
 		}
 		fn(infos)
 		return nil
@@ -65,15 +65,15 @@ func EnumerateDevices(fn func([]Info), fails ...func(err js.Error)) {
 
 // AwaitEnumerateDevices is to get media devices user authorized.
 // It is to read devices from channel to block process.
-func AwaitEnumerateDevices() []Info {
+func AwaitEnumerateDevices() []DeviceInfo {
 
-	ch := make(chan []Info)
+	ch := make(chan []DeviceInfo)
 	defer func() {
 		close(ch)
 	}()
 
 	EnumerateDevices(
-		func(infos []Info) {
+		func(infos []DeviceInfo) {
 			ch <- infos
 		},
 		func(js.Error) {
@@ -86,7 +86,7 @@ func AwaitEnumerateDevices() []Info {
 // -----------------------------------------------------------------------------
 
 // OnDevices is to listen to media devices.
-func OnDevicecChange(fn func([]Info)) {
+func OnDevicecChange(fn func([]DeviceInfo)) {
 	devices.Call("addEventListener", "devicechange", js.FuncOf(func(_ js.Value, args []js.Value) any {
 		EnumerateDevices(fn)
 		return nil

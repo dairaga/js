@@ -14,46 +14,46 @@ func (k Kind) String() string {
 }
 
 const (
-	VideoInput  Kind = "videoinput"
-	AudioInput  Kind = "audioinput"
-	AudioOutput Kind = "audiooutput"
+	KindVideoInput  Kind = "videoinput"
+	KindAudioInput  Kind = "audioinput"
+	KindAudioOutput Kind = "audiooutput"
 )
 
 // -----------------------------------------------------------------------------
 
-type Info js.Value
+type DeviceInfo js.Value
 
-func (i Info) JSValue() js.Value {
+func (i DeviceInfo) JSValue() js.Value {
 	return js.Value(i)
 }
 
 // -----------------------------------------------------------------------------
 
-func (i Info) ID() string {
+func (i DeviceInfo) ID() string {
 	return js.Value(i).Get("deviceId").String()
 }
 
 // -----------------------------------------------------------------------------
 
-func (i Info) GroupID() string {
+func (i DeviceInfo) GroupID() string {
 	return js.Value(i).Get("groupId").String()
 }
 
 // -----------------------------------------------------------------------------
 
-func (i Info) Kind() Kind {
+func (i DeviceInfo) Kind() Kind {
 	return Kind(js.Value(i).Get("kind").String())
 }
 
 // -----------------------------------------------------------------------------
 
-func (i Info) Label() string {
+func (i DeviceInfo) Label() string {
 	return js.Value(i).Get("label").String()
 }
 
 // -----------------------------------------------------------------------------
 
-func InfoOf(v js.Value) Info {
+func DeviceInfoOf(v js.Value) DeviceInfo {
 	if !builtin.MediaDeviceInfo.Is(v) {
 		panic(js.ValueError{
 			Method: "InfoOf",
@@ -61,5 +61,5 @@ func InfoOf(v js.Value) Info {
 		})
 	}
 
-	return Info(v)
+	return DeviceInfo(v)
 }
