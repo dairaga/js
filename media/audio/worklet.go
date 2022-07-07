@@ -2,7 +2,10 @@
 
 package audio
 
-import "github.com/dairaga/js/v2"
+import (
+	"github.com/dairaga/js/v2"
+	"github.com/dairaga/js/v2/builtin"
+)
 
 type Worklet js.Value
 
@@ -16,34 +19,19 @@ func (w Worklet) JSValue() js.Value {
 
 func (w Worklet) AddModule(url string, c ...js.Credential) js.Promise {
 	if len(c) > 0 {
-		return js.PromiseOf(js.Value(w).Call("addModule", url, js.Obj{"credentials": c[0]}))
+		return js.PromiseOf(js.Value(w).Call("addModule", url, js.Obj{"credentials": c[0].String()}))
 	}
 	return js.PromiseOf(js.Value(w).Call("addModule", url))
 }
 
 // -----------------------------------------------------------------------------
 
-type WorkletNode interface {
-	Node
-	Parameters() ParamMap
-}
-
-// -----------------------------------------------------------------------------
-
-type workletNode struct {
-	node
-}
-
-var _ WorkletNode = &workletNode{}
-
-// -----------------------------------------------------------------------------
-
-func (n workletNode) Parameters() ParamMap {
-	return ParamMap(n.JSValue().Get("parameters"))
-}
-
-// -----------------------------------------------------------------------------
-
-func (n workletNode) Port() js.MessagePort {
-	return js.MessagePort(n.JSValue().Get("port"))
+func WorkletOf(v js.Value) Worklet {
+	if !builtin.AudioWorklet.Is(v) {
+		panic(js.ValueError{
+			Method: "WorkletOf",
+			Type:   v.Type(),
+		})
+	}
+	return Worklet(v)
 }

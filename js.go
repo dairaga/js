@@ -72,13 +72,6 @@ func ValueOf(x any) Value {
 
 // -----------------------------------------------------------------------------
 
-// FuncOf 原 syscall/js 的 FuncOf。
-func FuncOf(fn JSFunc) Func {
-	return js.FuncOf(fn)
-}
-
-// -----------------------------------------------------------------------------
-
 // GoBytes 將 javascript 的 Uint8Array 轉成 golang 的 []byte。src 必須是 javascript 的 Uint8Array。
 func GoBytes(src Value) []byte {
 	if !builtin.Uint8Array.Is(src) {

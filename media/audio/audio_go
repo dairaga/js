@@ -1,0 +1,145 @@
+//go:build js && wasm
+
+package audio
+
+import (
+	"github.com/dairaga/js/v2"
+	"github.com/dairaga/js/v2/media"
+)
+
+type Device interface {
+	ID() string
+	SampleRate() int64
+
+	Context() Context
+	Destination() DestinationNode
+	Source() SourceNode
+
+	Resume() js.Promise
+	Suspend() js.Promise
+	Release() js.Promise
+
+	LoadWorklet(url, name string, c ...js.Credential) js.Promise
+	AwaitLoadWorklet(url, name string, c ...js.Credential) WorkletNode
+}
+
+type device js.Value
+
+var _ Device = device{}
+
+// -----------------------------------------------------------------------------
+
+func (d device) JSValue() js.Value {
+	return js.Value(d)
+}
+
+// -----------------------------------------------------------------------------
+
+func (d device) ID() string {
+	return js.Value(d).Get("id").String()
+
+}
+
+// -----------------------------------------------------------------------------
+
+func (d device) SampleRate() int64 {
+	return int64(js.Value(d).Get("sampleRate").Int())
+}
+
+// -----------------------------------------------------------------------------
+
+func (d device) Context() Context {
+	return Context(js.Value(d).Get("ctx"))
+}
+
+// -----------------------------------------------------------------------------
+
+func (d device) Resume() js.Promise {
+	return d.Context().Resume()
+}
+
+// -----------------------------------------------------------------------------
+
+func (d device) Suspend() js.Promise {
+	return d.Context().Suspend()
+}
+
+// -----------------------------------------------------------------------------
+
+func (d device) analyser() AnalyserNode {
+	n := js.Value(d).Get("analyser")
+	return &analyserNode{
+		node: node(n),
+	}
+}
+
+// -----------------------------------------------------------------------------
+
+func (d device) GetByteFrequencyData() []byte {
+	return d.analyser().GetByteFrequencyData()
+}
+
+// -----------------------------------------------------------------------------
+
+func (d device) Destination() DestinationNode {
+	return d.Context().Destination()
+}
+
+// -----------------------------------------------------------------------------
+
+func (d device) Source() SourceNode {
+	n := js.Value(d).Get("src")
+	return &sourceNode{
+		node: node(n),
+	}
+}
+
+// -----------------------------------------------------------------------------
+
+func (d device) LoadWorklet(url, name string, c ...js.Credential) js.Promise {
+	return d.Context().AudioWorklet().AddModule(url, c...).Then(func(js.Value) any {
+		result := NewWorklet(d.Context(), name)
+		result.ConnectDevice(d)
+		return result.JSValue() // returns javascript value or panic.
+	})
+}
+
+// -----------------------------------------------------------------------------
+
+func (d device) AwaitLoadWorklet(url, name string, c ...js.Credential) WorkletNode {
+	return &workletNode{node: node(d.LoadWorklet(url, name, c...).Await())}
+}
+
+// -----------------------------------------------------------------------------
+
+func (d device) Release() js.Promise {
+	d.analyser().Disconnect()
+	d.Source().Disconnect()
+	return d.Context().Close()
+}
+
+// -----------------------------------------------------------------------------
+
+func AttachDevice(id string, sampleRate int64) js.Promise {
+	return media.GetUserMedia(js.Obj{"video": false, "audio": js.Obj{"deviceId": id}}).Then(func(v js.Value) any {
+		d := js.ValueOf(map[string]any{})
+		d.Set("id", id)
+		d.Set("sampleRate", sampleRate)
+
+		ctx := NewContext(sampleRate)
+		src := ctx.CreateMediaStreamSource(media.StreamOf(v))
+		analyser := ctx.CreateAnalyser()
+		src.Connect(analyser)
+
+		d.Set("ctx", ctx.JSValue())
+		d.Set("src", src.JSValue())
+		d.Set("analyser", analyser.JSValue())
+		return d
+	})
+}
+
+// -----------------------------------------------------------------------------
+
+func DeviceOf(v js.Value) Device {
+	return device(v)
+}

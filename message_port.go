@@ -2,7 +2,9 @@
 
 package js
 
-import "syscall/js"
+import (
+	"github.com/dairaga/js/v2/builtin"
+)
 
 type MessagePort Value
 
@@ -15,17 +17,48 @@ func (m MessagePort) JSValue() Value {
 // -----------------------------------------------------------------------------
 
 func (m MessagePort) Start() {
-	js.Value(m).Call("start")
+	Value(m).Call("start")
 }
 
 // -----------------------------------------------------------------------------
 
 func (m MessagePort) PostMessage(v Value) {
-	js.Value(m).Call("postMessage", v)
+	Value(m).Call("postMessage", v)
 }
 
 // -----------------------------------------------------------------------------
 
 func (m MessagePort) Close() {
-	js.Value(m).Call("close")
+	Value(m).Call("close")
+}
+
+// -----------------------------------------------------------------------------
+
+func (m MessagePort) OnMessage(fn func(Value)) {
+	Value(m).Call("addEventListener", "message", FuncOf(func(_ Value, args []Value) any {
+		fn(args[0])
+		return nil
+	}))
+}
+
+// -----------------------------------------------------------------------------
+
+func (m MessagePort) OnError(fn func(Value)) {
+	Value(m).Call("addEventListener", "messageerror", FuncOf(func(this Value, args []Value) any {
+		fn(args[0])
+		return nil
+	}))
+}
+
+// -----------------------------------------------------------------------------
+
+func MessagePortOf(v Value) MessagePort {
+	if !builtin.MessagePort.Is(v) {
+		panic(ValueError{
+			Method: "MessagePortOf",
+			Type:   v.Type(),
+		})
+	}
+
+	return MessagePort(v)
 }

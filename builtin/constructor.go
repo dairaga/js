@@ -28,8 +28,9 @@ func (c Constructor) Is(v js.Value) bool {
 // -----------------------------------------------------------------------------
 
 const (
-	Object  = Constructor("Object")  // Javascript Object class.
-	Promise = Constructor("Promise") // Javascript Promise class.
+	Object      = Constructor("Object")      // Javascript Object class.
+	Promise     = Constructor("Promise")     // Javascript Promise class.
+	MessagePort = Constructor("MessagePort") // Javascript MessagePort class.
 
 	EventTarget = Constructor("EventTarget") // Javascript EventTarget class.
 	Event       = Constructor("Event")       // Javascript Event class.
@@ -74,9 +75,12 @@ const (
 	MediaDeviceInfo            = Constructor("MediaDeviceInfo")            // Javascript MediaDeviceInfo class.
 	MediaStreamAudioSourceNode = Constructor("MediaStreamAudioSourceNode") // Javascript MediaStreamAudioSourceNode class.
 
-	AudioContext         = Constructor("AudioContext")         // Javascript AudioContext class.
-	AnalyserNode         = Constructor("AnalyserNode")         // Javascript AnalyserNode class.
-	AudioDestinationNode = Constructor("AudioDestinationNode") // Javascript AudioDestinationNode class.
+	AudioContext          = Constructor("AudioContext")          // Javascript AudioContext class.
+	AnalyserNode          = Constructor("AnalyserNode")          // Javascript AnalyserNode class.
+	AudioDestinationNode  = Constructor("AudioDestinationNode")  // Javascript AudioDestinationNode class.
+	AudioWorklet          = Constructor("AudioWorklet")          // Javascript AudioWorklet class.
+	AudioWorkletNode      = Constructor("AudioWorkletNode")      // Javascript AudioWorkletNode class.
+	AudioWorkletProcessor = Constructor("AudioWorkletProcessor") // Javascript AudioWorkletProcessor class.
 )
 
 // -----------------------------------------------------------------------------

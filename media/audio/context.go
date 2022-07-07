@@ -13,9 +13,9 @@ import (
 type State string
 
 const (
-	Suspended State = "suspended"
-	Running   State = "running"
-	Closed    State = "closed"
+	StateSuspended State = "suspended"
+	StateRunning   State = "running"
+	StateClosed    State = "closed"
 )
 
 func (s State) String() string {
@@ -30,6 +30,12 @@ type Context js.Value
 
 func (c Context) JSValue() js.Value {
 	return js.Value(c)
+}
+
+// -----------------------------------------------------------------------------
+
+func (c Context) AudioWorklet() Worklet {
+	return Worklet(js.Value(c).Get("audioWorklet"))
 }
 
 // -----------------------------------------------------------------------------
@@ -100,7 +106,19 @@ func (c Context) Close() js.Promise {
 
 // -----------------------------------------------------------------------------
 
-func NewContext(sampleRate int64) Context {
+func NewContext(sampleRate float64) Context {
 	ctx := builtin.AudioContext.New(js.Obj{"sampleRate": sampleRate})
 	return Context(ctx)
+}
+
+// -----------------------------------------------------------------------------
+
+func ContextOf(v js.Value) Context {
+	if !builtin.AudioContext.Is(v) {
+		panic(js.ValueError{
+			Method: "ContextOf",
+			Type:   v.Type(),
+		})
+	}
+	return Context(v)
 }

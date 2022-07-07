@@ -6,6 +6,8 @@
 package websocket
 
 import (
+	"fmt"
+
 	"github.com/dairaga/js/v2"
 	"github.com/dairaga/js/v2/builtin"
 )
@@ -118,17 +120,34 @@ func (cli *Client) Closed() bool {
 // SendText sends text message.
 //
 // See https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/send.
-func (cli *Client) SentText(msg string) {
-	cli.ref.Call("send", msg)
-}
+//func (cli *Client) SentText(msg string) {
+//	cli.ref.Call("send", msg)
+//}
 
 // -----------------------------------------------------------------------------
 
-// SendBinary sends binary message.
+// Send sends message.
 //
 // See https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/send.
-func (cli *Client) SendBinary(buf []byte) {
-	cli.ref.Call("send", js.Uint8Array(buf))
+func (cli *Client) Send(x any) {
+	switch v := x.(type) {
+	case string:
+		cli.ref.Call("send", v)
+	case []byte:
+		cli.ref.Call("send", js.Uint8Array(v))
+	case js.Wrapper:
+		cli.Send(v.JSValue())
+	case js.Value:
+		if !(builtin.ArrayBuffer.Is(v) || builtin.IsArrayBufferView(v) || builtin.Blob.Is(v)) {
+			panic(js.ValueError{
+				Method: "WebSocket.Send",
+				Type:   v.Type(),
+			})
+		}
+		cli.ref.Call("send", v)
+	default:
+		panic(fmt.Sprintf("unsupported type: %T", x))
+	}
 }
 
 // -----------------------------------------------------------------------------

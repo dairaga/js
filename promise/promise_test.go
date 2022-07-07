@@ -55,4 +55,19 @@ func TestPromise(t *testing.T) {
 func TestPromiseAwait(t *testing.T) {
 	assert.Equal(t, 1, promise.Resolve(1).Await().Int())
 	assert.Equal(t, -1, promise.Reject(-1).Await().Int())
+
+	assert.Equal(t, 2, promise.Resolve(1).Then(func(v js.Value) any {
+		return v.Int() + 1
+	}).Await().Int())
+
+	assert.Equal(t, -2, promise.Reject(-1).Catch(func(v js.Value) any {
+		return js.ValueOf(v.Int() - 1)
+	}).Await().Int())
+
+	result := promise.Resolve(map[string]any{"a": 1, "b": js.ValueOf(2)}).Then(func(v js.Value) any {
+		v.Set("c", v.Get("a").Int()+v.Get("b").Int())
+		return v
+	}).Await()
+
+	assert.Equal(t, 3, result.Get("c").Int())
 }

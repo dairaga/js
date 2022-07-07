@@ -17,12 +17,16 @@ type app struct {
 	//models   map[string]reflect.Value
 	triggers map[string][]func(string) // Callback functions when value changed.
 	//hander   StateHandler
+	ch    chan int
+	ended bool
 }
 
 // an internal global app.
 var _app = &app{
 	//models:   make(map[string]reflect.Value),
 	triggers: make(map[string][]func(string)),
+	ch:       make(chan int, 1),
+	ended:    false,
 }
 
 // -----------------------------------------------------------------------------
@@ -186,11 +190,22 @@ func init() {
 // -----------------------------------------------------------------------------
 
 // Start starts a WASM application. all given functions fn will be called sequentially before blocking main process.
-func Start(fn ...func()) {
+func Start(fn ...func()) int {
 	for i := range fn {
-		fn[i]()
+		if !_app.ended {
+			fn[i]()
+		}
 	}
-	select {}
+	exitCode := <-_app.ch
+	close(_app.ch)
+	return exitCode
+}
+
+// -----------------------------------------------------------------------------
+
+func Exit(code int) {
+	_app.ended = true
+	_app.ch <- code
 }
 
 // -----------------------------------------------------------------------------
