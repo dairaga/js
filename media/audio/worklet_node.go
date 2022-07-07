@@ -7,9 +7,16 @@ import (
 	"github.com/dairaga/js/v2/builtin"
 )
 
+// WorkletNode is Javascript AudioWorkletNode.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/AudioWorkletNode.
 type WorkletNode interface {
-	Node
+	Node // inherits from AudioNode.
+
+	// Parameters returns the parameters of the worklet.
 	Parameters() ParamMap
+
+	// Port returns the Javascript MessagePort of the worklet.
 	Port() js.MessagePort
 }
 
@@ -35,13 +42,17 @@ func (n workletNode) Port() js.MessagePort {
 
 // -----------------------------------------------------------------------------
 
-func NewWorklet(ctx Context, name string) WorkletNode {
+// NewWorklet creates a new AudioWorkletNode with given AudioContext and module name.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/AudioWorkletNode/AudioWorkletNode.
+func NewWorkletNode(ctx Context, name string) WorkletNode {
 	val := builtin.AudioWorkletNode.New(ctx.JSValue(), name)
 	return &workletNode{node: node(val)}
 }
 
 // -----------------------------------------------------------------------------
 
+// WorkleNodetOf converts to an AudioWorkletNode from given Javascript value v.
 func WorkleNodetOf(v js.Value) WorkletNode {
 	if !builtin.AudioWorkletNode.Is(v) {
 		panic(js.ValueError{

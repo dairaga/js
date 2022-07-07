@@ -5,7 +5,7 @@ package builtin
 
 import "syscall/js"
 
-// Constructor represents a javascript class constructor.
+// Constructor represents a Javascript class constructor.
 type Constructor string
 
 func (c Constructor) JSValue() js.Value {

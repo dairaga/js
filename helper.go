@@ -52,6 +52,15 @@ func setAttr(v Value, a, val string) Value {
 
 // -----------------------------------------------------------------------------
 
+func removeAttr(v Value, a string) Value {
+	if a != _tattoo {
+		v.Call("removeAttribute", a)
+	}
+	return v
+}
+
+// -----------------------------------------------------------------------------
+
 func addClz(v Value, clz string) Value {
 	v.Get("classList").Call("add", clz)
 	return v

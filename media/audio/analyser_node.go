@@ -7,19 +7,56 @@ import (
 	"github.com/dairaga/js/v2/builtin"
 )
 
+// AnalyserNode is Javascript AnalyserNode.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode.
 type AnalyserNode interface {
 	Node
 
+	// FFTSize returns the value of the fftSize property.
+	//
+	// See https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/fftSize.
 	FFTSize() uint
+
+	// FrequencyBinCount returns the value of the frequencyBinCount property.
+	//
+	// See https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/frequencyBinCount.
 	FrequencyBinCount() uint
+
+	// MaxDecibels returns the value of the maxDecibels property.
+	//
+	// See https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/maxDecibels.
 	MaxDecibels() float64
+
+	// MinDecibels returns the value of the minDecibels property.
+	//
+	// See https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/minDecibels.
 	MinDecibels() float64
+
+	// SmoothingTimeConstant returns the value of the smoothingTimeConstant property.
+	//
+	// See https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/smoothingTimeConstant.
 	SmoothingTimeConstant() float64
 
+	// GetByteFrequencyData returns the current frequency data into bytes.
+	//
+	// See https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/getByteFrequencyData.
 	GetByteFrequencyData() []byte
+
+	// GetByteTimeDomainData returns he current waveform, or time-domain, data into bytes.
+	//
+	// See https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/getByteTimeDomainData.
 	GetByteTimeDomainData() []byte
+
+	// GetFloatFrequencyData returns the current frequency data into float32 array.
+	//
+	// https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/getFloatFrequencyData.
 	GetFloatFrequencyData() []float32
-	getFloatTimeDomainData() []float32
+
+	// GetFloatTimeDomainData returns the current waveform, or time-domain, data into float32 array.
+	//
+	// See https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/getFloatTimeDomainData.
+	GetFloatTimeDomainData() []float32
 }
 
 type analyserNode struct {
@@ -87,7 +124,7 @@ func (a *analyserNode) GetFloatFrequencyData() []float32 {
 
 // -----------------------------------------------------------------------------
 
-func (a *analyserNode) getFloatTimeDomainData() []float32 {
+func (a *analyserNode) GetFloatTimeDomainData() []float32 {
 	size := a.FFTSize()
 	buf := builtin.Float32Array.New(size)
 	a.JSValue().Call("getFloatTimeDomainData", buf)
@@ -96,6 +133,7 @@ func (a *analyserNode) getFloatTimeDomainData() []float32 {
 
 // -----------------------------------------------------------------------------
 
+// AnalyserNodeOf converts to AnalyserNode from given Javascript value v.
 func AnalyserNodeOf(v js.Value) AnalyserNode {
 	if !builtin.AnalyserNode.Is(v) {
 		panic(js.ValueError{

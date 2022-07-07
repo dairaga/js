@@ -1,6 +1,6 @@
 //go:build js && wasm
 
-// Package url provides common data structures and functions about javascript URL.
+// Package url provides common data structures and functions about Javascript URL.
 package url
 
 import (
@@ -11,12 +11,12 @@ import (
 	"github.com/dairaga/js/v2/builtin"
 )
 
-// URL is javascript URL.
+// URL is Javascript URL.
 //
 // See https://developer.mozilla.org/en-US/docs/Web/API/URL.
 type URL js.Value
 
-// JSValue returns javascript value.
+// JSValue returns Javascript value.
 func (u URL) JSValue() js.Value {
 	return js.Value(u)
 }
@@ -227,7 +227,7 @@ func (u URL) SetUsername(username string) {
 
 // -----------------------------------------------------------------------------
 
-// Params returns all parameters in the url. The resulted is a javascript URLSearchParams.
+// Params returns all parameters in the url. The resulted is a Javascript URLSearchParams.
 //
 // See https://developer.mozilla.org/en-US/docs/Web/API/URL/searchParams.
 func (u URL) Params() Params {
@@ -236,7 +236,7 @@ func (u URL) Params() Params {
 
 // -----------------------------------------------------------------------------
 
-// String invokes javascript URL.toString method and returns whole url string like Href.
+// String invokes Javascript URL.toString method and returns whole url string like Href.
 //
 // See https://developer.mozilla.org/en-US/docs/Web/API/URL/toString.
 func (u URL) String() string {
@@ -245,7 +245,7 @@ func (u URL) String() string {
 
 // -----------------------------------------------------------------------------
 
-// JSON invokes javascript URL.toJSON method and returns a serialized string of the url.
+// JSON invokes Javascript URL.toJSON method and returns a serialized string of the url.
 //
 // See https://developer.mozilla.org/en-US/docs/Web/API/URL/toJSON.
 func (u URL) JSON() string {

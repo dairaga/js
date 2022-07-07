@@ -2,6 +2,10 @@
 
 package js
 
+import (
+	"github.com/dairaga/js/v2/builtin"
+)
+
 type Event interface {
 	Wrapper
 	Type() string
@@ -33,4 +37,16 @@ func (e event) Type() string {
 
 func (e event) PreventDefault() {
 	Value(e).Call("preventDefault")
+}
+
+// -----------------------------------------------------------------------------
+
+func EventOf(v Value) Event {
+	if !builtin.Event.Is(v) {
+		panic(ValueError{
+			Method: "EventOf",
+			Type:   v.Type(),
+		})
+	}
+	return event(v)
 }

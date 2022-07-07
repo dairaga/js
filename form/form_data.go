@@ -24,7 +24,7 @@ type FormValue interface {
 	// Type returns the value type.
 	Type() ValueType
 
-	// ValueRef returns javascript value.
+	// ValueRef returns Javascript value.
 	ValueRef() js.Value
 }
 
@@ -33,7 +33,7 @@ type FormValue interface {
 // String represents String value.
 type String string
 
-// ValueRef returns javascript value.
+// ValueRef returns Javascript value.
 func (s String) ValueRef() js.Value {
 	return js.ValueOf(string(s))
 }
@@ -50,7 +50,7 @@ func (s String) Type() ValueType {
 // Binary represents Binary value.
 type Binary js.Value
 
-// ValueRef returns javascript value.
+// ValueRef returns Javascript value.
 func (b Binary) ValueRef() js.Value {
 	v := js.Value(b)
 	if builtin.Blob.Is(v) {
@@ -69,14 +69,14 @@ func (b Binary) Type() ValueType {
 
 // -----------------------------------------------------------------------------
 
-// FormData is javascript FormData.
+// FormData is Javascript FormData.
 //
 // See https://developer.mozilla.org/en-US/docs/Web/API/FormData.
 type FormData js.Value
 
 // -----------------------------------------------------------------------------
 
-// JSValue returns javascript value.
+// JSValue returns Javascript value.
 func (f FormData) JSValue() js.Value {
 	return js.Value(f)
 }
@@ -138,7 +138,7 @@ func (f FormData) Delete(name string) {
 //
 // 1. string as selector criteria.
 //
-// 2. javascript value or wrapper of javascript value.
+// 2. Javascript value or wrapper of Javascript value.
 func FormDataOf(x ...any) FormData {
 	if len(x) <= 0 {
 		return FormData(builtin.FormData.New())

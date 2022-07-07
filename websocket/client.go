@@ -1,6 +1,6 @@
 //go:build js && wasm
 
-// Package websocket is wrapper of javascript WebSocket API. It sets binary type to arraybuffer as default.
+// Package websocket is wrapper of Javascript WebSocket API. It sets binary type to arraybuffer as default.
 //
 // See https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API.
 package websocket
@@ -67,15 +67,15 @@ type Handler interface {
 
 // -----------------------------------------------------------------------------
 
-// Client is a wrapper of javascript WebSocket class.
+// Client is a wrapper of Javascript WebSocket class.
 type Client struct {
-	ref      js.Value    // javascript WebSocket instance.
+	ref      js.Value    // Javascript WebSocket instance.
 	listener js.Listener // websocket listeners.
 }
 
 // -----------------------------------------------------------------------------
 
-// JSValue returns javascript value.
+// JSValue returns Javascript value.
 func (cli *Client) JSValue() js.Value {
 	return cli.ref
 }

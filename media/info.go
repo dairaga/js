@@ -22,7 +22,7 @@ const (
 
 // -----------------------------------------------------------------------------
 
-// DeviceInfo is javascript MediaDeviceInfo.
+// DeviceInfo is Javascript MediaDeviceInfo.
 //
 // See https://developer.mozilla.org/en-US/docs/Web/API/MediaDeviceInfo.
 type DeviceInfo js.Value
@@ -69,7 +69,7 @@ func (i DeviceInfo) Label() string {
 
 // -----------------------------------------------------------------------------
 
-// DeviceInfoOf wraps a JavaScript MediaDeviceInfo object.
+// DeviceInfoOf wraps a Javascript MediaDeviceInfo object.
 func DeviceInfoOf(v js.Value) DeviceInfo {
 	if !builtin.MediaDeviceInfo.Is(v) {
 		panic(js.ValueError{

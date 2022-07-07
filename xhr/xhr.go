@@ -1,6 +1,6 @@
 //go:build js && wasm
 
-// Package xhr is a wrapper of javascript XMLHttpRequest (XHR), and provides a simple way to make a JSON AJAX.
+// Package xhr is a wrapper of Javascript XMLHttpRequest (XHR), and provides a simple way to make a JSON AJAX.
 //
 // See https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest.
 package xhr

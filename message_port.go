@@ -34,20 +34,25 @@ func (m MessagePort) Close() {
 
 // -----------------------------------------------------------------------------
 
-func (m MessagePort) OnMessage(fn func(Value)) {
-	Value(m).Call("addEventListener", "message", FuncOf(func(_ Value, args []Value) any {
-		fn(args[0])
+func (m MessagePort) OnMessage(fn func(Event)) Func {
+	jsfn := FuncOf(func(_ Value, args []Value) any {
+		fn(event(args[0]))
 		return nil
-	}))
+	})
+
+	Value(m).Call("addEventListener", "message", jsfn)
+	return jsfn
 }
 
 // -----------------------------------------------------------------------------
 
-func (m MessagePort) OnError(fn func(Value)) {
-	Value(m).Call("addEventListener", "messageerror", FuncOf(func(this Value, args []Value) any {
+func (m MessagePort) OnError(fn func(Value)) Func {
+	jsfn := FuncOf(func(this Value, args []Value) any {
 		fn(args[0])
 		return nil
-	}))
+	})
+	Value(m).Call("addEventListener", "messageerror", jsfn)
+	return jsfn
 }
 
 // -----------------------------------------------------------------------------

@@ -40,6 +40,7 @@ type Element interface {
 
 	Parent() Element
 	Tattoo() string
+	Enable(enable bool) Element
 
 	Query(selector string) Element
 	QueryAll(selector string) Elements
@@ -52,6 +53,7 @@ type Element interface {
 
 	Attr(a string, at ...string) string
 	SetAttr(a, value string, at ...string) Element
+	RemoveAttr(a string, at ...string) Element
 
 	Text() string
 	SetText(txt string) Element
@@ -137,6 +139,17 @@ func (e element) Tattoo() string {
 
 // -----------------------------------------------------------------------------
 
+func (e element) Enable(enable bool) Element {
+	if enable {
+		e.RemoveAttr("disabled")
+	} else {
+		e.SetAttr("disabled", "disabled")
+	}
+	return e
+}
+
+// -----------------------------------------------------------------------------
+
 func (e element) Query(selector string) Element {
 	return elementOf(query(Value(e), selector))
 }
@@ -187,6 +200,15 @@ func (e element) Attr(a string, selector ...string) string {
 func (e element) SetAttr(a, val string, selector ...string) Element {
 	if _tattoo != a {
 		setAttr(at(Value(e), selector...), a, val)
+	}
+	return e
+}
+
+// -----------------------------------------------------------------------------
+
+func (e element) RemoveAttr(a string, selector ...string) Element {
+	if a != _tattoo {
+		removeAttr(at(Value(e), selector...), a)
 	}
 	return e
 }

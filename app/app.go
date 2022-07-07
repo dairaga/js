@@ -74,14 +74,14 @@ func (a *app) change(method string, x any, newURL ...string) error {
 
 // -----------------------------------------------------------------------------
 
-// push is to call javascript window.history.pushState.
+// push is to call Javascript window.history.pushState.
 func (a *app) push(x any, newURL ...string) error {
 	return a.change("pushState", x, newURL...)
 }
 
 // -----------------------------------------------------------------------------
 
-// replace is to call javascript window.history.replaceState.
+// replace is to call Javascript window.history.replaceState.
 func (a *app) replace(x any, newURL ...string) error {
 	return a.change("replaceState", x, newURL...)
 }
@@ -253,7 +253,7 @@ func State(x any) error {
 
 // -----------------------------------------------------------------------------
 
-// Go is javascript window.history.go(detla).
+// Go is Javascript window.history.go(detla).
 //
 // See https://developer.mozilla.org/en-US/docs/Web/API/History/go.
 func Go(delta int) {
@@ -262,7 +262,7 @@ func Go(delta int) {
 
 // -----------------------------------------------------------------------------
 
-// Forward is javascript window.history.forward.
+// Forward is Javascript window.history.forward.
 //
 // See https://developer.mozilla.org/en-US/docs/Web/API/History/forward
 func Forward() {
@@ -271,7 +271,7 @@ func Forward() {
 
 // -----------------------------------------------------------------------------
 
-// Back is javascript window.history.back.
+// Back is Javascript window.history.back.
 //
 // https://developer.mozilla.org/en-US/docs/Web/API/History/back
 func Back() {

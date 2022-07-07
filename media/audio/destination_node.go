@@ -7,8 +7,15 @@ import (
 	"github.com/dairaga/js/v2/builtin"
 )
 
+// DestinationNode is Javascript AudioDestinationNode object.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/AudioDestinationNode.
 type DestinationNode interface {
 	Node
+
+	// MaxChannelCount returns the maximum amount of channels that the physical device can handle.
+	//
+	// See https://developer.mozilla.org/en-US/docs/Web/API/AudioDestinationNode/maxChannelCount.
 	MaxChannelCount() uint64
 }
 

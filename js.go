@@ -24,12 +24,12 @@ const (
 // -----------------------------------------------------------------------------
 
 var (
-	global    = js.Global()            // global 物件，也是 javascript 的 window 物件。
+	global    = js.Global()            // global 物件，也是 Javascript 的 window 物件。
 	document  = global.Get("document") // Document 物件。
 	body      = document.Get("body")   // Document 下的 Body。
-	null      = js.Null()              // javascript null。
-	undefined = js.Undefined()         // javascript undefined。
-	jsjson    = global.Get("JSON")     // javascript JSON.
+	null      = js.Null()              // Javascript null。
+	undefined = js.Undefined()         // Javascript undefined。
+	jsjson    = global.Get("JSON")     // Javascript JSON.
 )
 
 // -----------------------------------------------------------------------------
@@ -50,7 +50,7 @@ type (
 
 // Wrapper 原 golang 的 Wrapper interface，覺得很好用，保留。
 type Wrapper interface {
-	// JSValue returns javascript value.
+	// JSValue returns Javascript value.
 	JSValue() Value
 }
 
@@ -72,7 +72,7 @@ func ValueOf(x any) Value {
 
 // -----------------------------------------------------------------------------
 
-// GoBytes 將 javascript 的 Uint8Array 轉成 golang 的 []byte。src 必須是 javascript 的 Uint8Array。
+// GoBytes 將 Javascript 的 Uint8Array 轉成 golang 的 []byte。src 必須是 Javascript 的 Uint8Array。
 func GoBytes(src Value) []byte {
 	if !builtin.Uint8Array.Is(src) {
 		panic("src is not an Uint8Array")
@@ -86,7 +86,7 @@ func GoBytes(src Value) []byte {
 
 // -----------------------------------------------------------------------------
 
-// Uint8Array 將 golang 的 []byte 轉成 javascript 的 Uint8Array。
+// Uint8Array 將 golang 的 []byte 轉成 Javascript 的 Uint8Array。
 func Uint8Array(src []byte) Value {
 	dst := builtin.Uint8Array.New(len(src))
 	js.CopyBytesToJS(dst, src)
@@ -95,7 +95,7 @@ func Uint8Array(src []byte) Value {
 
 // -----------------------------------------------------------------------------
 
-// ArrayBufferToBytes 將 javascript 的 ArrayBuffer 轉成 golang []byte。src 必須是 javascript 的 ArrayBuffer。
+// ArrayBufferToBytes 將 Javascript 的 ArrayBuffer 轉成 golang []byte。src 必須是 Javascript 的 ArrayBuffer。
 func ArrayBufferToBytes(src Value) []byte {
 	if !builtin.ArrayBuffer.Is(src) {
 		panic("src is not an ArrayBuffer")
@@ -124,14 +124,14 @@ func Float32Array(src js.Value) []float32 {
 
 // -----------------------------------------------------------------------------
 
-// Null 回傳 javascript 的 null。
+// Null 回傳 Javascript 的 null。
 func Null() Value {
 	return null
 }
 
 // -----------------------------------------------------------------------------
 
-// Undefined 回傳 javascript 的 Undefined。
+// Undefined 回傳 Javascript 的 Undefined。
 func Undefined() Value {
 	return undefined
 }

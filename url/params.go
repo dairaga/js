@@ -4,12 +4,12 @@ package url
 
 import "github.com/dairaga/js/v2"
 
-// Params is javascript URLSearchParams.
+// Params is Javascript URLSearchParams.
 //
 // See https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams.
 type Params js.Value
 
-// JSValue returns javascript value.
+// JSValue returns Javascript value.
 func (p Params) JSValue() js.Value {
 	return js.Value(p)
 }

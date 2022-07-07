@@ -26,7 +26,7 @@ var (
 
 // Client is a AJAX client made by XHR.
 type Client struct {
-	ref      js.Value    // javascript XMLHttpRequest instance.
+	ref      js.Value    // Javascript XMLHttpRequest instance.
 	lastErr  error       // last error.
 	released bool        // client is released or not.
 	listener js.Listener // all event listeners.
@@ -34,7 +34,7 @@ type Client struct {
 
 // -----------------------------------------------------------------------------
 
-// JSValue returns the underlying javascript XMLHttpRequest instance.
+// JSValue returns the underlying Javascript XMLHttpRequest instance.
 func (cli *Client) JSValue() js.Value {
 	return cli.ref
 }
