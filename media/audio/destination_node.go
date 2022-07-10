@@ -7,7 +7,7 @@ import (
 	"github.com/dairaga/js/v2/builtin"
 )
 
-// DestinationNode is Javascript AudioDestinationNode object.
+// DestinationNode is Javascript AudioDestinationNode.
 //
 // See https://developer.mozilla.org/en-US/docs/Web/API/AudioDestinationNode.
 type DestinationNode interface {
@@ -35,6 +35,7 @@ func (d *destinationNode) MaxChannelCount() uint64 {
 
 // -----------------------------------------------------------------------------
 
+// DestinationNodeOf converts to an AudioDestinationNode from given Javascript value v.
 func DestinationNodeOf(v js.Value) DestinationNode {
 	if !builtin.AudioDestinationNode.Is(v) {
 		panic(js.ValueError{

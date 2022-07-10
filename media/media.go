@@ -25,20 +25,6 @@ func Authorize(video, audio bool) js.Promise {
 
 // AwaitAuthorize returns true if user authorizes to access devices.
 func AwaitAuthorize(video, audio bool) bool {
-	/*ch := make(chan bool)
-
-	Authorize(video, audio).Then(func(result js.Value) any {
-		ch <- true
-		return nil
-	}).Catch(func(err js.Value) any {
-		ch <- false
-		return nil
-	}).Finally(func() any {
-		close(ch)
-		return nil
-	})
-
-	return ch*/
 
 	result := Authorize(video, audio).Await()
 	return result.Truthy() && builtin.MediaStream.Is(result)

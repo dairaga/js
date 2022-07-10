@@ -8,19 +8,44 @@ import (
 )
 
 // Device represents an AudioDevice. It is not a built-in Javascript object.
-// Device is to attach an device id and process data with a custom worklet.
+// Device is to attach an device via device id from  MediaDevices.enumerateDevices() and process data with a custom worklet.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/enumerateDevices
 type Device interface {
 	js.Wrapper
 
+	// ID returns the device id. Device id can be retrieved from the MediaDevices.enumerateDevices() method.
+	//
+	// See https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/enumerateDevices.
 	ID() string
+
+	// SampleRate returns the sample rate inputted when attaching the device.
 	SampleRate() float64
+
+	// GetByteFrequencyData returns current frequency data from underlying AnalyzerNode.
+	//
+	// See https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/getByteFrequencyData.
 	GetByteFrequencyData() []byte
+
+	// Process process attached pyhisical device.
+	// Give url and name to create a worklet to load module.
+	// Give callback cb to handle data from worklet.
+	//
+	// See https://developer.mozilla.org/en-US/docs/Web/API/Worklet/addModule.
+	// See https://developer.mozilla.org/en-US/docs/Web/API/AudioWorkletProcessor/AudioWorkletProcessor.
+	// See https://developer.mozilla.org/en-US/docs/Web/API/MessagePort/message_event.
 	Process(url, name string, cb func(js.Event), c ...js.Credential) js.Promise
 
+	// Truthy returns true if it is valid.
 	Truthy() bool
+
+	// Ready returns true if it is ready to process.
 	Ready() bool
+
+	// Closed returns true if the device is closed.
 	Closed() bool
 
+	// Close detaches the device and releases resources used.
 	Close() js.Promise
 }
 
@@ -35,25 +60,18 @@ func (d device) JSValue() js.Value {
 
 // -----------------------------------------------------------------------------
 
-// ID returns the device id. Device id can be retrieved from the MediaDevices.enumerateDevices() method.
-//
-// See https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/enumerateDevices.
 func (d device) ID() string {
 	return js.Value(d).Get("deviceID").String()
 }
 
 // -----------------------------------------------------------------------------
 
-// SampleRate returns the sample rate inputted when attaching the device.
 func (d device) SampleRate() float64 {
 	return js.Value(d).Get("sampleRate").Float()
 }
 
 // -----------------------------------------------------------------------------
 
-// GetByteFrequencyData returns current frequency data from underlying AnalyzerNode.
-//
-// See https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/getByteFrequencyData.
 func (d device) GetByteFrequencyData() []byte {
 	n := analyserNode{
 		node: node(js.Value(d).Get("analyserNode")),
@@ -64,13 +82,6 @@ func (d device) GetByteFrequencyData() []byte {
 
 // -----------------------------------------------------------------------------
 
-// Process process attached pyhisical device.
-// Give url and name to create a worklet to load module.
-// Give callback cb to handle data from worklet.
-//
-// See https://developer.mozilla.org/en-US/docs/Web/API/Worklet/addModule.
-// See https://developer.mozilla.org/en-US/docs/Web/API/AudioWorkletProcessor/AudioWorkletProcessor.
-// See https://developer.mozilla.org/en-US/docs/Web/API/MessagePort/message_event.
 func (d device) Process(url, name string, cb func(js.Event), c ...js.Credential) js.Promise {
 	return media.GetUserMedia(js.Obj{
 		"video": false,
@@ -106,7 +117,6 @@ func (d device) Process(url, name string, cb func(js.Event), c ...js.Credential)
 
 // -----------------------------------------------------------------------------
 
-// Ready returns true if it is ready to process.
 func (d device) Ready() bool {
 	ready := js.Value(d).Get("ready")
 	return ready.Truthy() && ready.Bool()
@@ -114,7 +124,6 @@ func (d device) Ready() bool {
 
 // -----------------------------------------------------------------------------
 
-// Closed returns true if the device is closed.
 func (d device) Closed() bool {
 	ctx := js.Value(d).Get("context")
 	return !ctx.Truthy() || Context(ctx).State() == StateClosed
@@ -122,7 +131,6 @@ func (d device) Closed() bool {
 
 // -----------------------------------------------------------------------------
 
-// Close detaches the device and releases resources used.
 func (d device) Close() js.Promise {
 	dv := js.Value(d)
 	dv.Set("ready", false)
@@ -139,7 +147,6 @@ func (d device) Close() js.Promise {
 
 // -----------------------------------------------------------------------------
 
-// Truthy returns true if it is valid.
 func (d device) Truthy() bool {
 	return js.Value(d).Get("deviceID").Truthy() && js.Value(d).Get("sampleRate").Truthy()
 }

@@ -8,8 +8,15 @@ import (
 	"github.com/dairaga/js/v2/media"
 )
 
+// SourceNode is Javascript MediaStreamAudioSourceNode.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamAudioSourceNode.
 type SourceNode interface {
 	Node
+
+	// MediaStream returns the value of mediaStream property.
+	//
+	// See https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamAudioSourceNode/mediaStream.
 	MediaStream() media.Stream
 }
 
@@ -27,6 +34,7 @@ func (s *sourceNode) MediaStream() media.Stream {
 
 // -----------------------------------------------------------------------------
 
+// SourceNodeOf converts to an MediaStreamAudioSourceNode from given Javascript value v.
 func SourceNodeOf(v js.Value) SourceNode {
 	if !builtin.MediaStreamAudioSourceNode.Is(v) {
 		panic(js.ValueError{

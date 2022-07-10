@@ -25,7 +25,7 @@ func (s State) String() string {
 
 // -----------------------------------------------------------------------------
 
-// Context is Javascript Contect object.
+// Context is Javascript AudioContext.
 //
 // See https://developer.mozilla.org/en-US/docs/Web/API/AudioContext.
 type Context js.Value

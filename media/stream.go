@@ -7,9 +7,9 @@ import (
 	"github.com/dairaga/js/v2/builtin"
 )
 
-// Stream is a Javascript MediaStream object.
+// Stream is a Javascript MediaStream.
 //
-// See https://developer.mozilla.org/en-US/docs/Web/API/MediaStream
+// See https://developer.mozilla.org/en-US/docs/Web/API/MediaStream.
 type Stream interface {
 	js.Wrapper
 
@@ -48,7 +48,7 @@ func (s stream) Active() bool {
 
 // -----------------------------------------------------------------------------
 
-// StreamOf wraps a Javascript MediaStream object.
+// StreamOf converts to a MediaStream from given Javascript value v.
 func StreamOf(v js.Value) Stream {
 	if !builtin.MediaStream.Is(v) {
 		panic(js.ValueError{

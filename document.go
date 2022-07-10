@@ -42,6 +42,7 @@ func Prepend(child Appendable, selector ...string) {
 // -----------------------------------------------------------------------------
 
 // RemoveChild 將 Body 內的物件移除。
+//
 // x 可以是：
 // 1. string: 需遵守 Selector 規則。
 // 2. Value: 呼叫 remove 函式，Value 必須是 Javascript Element。

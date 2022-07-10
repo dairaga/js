@@ -4,7 +4,7 @@ package audio
 
 import "github.com/dairaga/js/v2"
 
-// Node is a Javascript AudioNode object.
+// Node is a Javascript AudioNode.
 //
 // See https://developer.mozilla.org/en-US/docs/Web/API/AudioNode.
 type Node interface {
