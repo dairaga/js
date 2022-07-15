@@ -30,7 +30,8 @@ func (p promise) JSValue() Value {
 // -----------------------------------------------------------------------------
 
 func (p promise) call(method string, f func(Value) any) Promise {
-	result := Value(p).Call(method, js.FuncOf(func(_ js.Value, args []js.Value) any {
+
+	result := Value(p).Call(method, OnceFuncOf(func(_ Value, args []Value) any {
 		return f(args[0])
 	}))
 	return promise(result)
@@ -51,7 +52,7 @@ func (p promise) Catch(f func(Value) any) Promise {
 // -----------------------------------------------------------------------------
 
 func (p promise) Finally(f func() any) Promise {
-	result := Value(p).Call("finally", js.FuncOf(func(js.Value, []js.Value) any {
+	result := Value(p).Call("finally", OnceFuncOf(func(Value, []Value) any {
 		return f()
 	}))
 	return promise(result)
