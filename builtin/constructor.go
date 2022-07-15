@@ -28,6 +28,14 @@ func (c Constructor) Is(v js.Value) bool {
 // -----------------------------------------------------------------------------
 
 const (
+	Error          = Constructor("Error")          // Javascript Error class.
+	EvalError      = Constructor("EvalError")      // Javascript EvalError class.
+	RangeError     = Constructor("RangeError")     // Javascript RangeError class.
+	ReferenceError = Constructor("ReferenceError") // Javascript ReferenceError class.
+	SyntaxError    = Constructor("SyntaxError")    // Javascript SyntaxError class.
+	TypeError      = Constructor("TypeError")      // Javascript TypeError class.
+	URIError       = Constructor("URIError")       // Javascript URIError class.
+
 	Object      = Constructor("Object")      // Javascript Object class.
 	Promise     = Constructor("Promise")     // Javascript Promise class.
 	MessagePort = Constructor("MessagePort") // Javascript MessagePort class.
@@ -81,6 +89,10 @@ const (
 	AudioWorklet          = Constructor("AudioWorklet")          // Javascript AudioWorklet class.
 	AudioWorkletNode      = Constructor("AudioWorkletNode")      // Javascript AudioWorkletNode class.
 	AudioWorkletProcessor = Constructor("AudioWorkletProcessor") // Javascript AudioWorkletProcessor class.
+
+	Headers  = Constructor("Headers")  // Javascript Headers class.
+	Request  = Constructor("Request")  // Javascript Request class.
+	Response = Constructor("Response") // Javascript Response class.
 )
 
 // -----------------------------------------------------------------------------

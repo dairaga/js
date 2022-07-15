@@ -1,4 +1,4 @@
-.PHONY: clean test app builtin url xhr xhr/ajax example mvvm xhr/upload promise
+.PHONY: clean test app builtin url xhr xhr/ajax example mvvm xhr/upload promise http errors
 
 GOPATH=$(shell go env GOPATH)
 WASMEXEC=${GOPATH}/bin/wasmbrowsertest
@@ -27,6 +27,12 @@ xhr/upload:
 
 promise:
 	env WASM_HEADLESS=${WASM_HEADLESS} GOOS=js GOARCH=wasm go test -p 1 -timeout 0 github.com/dairaga/js/v2/promise -exec=${WASMEXEC} -test.v
+
+http:
+	env WASM_HEADLESS=${WASM_HEADLESS} GOOS=js GOARCH=wasm go test -p 1 -timeout 0 github.com/dairaga/js/v2/http -exec=${WASMEXEC} -test.v
+
+errors:
+	env WASM_HEADLESS=${WASM_HEADLESS} GOOS=js GOARCH=wasm go test -p 1 -timeout 0 github.com/dairaga/js/v2/errors -exec=${WASMEXEC} -test.v
 
 example:
 	env GOOS=js GOARCH=wasm go build -o example/wasm.wasm github.com/dairaga/js/v2/example
