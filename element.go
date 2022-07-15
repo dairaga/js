@@ -81,6 +81,11 @@ type Element interface {
 	Foucs(at ...string) Element
 	Blur(at ...string) Element
 
+	Style() Style
+	OuterHeight(includeMargin bool) int
+	SetOuterHeight(h int, includeMargin bool) Element
+	OuterWidth(includeMargin bool) int
+
 	Empty() Element
 	//Relese()
 	Dispose()
@@ -356,6 +361,52 @@ func (e element) Foucs(selector ...string) Element {
 func (e element) Blur(selector ...string) Element {
 	at(Value(e), selector...).Call("blur")
 	return e
+}
+
+// -----------------------------------------------------------------------------
+
+func (e element) Style() Style {
+	//return Style(global.Call("getComputedStyle", Value(e)))
+	return Style(Value(e).Get("style"))
+}
+
+// -----------------------------------------------------------------------------
+
+func (e element) OuterHeight(includeMargin bool) int {
+	if includeMargin {
+		s := e.Style()
+		mt, _ := ParseInt(s.GetPropertyValue("margin-top"), 10)
+		mb, _ := ParseInt(s.GetPropertyValue("margin-bottom"), 10)
+		return Value(e).Get("offsetHeight").Int() + mt + mb
+	}
+
+	return Value(e).Get("offsetHeight").Int()
+}
+
+// -----------------------------------------------------------------------------
+
+func (e element) SetOuterHeight(h int, includeMargin bool) Element {
+	s := e.Style()
+	if includeMargin {
+		mt, _ := ParseInt(s.GetPropertyValue("margin-top"), 10)
+		mb, _ := ParseInt(s.GetPropertyValue("margin-bottom"), 10)
+		h -= mt + mb
+	}
+	s.SetProperty("height", fmt.Sprintf("%dpx", h))
+	return e
+}
+
+// -----------------------------------------------------------------------------
+
+func (e element) OuterWidth(includeMargin bool) int {
+	if includeMargin {
+		s := e.Style()
+		ml, _ := ParseInt(s.GetPropertyValue("margin-left"), 10)
+		mr, _ := ParseInt(s.GetPropertyValue("margin-right"), 10)
+		return Value(e).Get("offsetWidth").Int() + ml + mr
+	}
+
+	return Value(e).Get("offsetWidth").Int()
 }
 
 // -----------------------------------------------------------------------------

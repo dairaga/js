@@ -147,3 +147,27 @@ func EncodeURI(src string) string {
 func DecodeURI(src string) string {
 	return global.Call("decodeURIComponent", src).String()
 }
+
+// -----------------------------------------------------------------------------
+
+func ParseInt(src string, base int) (int, bool) {
+	result := global.Call("parseInt", src, base)
+
+	if result.Truthy() {
+		return result.Int(), true
+	} else {
+		return 0, false
+	}
+}
+
+// -----------------------------------------------------------------------------
+
+func ParseFloat(src string) (float64, bool) {
+	result := global.Call("parseFloat", src)
+
+	if result.Truthy() {
+		return result.Float(), true
+	} else {
+		return 0, false
+	}
+}
