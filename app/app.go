@@ -5,6 +5,7 @@ package app
 
 import (
 	"github.com/dairaga/js/v2"
+	"github.com/dairaga/js/v2/json"
 	"github.com/dairaga/js/v2/url"
 )
 
@@ -47,20 +48,18 @@ func (a *app) url() url.URL {
 // -----------------------------------------------------------------------------
 
 // state returns current state in history and unmarshal it to given x.
-func (a *app) state(x any) (err error) {
+func (a *app) state(x json.Unmarshaler) error {
 	state := a.history.Get("state")
-	err = js.Unmarshal(state, x)
-	return
+	return json.UnmarshalValue(state, x)
 }
 
 // -----------------------------------------------------------------------------
 
 // change is a helper function to handle history state. Method is one of "pushState" or "replaceState".
-func (a *app) change(method string, x any, newURL ...string) error {
-	state, err := js.Marshal(x)
-
+func (a *app) change(method string, x json.Marshaler, newURL ...string) error {
+	state, err := json.MarshalValue(x)
 	if err != nil {
-		return err
+		return nil
 	}
 
 	if len(newURL) > 0 {
@@ -75,14 +74,14 @@ func (a *app) change(method string, x any, newURL ...string) error {
 // -----------------------------------------------------------------------------
 
 // push is to call Javascript window.history.pushState.
-func (a *app) push(x any, newURL ...string) error {
+func (a *app) push(x json.Marshaler, newURL ...string) error {
 	return a.change("pushState", x, newURL...)
 }
 
 // -----------------------------------------------------------------------------
 
 // replace is to call Javascript window.history.replaceState.
-func (a *app) replace(x any, newURL ...string) error {
+func (a *app) replace(x json.Marshaler, newURL ...string) error {
 	return a.change("replaceState", x, newURL...)
 }
 
@@ -229,7 +228,7 @@ func ChangeHash(new string) {
 // PushState changes history state and push it to history.
 //
 // See https://developer.mozilla.org/en-US/docs/Web/API/History/pushState.
-func Push(x any, newURL ...string) error {
+func Push(x json.Marshaler, newURL ...string) error {
 	return _app.push(x, newURL...)
 }
 
@@ -238,7 +237,7 @@ func Push(x any, newURL ...string) error {
 // ReplaceState changes history state and replace it to history.
 //
 // See https://developer.mozilla.org/en-US/docs/Web/API/History/replaceState.
-func Replace(x any, newURL ...string) error {
+func Replace(x json.Marshaler, newURL ...string) error {
 	return _app.replace(x, newURL...)
 }
 
@@ -247,7 +246,7 @@ func Replace(x any, newURL ...string) error {
 // State returns current state in history and unmarshal it to given x.
 //
 // See https://developer.mozilla.org/en-US/docs/Web/API/History/state.
-func State(x any) error {
+func State(x json.Unmarshaler) error {
 	return _app.state(x)
 }
 

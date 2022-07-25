@@ -11,6 +11,7 @@ import (
 
 	"github.com/dairaga/js/v2"
 	"github.com/dairaga/js/v2/app"
+	"github.com/dairaga/js/v2/json"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -34,6 +35,28 @@ type testState struct {
 	URL   string
 	Name  string
 	Index int
+}
+
+// -----------------------------------------------------------------------------
+
+func (s *testState) MarshalValue() (js.Value, error) {
+	return js.ValueOf(map[string]any{
+		"url":   s.URL,
+		"name":  s.Name,
+		"index": s.Index,
+	}), nil
+}
+
+// -----------------------------------------------------------------------------
+
+func (s *testState) UnmarshalValue(v js.Value) error {
+	if err := json.ValidValue(v); err != nil {
+		return err
+	}
+	s.URL = v.Get("url").String()
+	s.Name = v.Get("name").String()
+	s.Index = v.Get("index").Int()
+	return nil
 }
 
 // -----------------------------------------------------------------------------

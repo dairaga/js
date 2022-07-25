@@ -44,7 +44,7 @@ func (f File) WebkitRelativePath() string {
 
 func fileSupported(v Value) bool {
 	return v.Truthy() && (builtin.ArrayBuffer.Is(v) ||
-		builtin.IsArrayBufferView(v) ||
+		builtin.IsTypedArray(v) ||
 		builtin.Blob.Is(v))
 }
 

@@ -43,6 +43,7 @@ const (
 	EventTarget = Constructor("EventTarget") // Javascript EventTarget class.
 	Event       = Constructor("Event")       // Javascript Event class.
 
+	DataView          = Constructor("DataView")          // Javascript DataView class.
 	ArrayBuffer       = Constructor("ArrayBuffer")       // Javascript ArrayBuffer class.
 	Int8Array         = Constructor("Int8Array")         // Javascript Int8Array class.
 	Uint8Array        = Constructor("Uint8Array")        // Javascript Uint8Array class.
@@ -56,8 +57,9 @@ const (
 	BigInt64Array     = Constructor("BigInt64Array")     // Javascript BigInt64Array class.
 	BigUint64Array    = Constructor("BigUint64Array")    // Javascript BigUint64Array class.
 
-	URL            = Constructor("URL")            // Javascript URL class.
-	XMLHttpRequest = Constructor("XMLHttpRequest") // Javascript XMLHttpRequest class.
+	URL             = Constructor("URL")             // Javascript URL class.
+	URLSearchParams = Constructor("URLSearchParams") // Javascript URLSearchParams class.
+	XMLHttpRequest  = Constructor("XMLHttpRequest")  // Javascript XMLHttpRequest class.
 
 	HTMLFormElement = Constructor("HTMLFormElement") // Javascript HTMLFormElement class.
 	FormData        = Constructor("FormData")        // Javascript FormData class.
@@ -71,8 +73,9 @@ const (
 	HTMLTextAreaElement = Constructor("HTMLTextAreaElement") // Javascript HTMLTextAreaElement class.
 	HTMLTemplateElement = Constructor("HTMLTemplateElement") // Javascript HTMLTemplateElement class.
 
-	Blob = Constructor("Blob") // Javascript Blob class.
-	File = Constructor("File") // Javascript File class.
+	ReadableStream = Constructor("ReadableStream") // Javascript ReadableStream class.
+	Blob           = Constructor("Blob")           // Javascript Blob class.
+	File           = Constructor("File")           // Javascript File class.
 
 	RegExp = Constructor("RegExp") // Javascript RegExp class.
 
@@ -103,8 +106,22 @@ func Is(v js.Value, c Constructor) bool {
 
 // -----------------------------------------------------------------------------
 
-// IsArrayBufferView returns true if given instance v is an ArrayBufferView.
-func IsArrayBufferView(v js.Value) bool {
+func In(v js.Value, first Constructor, others ...Constructor) bool {
+	if Is(v, first) {
+		return true
+	}
+	for _, c := range others {
+		if Is(v, c) {
+			return true
+		}
+	}
+	return false
+}
+
+// -----------------------------------------------------------------------------
+
+// IsTypedArray returns true if given instance v is an typed array.
+func IsTypedArray(v js.Value) bool {
 	return v.InstanceOf(Int8Array.JSValue()) || v.InstanceOf(Uint8Array.JSValue()) || v.InstanceOf(Uint8ClampedArray.JSValue()) ||
 		v.InstanceOf(Int16Array.JSValue()) || v.InstanceOf(Uint16Array.JSValue()) ||
 		v.InstanceOf(Int32Array.JSValue()) || v.InstanceOf(Uint32Array.JSValue()) ||

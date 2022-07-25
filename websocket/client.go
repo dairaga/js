@@ -117,6 +117,12 @@ func (cli *Client) Closed() bool {
 
 // -----------------------------------------------------------------------------
 
+func (cli *Client) Ready() bool {
+	return cli.State() == Open
+}
+
+// -----------------------------------------------------------------------------
+
 // SendText sends text message.
 //
 // See https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/send.
@@ -138,7 +144,7 @@ func (cli *Client) Send(x any) {
 	case js.Wrapper:
 		cli.Send(v.JSValue())
 	case js.Value:
-		if !(builtin.ArrayBuffer.Is(v) || builtin.IsArrayBufferView(v) || builtin.Blob.Is(v)) {
+		if !(builtin.ArrayBuffer.Is(v) || builtin.IsTypedArray(v) || builtin.Blob.Is(v)) {
 			panic(js.ValueError{
 				Method: "WebSocket.Send",
 				Type:   v.Type(),
@@ -158,6 +164,7 @@ func Connect(url string, handler Handler) *Client {
 		ref:      builtin.WebSocket.New(url),
 		listener: make(map[string]js.Func),
 	}
+
 	ret.ref.Set("binaryType", "arraybuffer")
 
 	ret.listener.Add(ret.ref, "close", func(_ js.Value, _ []js.Value) any {
