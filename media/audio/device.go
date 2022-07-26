@@ -85,7 +85,9 @@ func (d device) GetByteFrequencyData() []byte {
 func (d device) Process(url, name string, cb func(js.Event), c ...js.Credential) js.Promise {
 	return media.GetUserMedia(js.Obj{
 		"video": false,
-		"audio": d.ID(),
+		"audio": js.Obj{
+			"deviceId": d.ID(),
+		},
 	}).Then(func(stream js.Value) any {
 		ctx := NewContext(d.SampleRate())
 		src := ctx.CreateMediaStreamSource(media.StreamOf(stream))
@@ -101,14 +103,14 @@ func (d device) Process(url, name string, cb func(js.Event), c ...js.Credential)
 			src.Connect(worker)
 			worker.Connect(ctx.Destination())
 
-			cb := worker.Port().OnMessage(func(evt js.Event) {
+			msgcb := worker.Port().OnMessage(func(evt js.Event) {
 				cb(evt)
 			})
 
 			worker.Port().Start() // must call start after addEventListener, see https://developer.mozilla.org/en-US/docs/Web/API/MessagePort/start.
 			js.Value(d).Set("workletNode", worker.JSValue())
 			js.Value(d).Set("ready", true)
-			js.Value(d).Set("msgcb", cb.Value)
+			js.Value(d).Set("msgcb", msgcb.Value)
 			return nil
 		})
 		return nil
