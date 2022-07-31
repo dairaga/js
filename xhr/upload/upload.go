@@ -68,12 +68,15 @@ type Client struct {
 
 // -----------------------------------------------------------------------------
 
-func (cli *Client) Upload(url, jobID string, form form.FormData) error {
+func (cli *Client) Upload(url, jobID string, form form.FormData, headers ...[2]string) error {
 	if cli.released {
 		return xhr.ErrReleased
 	}
 	cli.jobID = jobID
 	cli.ref.Call("open", xhr.POST, url, true)
+	for _, header := range headers {
+		cli.ref.Call("setRequestHeader", header[0], header[1])
+	}
 	cli.ref.Call("send", form.JSValue())
 	return nil
 }
@@ -120,6 +123,7 @@ func New(h Handler) *Client {
 	cli := new(Client)
 	cli.ref = builtin.XMLHttpRequest.New()
 	cli.ref.Set("withCredentials", defaultWithCredentials)
+
 	cli.upload = newUpload(cli.ref.Get("upload"))
 	cli.listener = make(js.Listener)
 	cli.released = false
