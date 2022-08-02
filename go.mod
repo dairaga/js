@@ -1,4 +1,4 @@
-module github.com/dairaga/js/v2
+module github.com/dairaga/js/v3
 
 go 1.18
 

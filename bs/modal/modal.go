@@ -4,8 +4,8 @@
 package modal
 
 import (
-	"github.com/dairaga/js/v2"
-	"github.com/dairaga/js/v2/bs"
+	"github.com/dairaga/js/v3"
+	"github.com/dairaga/js/v3/bs"
 )
 
 var object = bs.Global().Get("Modal") // bootstrap modal component.

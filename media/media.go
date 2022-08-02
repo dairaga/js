@@ -6,8 +6,8 @@
 package media
 
 import (
-	"github.com/dairaga/js/v2"
-	"github.com/dairaga/js/v2/builtin"
+	"github.com/dairaga/js/v3"
+	"github.com/dairaga/js/v3/builtin"
 )
 
 var navigator = js.Window().Get("navigator")

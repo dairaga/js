@@ -8,9 +8,9 @@ import (
 	"os/signal"
 	"testing"
 
-	"github.com/dairaga/js/v2"
-	"github.com/dairaga/js/v2/form"
-	"github.com/dairaga/js/v2/xhr"
+	"github.com/dairaga/js/v3"
+	"github.com/dairaga/js/v3/form"
+	"github.com/dairaga/js/v3/xhr"
 )
 
 const uploadURL = `http://127.0.0.1:8080/upload`

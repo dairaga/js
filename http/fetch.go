@@ -3,10 +3,10 @@
 package http
 
 import (
-	"github.com/dairaga/js/v2"
-	"github.com/dairaga/js/v2/errors"
-	"github.com/dairaga/js/v2/form"
-	"github.com/dairaga/js/v2/promise"
+	"github.com/dairaga/js/v3"
+	"github.com/dairaga/js/v3/errors"
+	"github.com/dairaga/js/v3/form"
+	"github.com/dairaga/js/v3/promise"
 )
 
 func Do(req Request) js.Promise {

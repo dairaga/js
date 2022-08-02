@@ -2,7 +2,7 @@
 
 package upload
 
-import "github.com/dairaga/js/v2/xhr"
+import "github.com/dairaga/js/v3/xhr"
 
 type ProgressFunc func(string, ProgressState, uint64, uint64)
 

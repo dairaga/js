@@ -9,9 +9,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dairaga/js/v2"
-	"github.com/dairaga/js/v2/app"
-	"github.com/dairaga/js/v2/json"
+	"github.com/dairaga/js/v3"
+	"github.com/dairaga/js/v3/app"
+	"github.com/dairaga/js/v3/json"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -142,7 +142,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dairaga/js/v2/url"
+	"github.com/dairaga/js/v3/url"
 	"github.com/stretchr/testify/assert"
 )
 

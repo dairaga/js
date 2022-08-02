@@ -3,8 +3,8 @@
 package audio
 
 import (
-	"github.com/dairaga/js/v2"
-	"github.com/dairaga/js/v2/media"
+	"github.com/dairaga/js/v3"
+	"github.com/dairaga/js/v3/media"
 )
 
 // Device represents an AudioDevice. It is not a built-in Javascript object.

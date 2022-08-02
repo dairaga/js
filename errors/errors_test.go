@@ -6,7 +6,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/dairaga/js/v2/builtin"
+	"github.com/dairaga/js/v3/builtin"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -7,9 +7,9 @@ package ajax
 import (
 	"time"
 
-	"github.com/dairaga/js/v2"
-	"github.com/dairaga/js/v2/builtin"
-	"github.com/dairaga/js/v2/xhr"
+	"github.com/dairaga/js/v3"
+	"github.com/dairaga/js/v3/builtin"
+	"github.com/dairaga/js/v3/xhr"
 )
 
 const (

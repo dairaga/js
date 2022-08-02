@@ -2,7 +2,7 @@
 
 package audio
 
-import "github.com/dairaga/js/v2"
+import "github.com/dairaga/js/v3"
 
 // Node is a Javascript AudioNode.
 //

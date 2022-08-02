@@ -5,7 +5,7 @@ package x
 import (
 	"testing"
 
-	"github.com/dairaga/js/v2"
+	"github.com/dairaga/js/v3"
 )
 
 type Person struct {

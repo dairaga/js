@@ -6,8 +6,8 @@
 package promise
 
 import (
-	"github.com/dairaga/js/v2"
-	"github.com/dairaga/js/v2/builtin"
+	"github.com/dairaga/js/v3"
+	"github.com/dairaga/js/v3/builtin"
 )
 
 // Resolve returns a Promise that is resolved the given value x.

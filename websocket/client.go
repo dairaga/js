@@ -8,8 +8,8 @@ package websocket
 import (
 	"fmt"
 
-	"github.com/dairaga/js/v2"
-	"github.com/dairaga/js/v2/builtin"
+	"github.com/dairaga/js/v3"
+	"github.com/dairaga/js/v3/builtin"
 )
 
 // State represents websocket ready state.

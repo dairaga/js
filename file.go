@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/dairaga/js/v2/builtin"
+	"github.com/dairaga/js/v3/builtin"
 )
 
 type File Value

@@ -5,7 +5,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/dairaga/js/v2/app"
+	"github.com/dairaga/js/v3/app"
 )
 
 //type MyData struct {

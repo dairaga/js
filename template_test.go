@@ -5,7 +5,7 @@ package js_test
 import (
 	"testing"
 
-	"github.com/dairaga/js/v2"
+	"github.com/dairaga/js/v3"
 	"github.com/stretchr/testify/assert"
 )
 

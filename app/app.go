@@ -4,9 +4,9 @@
 package app
 
 import (
-	"github.com/dairaga/js/v2"
-	"github.com/dairaga/js/v2/json"
-	"github.com/dairaga/js/v2/url"
+	"github.com/dairaga/js/v3"
+	"github.com/dairaga/js/v3/json"
+	"github.com/dairaga/js/v3/url"
 )
 
 // -----------------------------------------------------------------------------

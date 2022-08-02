@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/dairaga/js/v2"
+	"github.com/dairaga/js/v3"
 )
 
 // HandlerFunc is a function to handle XHR response.

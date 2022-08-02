@@ -3,8 +3,8 @@
 package media
 
 import (
-	"github.com/dairaga/js/v2"
-	"github.com/dairaga/js/v2/builtin"
+	"github.com/dairaga/js/v3"
+	"github.com/dairaga/js/v3/builtin"
 )
 
 // Stream is a Javascript MediaStream.

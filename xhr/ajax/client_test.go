@@ -9,7 +9,7 @@ import (
 	"os/signal"
 	"testing"
 
-	"github.com/dairaga/js/v2/xhr"
+	"github.com/dairaga/js/v3/xhr"
 	"github.com/stretchr/testify/assert"
 )
 

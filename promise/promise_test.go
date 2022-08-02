@@ -5,8 +5,8 @@ package promise_test
 import (
 	"testing"
 
-	"github.com/dairaga/js/v2"
-	"github.com/dairaga/js/v2/promise"
+	"github.com/dairaga/js/v3"
+	"github.com/dairaga/js/v3/promise"
 	"github.com/stretchr/testify/assert"
 )
 

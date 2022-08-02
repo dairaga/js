@@ -2,7 +2,7 @@
 
 package bs
 
-import "github.com/dairaga/js/v2"
+import "github.com/dairaga/js/v3"
 
 func Show(elm js.Element, show bool) js.Element {
 	if show {

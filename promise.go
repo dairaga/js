@@ -5,7 +5,7 @@ package js
 import (
 	"syscall/js"
 
-	"github.com/dairaga/js/v2/builtin"
+	"github.com/dairaga/js/v3/builtin"
 )
 
 type Promise interface {

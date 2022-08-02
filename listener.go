@@ -2,7 +2,7 @@
 
 package js
 
-import "github.com/dairaga/js/v2/builtin"
+import "github.com/dairaga/js/v3/builtin"
 
 type Listener map[string]Func
 

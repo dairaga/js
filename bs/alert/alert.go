@@ -4,8 +4,8 @@
 package alert
 
 import (
-	"github.com/dairaga/js/v2"
-	"github.com/dairaga/js/v2/bs"
+	"github.com/dairaga/js/v3"
+	"github.com/dairaga/js/v3/bs"
 )
 
 // bootstrap alert component.

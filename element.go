@@ -5,7 +5,7 @@ package js
 import (
 	"fmt"
 
-	"github.com/dairaga/js/v2/builtin"
+	"github.com/dairaga/js/v3/builtin"
 )
 
 type HTML string
