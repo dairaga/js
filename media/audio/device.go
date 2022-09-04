@@ -83,12 +83,19 @@ func (d device) GetByteFrequencyData() []byte {
 // -----------------------------------------------------------------------------
 
 func (d device) Process(url, name string, cb func(js.Event), c ...js.Credential) js.Promise {
-	return media.GetUserMedia(js.Obj{
+	obj := map[string]any{
 		"video": false,
-		"audio": js.Obj{
+	}
+
+	if d.ID() == "" {
+		obj["audio"] = true
+	} else {
+		obj["audio"] = js.Obj{
 			"deviceId": d.ID(),
-		},
-	}).Then(func(stream js.Value) any {
+		}
+	}
+
+	return media.GetUserMedia(obj).Then(func(stream js.Value) any {
 		ctx := NewContext(d.SampleRate())
 		src := ctx.CreateMediaStreamSource(media.StreamOf(stream))
 		analyser := ctx.CreateAnalyser()
