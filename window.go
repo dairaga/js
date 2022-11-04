@@ -50,3 +50,7 @@ func SetInterval(fn js.Func, ms int, args ...any) IntervalID {
 func ClearInterval(id IntervalID) {
 	global.Call("clearInterval", id)
 }
+
+func Reload() {
+	global.Get("location").Call("reload")
+}
