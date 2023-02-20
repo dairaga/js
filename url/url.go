@@ -1,278 +1,296 @@
-// +build js,wasm
+//go:build js && wasm
 
-/*Package url wraps javascript url object and funcions. */
+// Package url provides common data structures and functions about Javascript URL.
 package url
 
 import (
 	"fmt"
+	"strings"
 
-	"github.com/dairaga/js"
+	"github.com/dairaga/js/v2"
+	"github.com/dairaga/js/v2/builtin"
 )
 
-var (
-	_url = js.Value{}
-)
+// URL is Javascript URL.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/URL.
+type URL js.Value
 
-func init() {
-	if x := js.Window().Get("URL"); x.Truthy() {
-		_url = x
-	} else if x := js.Window().Get("webkitURL"); x.Truthy() {
-		_url = x
-	} else {
-		panic("Window.URL not supported")
-	}
+// JSValue returns Javascript value.
+func (u URL) JSValue() js.Value {
+	return js.Value(u)
 }
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
-// Params represents javascript URLSearchParams. https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
-type Params struct {
-	ref js.Value
+// Hash returns hash string containing a '#' in the url.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/URL/hash.
+func (u URL) Hash() string {
+	return js.Value(u).Get("hash").String()
 }
 
-// JSValue ...
-func (p *Params) JSValue() js.Value {
-	return p.ref
+// -----------------------------------------------------------------------------
+
+// SetHash sets a new hash string to the url. Given val must prefix '#'.
+func (u URL) SetHash(val string) {
+	js.Value(u).Set("hash", val)
 }
 
-func (p *Params) String() string {
-	return p.ref.Call("toString").String()
+// -----------------------------------------------------------------------------
+
+// Host returns host string in the url. Host contains hostname and port.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/URL/host.
+func (u URL) Host() string {
+	return js.Value(u).Get("host").String()
 }
 
-// Has returns boolean indicates whether or not params has the key.
-func (p *Params) Has(name string) bool {
-	return p.ref.Call("has", name).Bool()
+// -----------------------------------------------------------------------------
+
+// SetHost sets a new host string to the url.
+func (u URL) SetHost(val string) {
+	js.Value(u).Set("host", val)
 }
 
-// Get returns the first value of the key.
-func (p *Params) Get(name string) (string, bool) {
-	if x := p.ref.Call("get", name); x.Truthy() {
-		return x.String(), true
-	}
+// -----------------------------------------------------------------------------
 
-	return "", false
+// Hostname returns the domain name in the url.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/URL/hostname.
+func (u URL) Hostname() string {
+	return js.Value(u).Get("hostname").String()
 }
 
-// GetAll returns all values of the key.
-func (p *Params) GetAll(name string) []string {
-	if x := p.ref.Call("getAll", name); x.Truthy() {
-		if size := x.Length(); size > 0 {
-			result := make([]string, size)
-			for i := 0; i < size; i++ {
-				result[i] = x.Index(i).String()
-			}
-		}
-	}
+// -----------------------------------------------------------------------------
 
-	return nil
+// SetHostname sets new domain name to the url.
+func (u URL) SetHostname(val string) {
+	js.Value(u).Set("hostname", val)
 }
 
-// Set sets value for the key.
-func (p *Params) Set(name, value string) *Params {
-	p.ref.Call("set", name, value)
-	return p
+// -----------------------------------------------------------------------------
+
+// Href returns whole string in the url.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/URL/href.
+func (u URL) Href() string {
+	return js.Value(u).Get("href").String()
 }
 
-// Append appends a value to the key.
-func (p *Params) Append(name, value string) *Params {
-	p.ref.Call("append", name, value)
-	return p
+// -----------------------------------------------------------------------------
+
+// SetHref sets a new whole url string to the url.
+func (u URL) SetHref(val string) {
+	js.Value(u).Set("href", val)
 }
 
-// Delete removes the key from parameters.
-func (p *Params) Delete(name string) *Params {
-	p.ref.Call("delete", name)
-	return p
+// -----------------------------------------------------------------------------
+
+// Origin returns returns a string containing the Unicode serialization of the origin of the url.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/URL/origin.
+func (u URL) Origin() string {
+	return js.Value(u).Get("origin").String()
 }
 
-// Foreach applies fn on each key/value pair.
-func (p *Params) Foreach(fn func(key, value string)) {
-	cb := js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
-		fn(args[1].String(), args[0].String())
-		return nil
-	})
+// -----------------------------------------------------------------------------
 
-	p.ref.Call("forEach", cb)
-	cb.Release()
+// Password returns the password string in the url.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/URL/password.
+func (u URL) Password() string {
+	return js.Value(u).Get("password").String()
 }
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
-// URL represents jaavascript url. https://developer.mozilla.org/en-US/docs/Web/API/URL
-type URL struct {
-	ref js.Value
+// SetPassword sets a new password to the url.
+func (u URL) SetPassword(val string) {
+	js.Value(u).Set("password", val)
 }
 
-// New returns a URL object.
-func New(link string) *URL {
-	return &URL{ref: _url.New(link)}
+// -----------------------------------------------------------------------------
+
+// Pathname returns pathname string in the url.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/URL/pathname.
+//func (u URL) Pathname() string {
+//	return js.Value(u).Get("pathname").String()
+//}
+
+// -----------------------------------------------------------------------------
+
+// QueryPath returns query path string has prefix '/' in the url.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/URL/pathname.
+func (u URL) QueryPath() string {
+	return js.Value(u).Get("pathname").String()
 }
 
-// JSValue ...
-func (u *URL) JSValue() js.Value {
-	return u.ref
+// -----------------------------------------------------------------------------
+
+// SetPathname sets a new pathname to url.
+//func (u URL) SetPathname(val string) {
+//	js.Value(u).Set("pathname", val)
+//}
+
+// -----------------------------------------------------------------------------
+
+// SetQueryPath sets a new query path to the url.
+func (u URL) SetQueryPath(path string) {
+	js.Value(u).Set("pathname", path)
 }
 
-// Hash returns hash property.
-func (u *URL) Hash() string {
-	return u.ref.Get("hash").String()
+// -----------------------------------------------------------------------------
+
+// Port returns port (in string) in the url.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/URL/port.
+func (u URL) Port() string {
+	return js.Value(u).Get("port").String()
 }
 
-// SetHash set hash property.
-func (u *URL) SetHash(hash string) *URL {
-	u.ref.Set("hash", hash)
-	return u
+// -----------------------------------------------------------------------------
+
+// SetPort sets new port to the url.
+func (u URL) SetPort(port int) {
+	js.Value(u).Set("port", fmt.Sprintf("%d", port))
 }
 
-// Host returns host property.
-func (u *URL) Host() string {
-	return u.ref.Get("host").String()
+// -----------------------------------------------------------------------------
+
+// Protocol returns protocol string has suffix ':' in the url.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/URL/protocol.
+func (u URL) Protocol() string {
+	return js.Value(u).Get("protocol").String()
 }
 
-// SetHost sets host property.
-func (u *URL) SetHost(host string) *URL {
-	u.ref.Set("host", host)
-	return u
-}
+// -----------------------------------------------------------------------------
 
-// Hostname returns hostname property.
-func (u *URL) Hostname() string {
-	return u.ref.Get("hostname").String()
-}
-
-// SetHostname sets hostname property.
-func (u *URL) SetHostname(hostname string) *URL {
-	u.ref.Set("hostname", hostname)
-	return u
-}
-
-// Href returns href property.
-func (u *URL) Href() string {
-	return u.ref.Get("href").String()
-}
-
-// SetHref sets href property.
-func (u *URL) SetHref(href string) *URL {
-	u.ref.Set("href", href)
-	return u
-}
-
-// Origin returns origin property.
-func (u *URL) Origin() string {
-	return u.ref.Get("origin").String()
-}
-
-// Password returns password property.
-func (u *URL) Password() string {
-	return u.ref.Get("password").String()
-}
-
-// SetPassword sets password property.
-func (u *URL) SetPassword(password string) *URL {
-	u.ref.Set("password", password)
-	return u
-}
-
-// Pathname returns pathname property.
-func (u *URL) Pathname() string {
-	return u.ref.Get("pathname").String()
-}
-
-// SetPathname sets pathname property.
-func (u *URL) SetPathname(pathname string) *URL {
-	u.ref.Set("pathname", pathname)
-	return u
-}
-
-// Port returns port property.
-func (u *URL) Port() string {
-	return u.ref.Get("port").String()
-}
-
-// SetPort sets port property.
-func (u *URL) SetPort(port int) *URL {
-	u.ref.Set("port", fmt.Sprintf("%d", port))
-	return u
-}
-
-// Protocol returns protocol property and remove ":" at end.
-func (u *URL) Protocol() string {
-	if x := u.ref.Get("protocol"); x.Truthy() {
-		if tmp := x.String(); tmp != "" {
-			return tmp[0 : len(tmp)-1]
-		}
+// SetProtocol sets new protocol suffix ':' automatically to the url.
+func (u URL) SetProtocol(protocol string) {
+	if protocol[len(protocol)-1] != ':' {
+		protocol += ":"
 	}
 
-	return ""
+	js.Value(u).Set("protocol", protocol)
 }
 
-// SetProtocol sets protocol property. Append ":" automatically if protocol is not end with ":".
-func (u *URL) SetProtocol(protocol string) *URL {
-	if protocol != "" {
-		if protocol[len(protocol)-1] == ':' {
-			u.ref.Set("protocol", protocol)
-		} else {
-			u.ref.Set("protocol", protocol+":")
-		}
-	}
-	return u
-}
+// -----------------------------------------------------------------------------
 
 // Search returns search property.
-func (u *URL) Search() string {
-	return u.Querystring()
-}
+//func (u URL) Search() string {
+//	return js.Value(u).Get("search").String()
+//}
 
-// Querystring returns query string in the url.
-func (u *URL) Querystring() string {
-	return u.ref.Get("search").String()
+// -----------------------------------------------------------------------------
+
+// Querystring returns query string has prefix '?' in the url.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/URL/search.
+func (u URL) QueryString() string {
+	return js.Value(u).Get("search").String()
 }
 
 // SetSearch sets search property.
-func (u *URL) SetSearch(search string) *URL {
-	return u.SetQuerystring(search)
+//func (u URL) SetSearch(search string) {
+//	js.Value(u).Set("search", search)
+//}
+
+// -----------------------------------------------------------------------------
+
+// SetQuerystring sets query string prefix '?' automatically to the url.
+func (u URL) SetQueryString(query string) {
+	if !strings.HasPrefix(query, "?") {
+		query = "?" + query
+	}
+	js.Value(u).Set("search", query)
 }
 
-// SetQuerystring sets query string in the url.
-func (u *URL) SetQuerystring(query string) *URL {
-	u.ref.Set("search", query)
-	return u
+// -----------------------------------------------------------------------------
+
+// Username returns user name string in the url.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/URL/username.
+func (u URL) Username() string {
+	return js.Value(u).Get("username").String()
 }
 
-// Username returns username property.
-func (u *URL) Username() string {
-	return u.ref.Get("username").String()
+// -----------------------------------------------------------------------------
+
+// SetUsername sets new user name string to the url.
+func (u URL) SetUsername(username string) {
+	js.Value(u).Set("username", username)
 }
 
-// SetUsername sets username property.
-func (u *URL) SetUsername(username string) *URL {
-	u.ref.Set("username", username)
-	return u
+// -----------------------------------------------------------------------------
+
+// Params returns all parameters in the url. The resulted is a Javascript URLSearchParams.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/URL/searchParams.
+func (u URL) Params() Params {
+	return Params(js.Value(u).Get("searchParams"))
 }
 
-// Params returns parameters in url.
-func (u *URL) Params() *Params {
-	return &Params{ref: u.ref.Get("searchParams")}
+// -----------------------------------------------------------------------------
+
+// String invokes Javascript URL.toString method and returns whole url string like Href.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/URL/toString.
+func (u URL) String() string {
+	return js.Value(u).Call("toString").String()
 }
 
-func (u *URL) String() string {
+// -----------------------------------------------------------------------------
 
-	if x := u.ref.Get("toString"); x.Truthy() {
-		fmt.Println("xxx")
-		return u.ref.Call("toString").String()
+// JSON invokes Javascript URL.toJSON method and returns a serialized string of the url.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/URL/toJSON.
+func (u URL) JSON() string {
+	return js.Value(u).Call("toJSON").String()
+}
+
+// -----------------------------------------------------------------------------
+
+// New returns a new URL object with given string url.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/URL/URL.
+func New(url string) URL {
+	return URL(builtin.URL.New(url))
+}
+
+// -----------------------------------------------------------------------------
+
+// CreateObjectURL creates a url string prepresenting the given object x.
+// The given object x must be Blob, File, or MediaSource.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL.
+func CreateObjectURL(x any) string {
+	var resulted js.Value
+
+	switch v := x.(type) {
+	case js.Wrapper:
+		resulted = v.JSValue()
+	case js.Value:
+		resulted = v
+	default:
+		panic(fmt.Sprintf("unsupported type %T", x))
 	}
 
-	return fmt.Sprintf("%s://%s%s%s%s", u.Protocol(), u.Host(), u.Pathname(), u.Querystring(), u.Hash())
+	if !builtin.MediaSource.Is(resulted) && !builtin.Blob.Is(resulted) && !builtin.File.Is(resulted) {
+		panic(fmt.Sprintf("unsupported type %v", resulted.Type()))
+	}
+
+	return builtin.URL.JSValue().Call("createObjectURL", resulted).String()
 }
 
-// ----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
-// Create returns a URL representing the obj.
-func Create(obj interface{}) string {
-	return _url.Call("createObjectURL", obj).String()
-}
-
-// Revoke releases an existing object URL. https://developer.mozilla.org/en-US/docs/Web/API/URL/revokeObjectURL
-func Revoke(link string) {
-	_url.Call("revokeObjectURL", link)
+// RevokeObjectURL revokes a URL previously created by CreateObjectURL.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/URL/revokeObjectURL.
+func RevokeObjectURL(url string) {
+	builtin.URL.JSValue().Call("revokeObjectURL", url)
 }

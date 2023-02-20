@@ -1,34 +1,56 @@
-// +build js,wasm
+//go:build js && wasm
 
 package js
 
-import "fmt"
+import (
+	"fmt"
+	"syscall/js"
+)
 
-// window
+type IntervalID = js.Value
 
-var window = global.Get("window")
+// -----------------------------------------------------------------------------
 
-// Window ...
-func Window() Value {
-	return window
+func Window() js.Value {
+	return global
 }
 
-// Alert invokes window.alert function.
-func Alert(a ...interface{}) {
-	window.Call("alert", fmt.Sprint(a...))
+// -----------------------------------------------------------------------------
+
+func Alert(a ...any) {
+	global.Call("alert", fmt.Sprint(a...))
 }
 
-// Alertf invokes window.alert function.
-func Alertf(format string, a ...interface{}) {
-	window.Call("alert", fmt.Sprintf(format, a...))
+// -----------------------------------------------------------------------------
+
+func Alertf(format string, a ...any) {
+	global.Call("alert", fmt.Sprintf(format, a...))
 }
 
-// Confirm invokes window.confirm function.
-func Confirm(a ...interface{}) bool {
-	return window.Call("confirm", fmt.Sprint(a...)).Bool()
+// -----------------------------------------------------------------------------
+
+func Redirect(newURL string) {
+	global.Get("location").Set("href", newURL)
 }
 
-// Confirmf invokes window.confirm function.
-func Confirmf(format string, a ...interface{}) bool {
-	return window.Call("confirm", fmt.Sprintf(format, a...)).Bool()
+// -----------------------------------------------------------------------------
+
+func SetInterval(fn js.Func, ms int, args ...any) IntervalID {
+	if ms < 4 {
+		ms = 0
+	}
+
+	newArgs := append([]any{fn, ms}, args...)
+
+	return global.Call("setInterval", newArgs...)
+}
+
+// -----------------------------------------------------------------------------
+
+func ClearInterval(id IntervalID) {
+	global.Call("clearInterval", id)
+}
+
+func Reload() {
+	global.Get("location").Call("reload")
 }

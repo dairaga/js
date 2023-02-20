@@ -1,34 +1,52 @@
-// +build js,wasm
+//go:build js && wasm
 
 package js
 
-import "fmt"
+import (
+	"github.com/dairaga/js/v2/builtin"
+)
 
-// Event represents javascript Event. https://developer.mozilla.org/en-US/docs/Web/API/Event
-type Event struct {
-	ref Value
+type Event interface {
+	Wrapper
+	Type() string
+	Get(name string) Value
+	PreventDefault()
 }
 
-// JSValue ...
-func (e *Event) JSValue() Value {
-	return e.ref
+// -----------------------------------------------------------------------------
+
+type event Value
+
+func (e event) JSValue() Value {
+	return Value(e)
 }
 
-func (e *Event) String() string {
-	return fmt.Sprintf(`{type: %q}`, e.Type())
+// -----------------------------------------------------------------------------
+
+func (e event) Get(name string) Value {
+	return Value(e).Get(name)
 }
 
-// EventOf returns event.
-func EventOf(x Value) *Event {
-	return &Event{ref: x}
+// -----------------------------------------------------------------------------
+
+func (e event) Type() string {
+	return e.Get("type").String()
 }
 
-// Target https://developer.mozilla.org/en-US/docs/Web/API/Event/target
-func (e *Event) Target() Value {
-	return e.ref.Get("target")
+// -----------------------------------------------------------------------------
+
+func (e event) PreventDefault() {
+	Value(e).Call("preventDefault")
 }
 
-// Type https://developer.mozilla.org/en-US/docs/Web/API/Event/type
-func (e *Event) Type() string {
-	return e.ref.Get("type").String()
+// -----------------------------------------------------------------------------
+
+func EventOf(v Value) Event {
+	if !builtin.Event.Is(v) {
+		panic(ValueError{
+			Method: "EventOf",
+			Type:   v.Type(),
+		})
+	}
+	return event(v)
 }
